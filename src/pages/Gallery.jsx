@@ -8,18 +8,35 @@ import PageHero from "../components/PageHero";
 const categories = ["All", "Campus", "Events", "Classrooms", "Sports", "Cultural"];
 
 const photos = [
-  { src: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80", cat: "Campus", title: "School Building" },
-  { src: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80", cat: "Classrooms", title: "English Class in Progress" },
-  { src: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=600&q=80", cat: "Sports", title: "Annual Sports Day" },
-  { src: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&q=80", cat: "Campus", title: "School Grounds" },
-  { src: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&q=80", cat: "Classrooms", title: "Library & Study" },
-  { src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80", cat: "Events", title: "Republic Day Celebration" },
-  { src: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80", cat: "Cultural", title: "Cultural Program" },
-  { src: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80", cat: "Events", title: "Prize Distribution" },
-  { src: "https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=600&q=80", cat: "Classrooms", title: "Science Lab" },
-  { src: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80", cat: "Events", title: "Annual Day" },
-  { src: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600&q=80", cat: "Cultural", title: "Music & Dance Performance" },
-  { src: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=600&q=80", cat: "Campus", title: "Morning Assembly" },
+  // Campus
+  { src: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80", cat: "Campus", title: "School Building" },
+  { src: "https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80", cat: "Campus", title: "School Entrance" },
+  { src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80", cat: "Campus", title: "Morning Assembly" },
+  { src: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=800&q=80", cat: "Campus", title: "School Grounds" },
+
+  // Classrooms
+  { src: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80", cat: "Classrooms", title: "English Class in Progress" },
+  { src: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=80", cat: "Classrooms", title: "Library & Study" },
+  { src: "https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=800&q=80", cat: "Classrooms", title: "Science Lab" },
+  { src: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&q=80", cat: "Classrooms", title: "Interactive Learning" },
+
+  // Events
+  { src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80", cat: "Events", title: "Republic Day Celebration" },
+  { src: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80", cat: "Events", title: "Prize Distribution Ceremony" },
+  { src: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80", cat: "Events", title: "Annual Day Function" },
+  { src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", cat: "Events", title: "Graduation Ceremony" },
+
+  // Sports
+  { src: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&q=80", cat: "Sports", title: "Annual Sports Day" },
+  { src: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&q=80", cat: "Sports", title: "Athletics Track" },
+  { src: "https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=800&q=80", cat: "Sports", title: "Cricket Practice" },
+  { src: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=800&q=80", cat: "Sports", title: "Football Match" },
+
+  // Cultural
+  { src: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&q=80", cat: "Cultural", title: "Cultural Program" },
+  { src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80", cat: "Cultural", title: "Dance Performance" },
+  { src: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&q=80", cat: "Cultural", title: "Music Concert" },
+  { src: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80", cat: "Cultural", title: "Art Exhibition" },
 ];
 
 export default function Gallery() {
