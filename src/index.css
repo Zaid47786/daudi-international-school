@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,55 +7,40 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 220 30% 10%;
+    --foreground: 220 25% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 10%;
+    --card-foreground: 220 25% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 10%;
-    --primary: 222 76% 32%;
+    --popover-foreground: 220 25% 8%;
+    --primary: 222 72% 28%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 45 92% 53%;
-    --secondary-foreground: 222 76% 20%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
-    --accent: 45 92% 53%;
-    --accent-foreground: 222 76% 20%;
+    --secondary: 43 88% 52%;
+    --secondary-foreground: 222 72% 15%;
+    --muted: 220 16% 96%;
+    --muted-foreground: 220 10% 48%;
+    --accent: 43 88% 52%;
+    --accent-foreground: 222 72% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 222 76% 32%;
-    --radius: 0.75rem;
+    --border: 220 16% 90%;
+    --input: 220 16% 90%;
+    --ring: 222 72% 28%;
+    --radius: 0.5rem;
 
-    --font-poppins: 'Poppins', sans-serif;
-    --font-playfair: 'Playfair Display', serif;
+    --font-inter: 'Inter', sans-serif;
+    --font-fraunces: 'Fraunces', serif;
 
-    --royal-blue: #1A3A8F;
-    --gold: #F5C518;
-    --gold-dark: #D4A017;
-    --navy: #0D2456;
-  }
-
-  .dark {
-    --background: 222 47% 7%;
-    --foreground: 0 0% 98%;
-    --card: 222 47% 10%;
-    --card-foreground: 0 0% 98%;
-    --popover: 222 47% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 222 76% 55%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 45 92% 53%;
-    --secondary-foreground: 222 76% 20%;
-    --muted: 222 30% 15%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 45 92% 53%;
-    --accent-foreground: 222 76% 20%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 222 20% 18%;
-    --input: 222 20% 18%;
-    --ring: 222 76% 55%;
+    --ink: #0f1924;
+    --ink-soft: #3d4a5c;
+    --ink-muted: #8493a8;
+    --cream: #faf8f4;
+    --cream-dark: #f2ede4;
+    --cobalt: #1a3580;
+    --cobalt-deep: #0e1f52;
+    --amber: #e8a820;
+    --amber-light: #f5c642;
+    --amber-pale: #fef3d0;
+    --slate: #f4f6fa;
   }
 }
 
@@ -64,14 +49,64 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-poppins;
+    @apply bg-background text-foreground;
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  h1, h2, h3 {
-    @apply font-poppins;
+  h1, h2, h3, h4 {
+    font-family: var(--font-inter);
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
-  .font-poppins { font-family: var(--font-poppins); }
-  .font-playfair { font-family: var(--font-playfair); }
+  .font-inter { font-family: var(--font-inter); }
+  .font-fraunces { font-family: var(--font-fraunces); }
+
+  .text-ink { color: var(--ink); }
+  .text-ink-soft { color: var(--ink-soft); }
+  .text-ink-muted { color: var(--ink-muted); }
+
+  .bg-cream { background-color: var(--cream); }
+  .bg-cream-dark { background-color: var(--cream-dark); }
+  .bg-cobalt { background-color: var(--cobalt); }
+  .bg-cobalt-deep { background-color: var(--cobalt-deep); }
+  .bg-amber { background-color: var(--amber); }
+  .bg-amber-light { background-color: var(--amber-light); }
+  .bg-amber-pale { background-color: var(--amber-pale); }
+  .bg-slate-light { background-color: var(--slate); }
+
+  .text-cobalt { color: var(--cobalt); }
+  .text-cobalt-deep { color: var(--cobalt-deep); }
+  .text-amber { color: var(--amber); }
+  .text-amber-light { color: var(--amber-light); }
+
+  .border-amber { border-color: var(--amber); }
+  .border-cobalt { border-color: var(--cobalt); }
+  .border-ink { border-color: var(--ink); }
+
+  /* Refined underline accent */
+  .underline-amber {
+    text-decoration: underline;
+    text-decoration-color: var(--amber);
+    text-underline-offset: 6px;
+    text-decoration-thickness: 2px;
+  }
+
+  /* Sidebar rule */
+  .rule-left {
+    border-left: 3px solid var(--amber);
+    padding-left: 1rem;
+  }
+
+  /* Ink stamp label */
+  .label-stamp {
+    font-family: var(--font-inter);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
 }
