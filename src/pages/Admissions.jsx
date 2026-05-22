@@ -13,7 +13,7 @@ const steps = [
   { icon: Calendar, title: "4. Enrollment & Fees", desc: "Upon selection, complete the enrollment formalities and pay the minimal nominal fees." },
 ];
 
-const grades = ["Nursery", "LKG", "UKG", "Class I", "Class II", "Class III", "Class IV", "Class V", "Class VI", "Class VII", "Class VIII", "Class IX", "Class X"];
+const grades = ["Montessori", "Nursery", "Class I", "Class II", "Class III", "Class IV", "Class V", "Class VI", "Class VII", "Class VIII", "Class IX", "Class X"];
 
 const faqs = [
   { q: "Is DIS a government or private school?", a: "DIS is a private, non-profit school operating under the Daudi Welfare Trust. We are not government-aided but maintain very affordable fee structures." },

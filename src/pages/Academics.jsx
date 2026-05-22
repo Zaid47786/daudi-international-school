@@ -7,10 +7,10 @@ import PageHero from "../components/PageHero";
 
 const levels = [
   {
-    level: "Pre-Primary (Nursery – KG)",
+    level: "Montessori",
     age: "Ages 3–5",
-    desc: "A play-based foundational program focused on motor skills, language, creativity, and social skills.",
-    subjects: ["English", "Hindi", "Basic Maths", "Drawing & Art", "Physical Activities"],
+    desc: "A Montessori-based foundational program focused on motor skills, language, creativity, and social development through child-led, hands-on learning.",
+    subjects: ["English", "Hindi", "Basic Maths", "Drawing & Art", "Sensorial Activities", "Practical Life"],
     color: "bg-yellow-50 border-yellow-200",
     accent: "text-yellow-600",
     badge: "bg-yellow-100 text-yellow-700",

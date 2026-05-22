@@ -15,12 +15,12 @@ const coreValues = [
 ];
 
 const milestones = [
-  { year: "2014", event: "Daudi International School founded by Altamash Daudi under the Daudi Welfare Trust." },
-  { year: "2016", event: "First batch of students completed primary education with outstanding results." },
-  { year: "2018", event: "Received the Daudi International School Development and Extension Award." },
-  { year: "2020", event: "Expanded to secondary classes; enrollment crossed 300 students." },
+  { year: "2005", event: "Daudi International School founded by Altamash Daudi under the Daudi Welfare Trust." },
+  { year: "2008", event: "First batch of students completed primary education with outstanding results." },
+  { year: "2012", event: "Received the Daudi International School Development and Extension Award." },
+  { year: "2018", event: "Expanded to secondary classes; enrollment crossed 300 students." },
   { year: "2023", event: "Launched community scholarship program for underprivileged students." },
-  { year: "2024", event: "500+ students enrolled; recognized as a leading non-profit institution in Muzaffarpur." },
+  { year: "2026", event: "500+ students enrolled; recognized as a leading non-profit institution in Muzaffarpur." },
 ];
 
 export default function About() {
