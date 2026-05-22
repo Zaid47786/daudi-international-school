@@ -93,9 +93,10 @@ export default function About() {
             >
               <div className="rounded-3xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80"
-                  alt="Founder"
-                  className="w-full h-96 object-cover"
+                  src="https://i.ytimg.com/vi/qXYJYEKhXTY/maxresdefault.jpg"
+                  alt="Altamash Daudi - Founder"
+                  className="w-full h-96 object-cover object-top"
+                  onError={(e) => { e.target.src = "https://i.ytimg.com/vi/qXYJYEKhXTY/hqdefault.jpg"; }}
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 bg-navy rounded-2xl p-5 shadow-xl">
