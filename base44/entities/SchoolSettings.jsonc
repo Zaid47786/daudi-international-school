@@ -1,0 +1,33 @@
+{
+  "name": "SchoolSettings",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Unique setting key"
+    },
+    "value": {
+      "type": "string",
+      "description": "Setting value"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable label"
+    },
+    "group": {
+      "type": "string",
+      "enum": [
+        "general",
+        "hero",
+        "contact",
+        "social"
+      ],
+      "description": "Setting group"
+    }
+  },
+  "required": [
+    "key",
+    "value",
+    "group"
+  ]
+}
