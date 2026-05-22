@@ -36,7 +36,7 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-cobalt-deep/98 shadow-[0_1px_0_rgba(255,255,255,0.06)]"
+          ? "bg-cobalt-deep shadow-[0_1px_0_rgba(255,255,255,0.06)]"
           : isHome
           ? "bg-transparent"
           : "bg-cobalt-deep"
