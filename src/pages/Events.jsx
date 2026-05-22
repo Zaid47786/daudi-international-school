@@ -1,138 +1,106 @@
 import { motion } from "framer-motion";
-import { Calendar, Tag } from "lucide-react";
+import { Calendar, Clock, MapPin, ChevronRight } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
 
-const events = [
+const upcomingEvents = [
   {
-    title: "Annual Day Celebration 2024",
-    date: "December 15, 2024",
-    category: "Annual Event",
-    status: "upcoming",
-    desc: "A grand celebration of academic achievements, cultural performances, dance, music, and prize distribution for students across all grades.",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80",
+    date: "January 26, 2025",
+    title: "Republic Day Celebration",
+    time: "9:00 AM",
+    location: "School Ground, DIS Muzaffarpur",
+    desc: "Our annual Republic Day celebration features a flag hoisting ceremony, student parade, patriotic songs, and cultural performances. All parents are warmly invited to attend.",
+    category: "National Event",
+    color: "bg-blue-50 border-blue-200",
+    badge: "bg-blue-100 text-blue-700",
   },
   {
-    title: "Science Exhibition & Fair",
-    date: "November 20, 2024",
+    date: "February 14, 2025",
+    title: "Annual Science Exhibition",
+    time: "10:00 AM – 4:00 PM",
+    location: "School Hall, DIS Muzaffarpur",
+    desc: "Students from Class V to X showcase innovative science projects and experiments. Judges from local colleges will evaluate entries for prizes.",
     category: "Academic",
-    status: "upcoming",
-    desc: "Students present innovative science projects and experiments. Open to parents and community members. Best project wins the DIS Science Trophy.",
-    image: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?w=600&q=80",
+    color: "bg-green-50 border-green-200",
+    badge: "bg-green-100 text-green-700",
   },
   {
-    title: "Sports Day 2024",
-    date: "November 5, 2024",
+    date: "March 10, 2025",
+    title: "Annual Sports Day",
+    time: "8:00 AM",
+    location: "School Ground, DIS Muzaffarpur",
+    desc: "Inter-house athletic competitions including track events, team sports, and fun activities. Prize distribution ceremony follows the events.",
     category: "Sports",
-    status: "upcoming",
-    desc: "Inter-house sports competitions including track & field, cricket, kabaddi, and more. Celebrating physical fitness and team spirit.",
-    image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&q=80",
+    color: "bg-orange-50 border-orange-200",
+    badge: "bg-orange-100 text-orange-700",
   },
   {
-    title: "Republic Day Celebration 2024",
-    date: "January 26, 2024",
-    category: "National Event",
-    status: "past",
-    desc: "A patriotic celebration with flag hoisting, parade, cultural program, and speeches by students and teachers. A proud moment for the DIS family.",
-    image: "https://images.unsplash.com/photo-1587502537745-84b86da1204f?w=600&q=80",
-  },
-  {
-    title: "Independence Day Celebration",
-    date: "August 15, 2024",
-    category: "National Event",
-    status: "past",
-    desc: "Students performed patriotic songs, skits, and speeches celebrating India's independence. The event united students, parents, and staff.",
-    image: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=600&q=80",
-  },
-  {
-    title: "Teachers' Day Celebration",
-    date: "September 5, 2024",
-    category: "School Event",
-    status: "past",
-    desc: "Students honored their teachers with heartfelt performances, speeches, and gratitude as part of the Dr. S. Radhakrishnan Teachers' Day tradition.",
-    image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=600&q=80",
-  },
-  {
-    title: "DIS Development Award Ceremony 2018",
-    date: "2018",
-    category: "Award",
-    status: "past",
-    desc: "The prestigious Daudi International School Development and Extension Award presented by the Board of Directors of Daudi Welfare Trust, Muzaffarpur.",
-    image: "https://images.unsplash.com/photo-1559223607-b4d0555ae227?w=600&q=80",
-  },
-  {
-    title: "Annual Examination & Result Day",
-    date: "March 2024",
-    category: "Academic",
-    status: "past",
-    desc: "End-of-year examinations followed by result declaration and recognition of top academic performers with merit certificates and scholarships.",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80",
+    date: "April 5, 2025",
+    title: "Annual Cultural Day",
+    time: "4:00 PM",
+    location: "School Auditorium",
+    desc: "A grand cultural evening featuring student performances — drama, dance, music, and poetry. The event celebrates the rich cultural heritage of Bihar.",
+    category: "Cultural",
+    color: "bg-purple-50 border-purple-200",
+    badge: "bg-purple-100 text-purple-700",
   },
 ];
 
-const categoryColors = {
-  "Annual Event": "bg-purple-100 text-purple-800",
-  "Academic": "bg-blue-100 text-blue-800",
-  "Sports": "bg-green-100 text-green-800",
-  "National Event": "bg-orange-100 text-orange-800",
-  "School Event": "bg-yellow-100 text-yellow-800",
-  "Award": "bg-gold/20 text-yellow-800",
-};
+const pastEvents = [
+  { date: "August 15, 2024", title: "Independence Day Celebration", category: "National Event", desc: "Flag hoisting, patriotic performances, and prize distribution for academic achievers." },
+  { date: "October 2024", title: "Diwali & Eid Celebration", category: "Cultural", desc: "A joint celebration of Diwali and Eid, promoting communal harmony and unity among students." },
+  { date: "November 14, 2024", title: "Children's Day Celebration", category: "School Event", desc: "Teachers performed for students as a special treat — skits, songs, and fun games." },
+  { date: "December 20, 2024", title: "Annual Prize Distribution", category: "Academic", desc: "Annual ceremony honouring top academic performers, sports champions, and students showing exemplary character." },
+  { date: "January 26, 2024", title: "Republic Day Parade", category: "National Event", desc: "Vibrant Republic Day parade and cultural program attended by community dignitaries." },
+  { date: "March 2024", title: "Daudi Welfare Trust Annual Day", category: "Trust Event", desc: "Annual gathering of the Daudi Welfare Trust featuring the School Development and Extension Awards." },
+];
 
 export default function Events() {
-  const upcoming = events.filter((e) => e.status === "upcoming");
-  const past = events.filter((e) => e.status === "past");
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white font-poppins">
       <Navbar />
       <PageHero
         title="Events"
-        subtitle="Celebrating learning, culture, and community throughout the year"
-        bgImage="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1400&q=80"
+        subtitle="Celebrations, competitions, and community milestones"
+        bgImage="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1400&q=80"
       />
 
       {/* Upcoming Events */}
-      <section className="py-20 md:py-28">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="w-3 h-8 bg-gold rounded-full" />
-            <h2 className="text-2xl md:text-3xl font-black text-foreground">Upcoming Events</h2>
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 text-royal-blue text-xs font-bold tracking-widest uppercase mb-3">
+              <div className="h-px w-8 bg-gold" /> Mark Your Calendar <div className="h-px w-8 bg-gold" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-navy">Upcoming Events</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-            {upcoming.map((ev, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {upcomingEvents.map((ev, i) => (
               <motion.div
-                key={ev.title}
-                initial={{ opacity: 0, y: 20 }}
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.12 }}
-                className="bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all duration-300 group"
+                transition={{ delay: i * 0.1 }}
+                className={`rounded-2xl border-2 p-7 hover:shadow-xl transition-all duration-300 ${ev.color}`}
               >
-                <div className="relative overflow-hidden h-44">
-                  <img
-                    src={ev.image}
-                    alt={ev.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 right-3">
-                    <span className="px-3 py-1 bg-gold text-navy text-xs font-bold rounded-full shadow">
-                      Upcoming
-                    </span>
+                <div className="flex items-start justify-between mb-4">
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${ev.badge}`}>{ev.category}</span>
+                  <div className="text-right">
+                    <div className="flex items-center gap-1 text-gray-500 text-xs mb-1">
+                      <Calendar size={12} /> {ev.date}
+                    </div>
+                    <div className="flex items-center gap-1 text-gray-500 text-xs">
+                      <Clock size={12} /> {ev.time}
+                    </div>
                   </div>
                 </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-3 flex-wrap">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${categoryColors[ev.category]}`}>
-                      <Tag size={10} className="inline mr-1" />{ev.category}
-                    </span>
-                    <span className="flex items-center gap-1 text-muted-foreground text-xs">
-                      <Calendar size={12} />{ev.date}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-foreground mb-2 text-base">{ev.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{ev.desc}</p>
+                <h3 className="font-bold text-navy text-xl mb-3">{ev.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">{ev.desc}</p>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <MapPin size={12} className="text-royal-blue" />
+                  {ev.location}
                 </div>
               </motion.div>
             ))}
@@ -141,48 +109,53 @@ export default function Events() {
       </section>
 
       {/* Past Events */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="w-3 h-8 bg-muted-foreground/30 rounded-full" />
-            <h2 className="text-2xl md:text-3xl font-black text-foreground">Past Events</h2>
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 text-royal-blue text-xs font-bold tracking-widest uppercase mb-3">
+              <div className="h-px w-8 bg-gold" /> Looking Back <div className="h-px w-8 bg-gold" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-navy">Past Events</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-            {past.map((ev, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {pastEvents.map((ev, i) => (
               <motion.div
-                key={ev.title}
+                key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-card rounded-2xl overflow-hidden border border-border hover:shadow-lg transition-all duration-300 group"
+                transition={{ delay: i * 0.08 }}
+                className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 group"
               >
-                <div className="relative overflow-hidden h-40">
-                  <img
-                    src={ev.image}
-                    alt={ev.title}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
-                  />
-                  <div className="absolute top-3 right-3">
-                    <span className="px-3 py-1 bg-muted text-muted-foreground text-xs font-semibold rounded-full">
-                      Past
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar size={14} className="text-gold" />
+                  <span className="text-gray-400 text-xs">{ev.date}</span>
                 </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${categoryColors[ev.category]}`}>
-                      {ev.category}
-                    </span>
-                    <span className="flex items-center gap-1 text-muted-foreground text-xs">
-                      <Calendar size={11} />{ev.date}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-foreground mb-2 text-sm">{ev.title}</h3>
-                  <p className="text-muted-foreground text-xs leading-relaxed">{ev.desc}</p>
-                </div>
+                <h3 className="font-bold text-navy mb-2 group-hover:text-royal-blue transition-colors">{ev.title}</h3>
+                <span className="inline-block text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full mb-3">{ev.category}</span>
+                <p className="text-gray-500 text-xs leading-relaxed">{ev.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Republic Day Banner */}
+      <section
+        className="py-20 relative overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(to right, rgba(13,36,86,0.95) 0%, rgba(26,58,143,0.85) 100%), url(https://images.unsplash.com/photo-1531685250784-7569952593d2?w=1400&q=80)`,
+          backgroundSize: "cover", backgroundPosition: "center",
+        }}
+      >
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="text-gold text-xs font-bold tracking-widest uppercase mb-3">Featured Event</div>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Republic Day Celebration 2025</h2>
+          <p className="text-white/70 text-lg mb-8 leading-relaxed">
+            Join us on January 26, 2025 for our vibrant Republic Day celebration — a tribute to our nation's spirit, featuring student parades, cultural performances, and patriotic speeches.
+          </p>
+          <div className="inline-flex items-center gap-3 bg-gold/20 border border-gold/40 rounded-full px-6 py-3 text-gold font-semibold">
+            <Calendar size={18} /> January 26, 2025 · 9:00 AM · School Ground
           </div>
         </div>
       </section>
