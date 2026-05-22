@@ -42,7 +42,7 @@ export default function Admissions() {
       <Navbar />
       <PageHero
         title="Admissions"
-        subtitle="Join the DIS family — admissions open for 2025–26"
+        subtitle="Join the DIS family — admissions open for 2026–27"
         bgImage="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1400&q=80"
       />
 
@@ -84,7 +84,7 @@ export default function Admissions() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             {[
-              { label: "Academic Year", value: "April – March", sub: "2025–26 Enrollment Open" },
+              { label: "Academic Year", value: "April – March", sub: "2026–27 Enrollment Open" },
               { label: "Grades Available", value: "Nursery – X", sub: "English Medium" },
               { label: "Admission Fee", value: "Minimal", sub: "Non-profit, Affordable" },
             ].map((item, i) => (
