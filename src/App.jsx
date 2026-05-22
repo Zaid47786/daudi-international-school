@@ -21,14 +21,15 @@ const AuthenticatedApp = () => {
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-navy">
-        <div className="flex flex-col items-center gap-4">
+      <div className="fixed inset-0 flex items-center justify-center bg-cobalt-deep">
+        <div className="flex flex-col items-center gap-5">
           <img
             src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
             alt="DIS"
-            className="h-16 w-auto animate-pulse"
+            className="h-12 w-auto opacity-70"
+            style={{ animation: "pulse 2s ease-in-out infinite" }}
           />
-          <div className="w-8 h-8 border-4 border-gold/30 border-t-gold rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-amber/20 border-t-amber rounded-full animate-spin" />
         </div>
       </div>
     );
