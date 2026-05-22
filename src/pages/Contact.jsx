@@ -5,9 +5,11 @@ import { useToast } from "@/components/ui/use-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import { useSettings } from "../lib/useSchoolData";
 
 export default function Contact() {
   const { toast } = useToast();
+  const { settings } = useSettings();
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
@@ -49,20 +51,20 @@ export default function Contact() {
                 {
                   icon: MapPin,
                   label: "Address",
-                  content: "Shafi Manzil, Daudi Market\nMotijheel, Muzaffarpur\nBihar — 842001, India",
+                  content: settings.address,
                   link: null,
                 },
                 {
                   icon: Phone,
                   label: "Phone",
-                  content: "+91 621 224 3314",
-                  link: "tel:+916212243314",
+                  content: settings.phone,
+                  link: `tel:${settings.phone?.replace(/\s/g, "")}`,
                 },
                 {
                   icon: Mail,
                   label: "Email",
-                  content: "daudischool.muz@gmail.com",
-                  link: "mailto:daudischool.muz@gmail.com",
+                  content: settings.email,
+                  link: `mailto:${settings.email}`,
                 },
                 {
                   icon: Clock,
@@ -100,7 +102,7 @@ export default function Contact() {
                 <div className="text-gold text-xs font-bold uppercase tracking-widest mb-4">Follow Us</div>
                 <div className="flex gap-3">
                   <a
-                    href="https://www.facebook.com/p/Daudi-International-School-Muzaffarpur-100072254675605/"
+                    href={settings.facebook_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 bg-white/10 hover:bg-gold hover:text-navy text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
@@ -108,7 +110,7 @@ export default function Contact() {
                     <Facebook size={16} /> Facebook
                   </a>
                   <a
-                    href="https://www.youtube.com/@altamashdaudi7099"
+                    href={settings.youtube_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 bg-white/10 hover:bg-gold hover:text-navy text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"

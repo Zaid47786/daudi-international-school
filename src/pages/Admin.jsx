@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Settings, Calendar, Image, BarChart3, Home, LogOut, Menu, X } from "lucide-react";
+import { Settings, Calendar, Image, BarChart3, Home, LogOut, Menu, X, Inbox } from "lucide-react";
 import AdminSettings from "../components/admin/AdminSettings";
 import AdminEvents from "../components/admin/AdminEvents";
 import AdminGallery from "../components/admin/AdminGallery";
 import AdminStats from "../components/admin/AdminStats";
+import AdminInquiries from "../components/admin/AdminInquiries";
 import { base44 } from "@/api/base44Client";
 
 const tabs = [
@@ -12,6 +13,7 @@ const tabs = [
   { id: "stats", label: "Stats", icon: BarChart3 },
   { id: "events", label: "Events", icon: Calendar },
   { id: "gallery", label: "Gallery", icon: Image },
+  { id: "inquiries", label: "Inquiries", icon: Inbox },
 ];
 
 export default function Admin() {
@@ -28,6 +30,7 @@ export default function Admin() {
     stats: AdminStats,
     events: AdminEvents,
     gallery: AdminGallery,
+    inquiries: AdminInquiries,
   }[activeTab];
 
   return (

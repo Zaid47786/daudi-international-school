@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Facebook, Youtube } from "lucide-react";
+import { useSettings } from "../lib/useSchoolData";
 
 export default function Footer() {
+  const { settings } = useSettings();
   return (
     <footer className="bg-navy text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -55,19 +57,19 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="text-gold mt-0.5 shrink-0" />
                 <span className="text-white/60 text-sm">
-                  Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001
+                  {settings.address}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={16} className="text-gold shrink-0" />
-                <a href="tel:+916212243314" className="text-white/60 hover:text-gold text-sm transition-colors">
-                  +91 621 224 3314
+                <a href={`tel:${settings.phone}`} className="text-white/60 hover:text-gold text-sm transition-colors">
+                  {settings.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={16} className="text-gold shrink-0" />
-                <a href="mailto:daudischool.muz@gmail.com" className="text-white/60 hover:text-gold text-sm transition-colors break-all">
-                  daudischool.muz@gmail.com
+                <a href={`mailto:${settings.email}`} className="text-white/60 hover:text-gold text-sm transition-colors break-all">
+                  {settings.email}
                 </a>
               </li>
             </ul>
@@ -78,7 +80,7 @@ export default function Footer() {
             <h4 className="font-bold text-gold mb-5 text-sm tracking-widest uppercase">Follow Us</h4>
             <div className="flex gap-3 mb-6">
               <a
-                href="https://www.facebook.com/p/Daudi-International-School-Muzaffarpur-100072254675605/"
+                href={settings.facebook_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold hover:text-navy flex items-center justify-center transition-all duration-200 text-white"
@@ -86,7 +88,7 @@ export default function Footer() {
                 <Facebook size={18} />
               </a>
               <a
-                href="https://www.youtube.com/@altamashdaudi7099"
+                href={settings.youtube_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 hover:bg-gold hover:text-navy flex items-center justify-center transition-all duration-200 text-white"

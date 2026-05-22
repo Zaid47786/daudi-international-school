@@ -1,0 +1,43 @@
+{
+  "name": "AdmissionInquiry",
+  "type": "object",
+  "properties": {
+    "parent_name": {
+      "type": "string"
+    },
+    "child_name": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "enrolled",
+        "rejected"
+      ],
+      "default": "new"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "parent_name",
+    "child_name",
+    "phone",
+    "grade"
+  ]
+}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, FileText, Users, Calendar, Phone } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { base44 } from "@/api/base44Client";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
@@ -24,27 +25,25 @@ const faqs = [
 
 export default function Admissions() {
   const { toast } = useToast();
-  const [form, setForm] = useState({ parentName: "", childName: "", grade: "", phone: "", email: "", message: "" });
+  const [form, setForm] = useState({ parent_name: "", child_name: "", grade: "", phone: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    await base44.entities.AdmissionInquiry.create({ ...form, status: "new" });
+    setSubmitting(false);
     setSubmitted(true);
-    toast({
-      title: "Inquiry Submitted!",
-      description: "Thank you! Our admissions team will contact you within 2–3 working days.",
-    });
-    setForm({ parentName: "", childName: "", grade: "", phone: "", email: "", message: "" });
+    toast({ title: "Inquiry Submitted!", description: "Our admissions team will contact you within 2–3 working days." });
+    setForm({ parent_name: "", child_name: "", grade: "", phone: "", email: "", message: "" });
   };
 
   return (
     <div className="min-h-screen bg-white font-poppins">
       <Navbar />
-      <PageHero
-        title="Admissions"
-        subtitle="Join the DIS family — admissions open for 2026–27"
-        bgImage="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1400&q=80"
-      />
+      <PageHero title="Admissions" subtitle="Join the DIS family — admissions open for 2026–27"
+        bgImage="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1400&q=80" />
 
       {/* Process Steps */}
       <section className="py-20">
@@ -57,17 +56,9 @@ export default function Admissions() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="relative bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-xl hover:border-royal-blue/20 transition-all duration-300 text-center"
-              >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-royal-blue text-white rounded-full flex items-center justify-center text-sm font-bold">
-                  {i + 1}
-                </div>
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="relative bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-xl hover:border-royal-blue/20 transition-all duration-300 text-center">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-royal-blue text-white rounded-full flex items-center justify-center text-sm font-bold">{i + 1}</div>
                 <div className="w-14 h-14 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center mb-4 mt-2">
                   <s.icon size={24} className="text-royal-blue" />
                 </div>
@@ -102,20 +93,13 @@ export default function Admissions() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Left */}
             <div>
               <div className="inline-flex items-center gap-2 text-royal-blue text-xs font-bold tracking-widest uppercase mb-4">
                 <div className="h-px w-8 bg-gold" /> Eligibility
               </div>
               <h2 className="text-3xl font-bold text-navy mb-6">Who Can Apply?</h2>
               <div className="space-y-4 mb-8">
-                {[
-                  "Children between 3–15 years of age",
-                  "Any religion, caste, or socioeconomic background",
-                  "Students transferring from other schools (with TC)",
-                  "Scholarship available for underprivileged students",
-                  "No prior English proficiency required for lower grades",
-                ].map((point, i) => (
+                {["Children between 3–15 years of age", "Any religion, caste, or socioeconomic background", "Students transferring from other schools (with TC)", "Scholarship available for underprivileged students", "No prior English proficiency required for lower grades"].map((point, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <CheckCircle size={18} className="text-gold mt-0.5 flex-shrink-0" />
                     <span className="text-gray-700 text-sm">{point}</span>
@@ -134,13 +118,8 @@ export default function Admissions() {
               </div>
             </div>
 
-            {/* Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100"
-            >
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+              className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
               {submitted ? (
                 <div className="text-center py-12">
                   <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -159,74 +138,44 @@ export default function Admissions() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5 block">Parent's Name *</label>
-                        <input
-                          required
-                          value={form.parentName}
-                          onChange={(e) => setForm({ ...form, parentName: e.target.value })}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 focus:border-royal-blue transition"
-                          placeholder="Your full name"
-                        />
+                        <input required value={form.parent_name} onChange={(e) => setForm({ ...form, parent_name: e.target.value })}
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30" placeholder="Your full name" />
                       </div>
                       <div>
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5 block">Child's Name *</label>
-                        <input
-                          required
-                          value={form.childName}
-                          onChange={(e) => setForm({ ...form, childName: e.target.value })}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 focus:border-royal-blue transition"
-                          placeholder="Child's full name"
-                        />
+                        <input required value={form.child_name} onChange={(e) => setForm({ ...form, child_name: e.target.value })}
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30" placeholder="Child's full name" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5 block">Grade Applying For *</label>
-                        <select
-                          required
-                          value={form.grade}
-                          onChange={(e) => setForm({ ...form, grade: e.target.value })}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 focus:border-royal-blue transition bg-white"
-                        >
+                        <select required value={form.grade} onChange={(e) => setForm({ ...form, grade: e.target.value })}
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 bg-white">
                           <option value="">Select Grade</option>
                           {grades.map((g) => <option key={g} value={g}>{g}</option>)}
                         </select>
                       </div>
                       <div>
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5 block">Contact Number *</label>
-                        <input
-                          required
-                          value={form.phone}
-                          onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 focus:border-royal-blue transition"
-                          placeholder="+91 XXXXX XXXXX"
-                        />
+                        <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30" placeholder="+91 XXXXX XXXXX" />
                       </div>
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5 block">Email Address</label>
-                      <input
-                        type="email"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 focus:border-royal-blue transition"
-                        placeholder="your@email.com"
-                      />
+                      <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30" placeholder="your@email.com" />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5 block">Message / Questions</label>
-                      <textarea
-                        value={form.message}
-                        onChange={(e) => setForm({ ...form, message: e.target.value })}
-                        rows={3}
-                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 focus:border-royal-blue transition resize-none"
-                        placeholder="Any questions or additional information..."
-                      />
+                      <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={3}
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 resize-none"
+                        placeholder="Any questions or additional information..." />
                     </div>
-                    <button
-                      type="submit"
-                      className="w-full py-4 bg-royal-blue text-white font-bold rounded-xl hover:bg-navy transition-all duration-300 shadow-lg hover:shadow-royal-blue/30 hover:scale-[1.02] text-sm"
-                    >
-                      Submit Inquiry
+                    <button type="submit" disabled={submitting}
+                      className="w-full py-4 bg-royal-blue text-white font-bold rounded-xl hover:bg-navy transition-all duration-300 shadow-lg text-sm disabled:opacity-60">
+                      {submitting ? "Submitting..." : "Submit Inquiry"}
                     </button>
                   </form>
                 </>
@@ -247,14 +196,8 @@ export default function Admissions() {
           </div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-gray-50 rounded-2xl p-6 border border-gray-100"
-              >
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
                 <h3 className="font-bold text-navy mb-2">{faq.q}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{faq.a}</p>
               </motion.div>
