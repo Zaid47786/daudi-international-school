@@ -23,6 +23,11 @@
         "social"
       ],
       "description": "Setting group"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "SEO-friendly description"
     }
   },
   "required": [
