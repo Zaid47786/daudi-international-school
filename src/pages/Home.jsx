@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { BookOpen, Users, Award, Heart, ArrowRight, Star, Calendar, ChevronRight } from "lucide-react";
+import { BookOpen, Users, Award, Heart, ArrowRight, Calendar, ChevronRight } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -16,12 +16,6 @@ const values = [
   { title: "Inclusive Community", desc: "A non-profit school committed to making quality education accessible to all students in Muzaffarpur.", icon: "🤝" },
   { title: "Character Building", desc: "We nurture not just academic excellence but strong values, discipline, and civic responsibility.", icon: "⭐" },
   { title: "Modern Learning", desc: "Contemporary teaching methods combined with traditional values for a well-rounded education.", icon: "🎓" },
-];
-
-const testimonials = [
-  { name: "Rahul Kumar", role: "Parent of Class 8 Student", text: "DIS has transformed my child's attitude towards learning. The teachers are dedicated and the environment is nurturing.", stars: 5 },
-  { name: "Priya Sharma", role: "Parent of Class 5 Student", text: "The best school in Muzaffarpur. My daughter has grown so much academically and socially since joining DIS.", stars: 5 },
-  { name: "Mohammad Akhtar", role: "Parent of Class 10 Student", text: "Excellent faculty, disciplined environment and genuine care for every student. Highly recommend Daudi International School.", stars: 5 },
 ];
 
 const upcomingEvents = [
@@ -217,43 +211,6 @@ export default function Home() {
                 <div>
                   <h3 className="font-bold text-navy text-sm mb-1">{ev.title}</h3>
                   <p className="text-gray-500 text-xs leading-relaxed">{ev.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 text-royal-blue text-xs font-bold tracking-widest uppercase mb-3">
-              <div className="h-px w-8 bg-gold" /> Testimonials <div className="h-px w-8 bg-gold" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-navy">
-              What Parents Say
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(t.stars)].map((_, j) => (
-                    <Star key={j} size={14} className="text-gold fill-gold" />
-                  ))}
-                </div>
-                <p className="text-gray-600 text-sm leading-relaxed mb-5 italic">"{t.text}"</p>
-                <div className="border-t border-gray-100 pt-4">
-                  <div className="font-bold text-navy text-sm">{t.name}</div>
-                  <div className="text-gray-400 text-xs">{t.role}</div>
                 </div>
               </motion.div>
             ))}
