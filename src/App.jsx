@@ -6,7 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
-// Add page imports here
+// Page imports
 import Home from './pages/Home';
 import About from './pages/About';
 import Academics from './pages/Academics';
@@ -24,10 +24,10 @@ const AuthenticatedApp = () => {
         <div className="flex flex-col items-center gap-4">
           <img
             src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
-            alt="DIS Logo"
+            alt="DIS"
             className="h-16 w-auto animate-pulse"
           />
-          <div className="w-8 h-8 border-4 border-gold/30 border-t-gold rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-gold/30 border-t-gold rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -66,7 +66,7 @@ function App() {
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
