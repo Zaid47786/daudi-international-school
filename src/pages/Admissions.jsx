@@ -46,69 +46,70 @@ export default function Admissions() {
         bgImage="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1400&q=80" />
 
       {/* Process Steps */}
-      <section className="py-20">
+      <section className="py-14 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+          <div className="text-center mb-10 sm:mb-14">
             <div className="inline-flex items-center gap-2 text-royal-blue text-xs font-bold tracking-widest uppercase mb-3">
               <div className="h-px w-8 bg-gold" /> How to Apply <div className="h-px w-8 bg-gold" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-navy">Admission Process</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy">Admission Process</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
             {steps.map((s, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="relative bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-xl hover:border-royal-blue/20 transition-all duration-300 text-center">
+                className="relative bg-white rounded-2xl p-6 sm:p-7 border border-gray-100 shadow-sm hover:shadow-xl hover:border-royal-blue/20 transition-all duration-300 text-center pt-8">
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-royal-blue text-white rounded-full flex items-center justify-center text-sm font-bold">{i + 1}</div>
-                <div className="w-14 h-14 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center mb-4 mt-2">
-                  <s.icon size={24} className="text-royal-blue" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
+                  <s.icon size={22} className="text-royal-blue" />
                 </div>
-                <h3 className="font-bold text-navy mb-2">{s.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+                <h3 className="font-bold text-navy mb-2 text-sm sm:text-base">{s.title}</h3>
+                <p className="text-gray-500 text-xs sm:text-sm leading-relaxed">{s.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Key Info */}
-      <section className="py-12 bg-royal-blue">
+      {/* Key Info Banner */}
+      <section className="py-10 sm:py-12 bg-royal-blue">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6 text-center">
             {[
               { label: "Academic Year", value: "April – March", sub: "2026–27 Enrollment Open" },
               { label: "Grades Available", value: "Nursery – X", sub: "English Medium" },
               { label: "Admission Fee", value: "Minimal", sub: "Non-profit, Affordable" },
             ].map((item, i) => (
-              <div key={i} className="text-white">
-                <div className="text-gold text-2xl font-bold mb-1">{item.value}</div>
-                <div className="font-semibold mb-1">{item.label}</div>
-                <div className="text-white/60 text-sm">{item.sub}</div>
+              <div key={i} className="text-white py-2">
+                <div className="text-gold text-xl sm:text-2xl font-bold mb-1">{item.value}</div>
+                <div className="font-semibold text-sm sm:text-base mb-1">{item.label}</div>
+                <div className="text-white/60 text-xs sm:text-sm">{item.sub}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Inquiry Form */}
-      <section className="py-20 bg-gray-50">
+      {/* Inquiry Form + Eligibility */}
+      <section className="py-14 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12">
+            {/* Eligibility */}
             <div>
               <div className="inline-flex items-center gap-2 text-royal-blue text-xs font-bold tracking-widest uppercase mb-4">
                 <div className="h-px w-8 bg-gold" /> Eligibility
               </div>
-              <h2 className="text-3xl font-bold text-navy mb-6">Who Can Apply?</h2>
-              <div className="space-y-4 mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-navy mb-5">Who Can Apply?</h2>
+              <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 {["Children between 3–15 years of age", "Any religion, caste, or socioeconomic background", "Students transferring from other schools (with TC)", "Scholarship available for underprivileged students", "No prior English proficiency required for lower grades"].map((point, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <CheckCircle size={18} className="text-gold mt-0.5 flex-shrink-0" />
+                    <CheckCircle size={16} className="text-gold mt-0.5 flex-shrink-0" />
                     <span className="text-gray-700 text-sm">{point}</span>
                   </div>
                 ))}
               </div>
-              <div className="bg-navy rounded-2xl p-6 text-white">
+              <div className="bg-navy rounded-2xl p-5 sm:p-6 text-white">
                 <h3 className="font-bold text-gold mb-3">Documents Required</h3>
-                <ul className="space-y-2 text-sm text-white/70">
+                <ul className="space-y-1.5 text-sm text-white/70">
                   <li>• Birth Certificate</li>
                   <li>• Previous School Report Card (if applicable)</li>
                   <li>• Parent / Guardian ID Proof</li>
@@ -118,22 +119,23 @@ export default function Admissions() {
               </div>
             </div>
 
+            {/* Form */}
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+              className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100">
               {submitted ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle size={40} className="text-green-500" />
+                <div className="text-center py-10 sm:py-12">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <CheckCircle size={36} className="text-green-500" />
                   </div>
-                  <h3 className="text-2xl font-bold text-navy mb-3">Inquiry Submitted!</h3>
-                  <p className="text-gray-500 mb-6">Our admissions team will contact you within 2–3 working days.</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-navy mb-3">Inquiry Submitted!</h3>
+                  <p className="text-gray-500 mb-6 text-sm">Our admissions team will contact you within 2–3 working days.</p>
                   <button onClick={() => setSubmitted(false)} className="px-6 py-3 bg-royal-blue text-white rounded-full font-semibold text-sm hover:bg-navy transition">
                     Submit Another Inquiry
                   </button>
                 </div>
               ) : (
                 <>
-                  <h3 className="text-xl font-bold text-navy mb-6">Admission Inquiry Form</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-navy mb-5 sm:mb-6">Admission Inquiry Form</h3>
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -170,11 +172,10 @@ export default function Admissions() {
                     <div>
                       <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5 block">Message / Questions</label>
                       <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={3}
-                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 resize-none"
-                        placeholder="Any questions or additional information..." />
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30 resize-none" placeholder="Any questions or additional information..." />
                     </div>
                     <button type="submit" disabled={submitting}
-                      className="w-full py-4 bg-royal-blue text-white font-bold rounded-xl hover:bg-navy transition-all duration-300 shadow-lg text-sm disabled:opacity-60">
+                      className="w-full py-3.5 sm:py-4 bg-royal-blue text-white font-bold rounded-xl hover:bg-navy transition-all duration-300 shadow-lg text-sm disabled:opacity-60">
                       {submitting ? "Submitting..." : "Submit Inquiry"}
                     </button>
                   </form>
@@ -186,20 +187,20 @@ export default function Admissions() {
       </section>
 
       {/* FAQs */}
-      <section className="py-20 bg-white">
+      <section className="py-14 sm:py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10 sm:mb-12">
             <div className="inline-flex items-center gap-2 text-royal-blue text-xs font-bold tracking-widest uppercase mb-3">
               <div className="h-px w-8 bg-gold" /> FAQs <div className="h-px w-8 bg-gold" />
             </div>
-            <h2 className="text-3xl font-bold text-navy">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-navy">Frequently Asked Questions</h2>
           </div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                <h3 className="font-bold text-navy mb-2">{faq.q}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{faq.a}</p>
+                className="bg-gray-50 rounded-2xl p-5 sm:p-6 border border-gray-100">
+                <h3 className="font-bold text-navy mb-2 text-sm sm:text-base">{faq.q}</h3>
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{faq.a}</p>
               </motion.div>
             ))}
           </div>
