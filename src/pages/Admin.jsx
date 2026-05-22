@@ -16,10 +16,63 @@ const tabs = [
   { id: "inquiries", label: "Inquiries", icon: Inbox },
 ];
 
+const ADMIN_PASSWORD = "Me2DIS";
+
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("settings");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (passwordInput === ADMIN_PASSWORD) {
+      setAuthenticated(true);
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+      setPasswordInput("");
+    }
+  };
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen bg-navy flex items-center justify-center px-4 font-poppins">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm">
+          <div className="text-center mb-8">
+            <img
+              src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+              alt="DIS"
+              className="h-16 w-auto mx-auto mb-4"
+            />
+            <h1 className="text-xl font-bold text-navy">Admin Panel</h1>
+            <p className="text-gray-400 text-sm mt-1">Enter password to continue</p>
+          </div>
+          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => { setPasswordInput(e.target.value); setPasswordError(false); }}
+                placeholder="Password"
+                className={`w-full border ${passwordError ? "border-red-400" : "border-gray-200"} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30`}
+                autoFocus
+              />
+              {passwordError && <p className="text-red-500 text-xs mt-1.5">Incorrect password. Please try again.</p>}
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-royal-blue text-white font-bold rounded-xl hover:bg-navy transition text-sm"
+            >
+              Enter Admin
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   const handleLogout = () => {
     base44.auth.logout("/");
