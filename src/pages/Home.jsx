@@ -59,7 +59,7 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 bg-gold/20 border border-gold/40 rounded-full px-4 py-1.5 mb-6">
               <span className="w-2 h-2 bg-gold rounded-full animate-pulse" />
               <span className="text-gold text-xs font-semibold tracking-widest uppercase">
-                Admissions Open 2024–25
+                Admissions Open 2025–26
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
@@ -268,7 +268,7 @@ export default function Home() {
             Ready to Join the <span className="text-gold">DIS Family?</span>
           </h2>
           <p className="text-white/70 mb-8 text-lg">
-            Admissions are open for the 2024–25 academic year. Secure your child's future today.
+            Admissions are open for the 2025–26 academic year. Secure your child's future today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

@@ -108,7 +108,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p className="text-white/40 text-xs">
-            © 2024 Daudi International School, Muzaffarpur. All rights reserved.
+          © 2026 Daudi International School, Muzaffarpur. All rights reserved.
           </p>
           <p className="text-white/40 text-xs">
             A Daudi Welfare Trust Initiative
