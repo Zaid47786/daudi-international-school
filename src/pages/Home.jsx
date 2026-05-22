@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { BookOpen, Users, Award, Heart, Star, Globe, Trophy, ArrowRight } from "lucide-react";
+import { BookOpen, Users, Award, Heart, Star, Globe, Trophy, ArrowRight, ArrowUpRight, GraduationCap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSettings, useStats, useEvents } from "../lib/useSchoolData";
 
-const ICON_MAP = { BookOpen, Users, Award, Heart, Star, Globe, Trophy };
+const ICON_MAP = { BookOpen, Users, Award, Heart, Star, Globe, Trophy, GraduationCap };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.45, delay: i * 0.08, ease: "easeOut" } }),
-};
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-40px" },
+  transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay },
+});
 
 export default function Home() {
   const { settings } = useSettings();
@@ -21,144 +23,129 @@ export default function Home() {
     <div className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
       <Navbar />
 
-      {/* ─── HERO ─────────────────────────────────────────────── */}
-      <section
-        className="relative min-h-screen flex items-end pb-16 sm:pb-24 overflow-hidden"
-        style={{
-          backgroundImage: `url(https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1800&q=85)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 20%",
-        }}
-      >
-        {/* Dark overlay — heavier at bottom, lighter at top */}
-        <div
-          className="absolute inset-0"
-          style={{ background: "linear-gradient(to top, rgba(10,18,48,0.97) 0%, rgba(10,18,48,0.55) 55%, rgba(10,18,48,0.3) 100%)" }}
-        />
+      {/* ══════════════════════════════════════════
+          HERO — asymmetric, editorial, full-bleed
+         ══════════════════════════════════════════ */}
+      <section className="relative overflow-hidden" style={{ minHeight: "100svh", backgroundColor: "var(--cobalt-deep)" }}>
 
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 w-full pt-32">
-          <div className="max-w-2xl">
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+        {/* Background image — right-side crop */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1800&q=85"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center 20%", opacity: 0.25 }}
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, var(--cobalt-deep) 50%, rgba(14,31,82,0.6) 100%)" }} />
+        </div>
+
+        {/* Fine grid overlay */}
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col justify-end" style={{ minHeight: "100svh", paddingTop: "120px", paddingBottom: "72px" }}>
+          <div className="max-w-3xl">
+
+            {/* Eyebrow */}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              style={{
-                fontSize: "11px",
-                fontWeight: 700,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--amber)",
-                marginBottom: "18px",
-              }}
+              className="flex items-center gap-3 mb-8"
             >
-              Muzaffarpur, Bihar — Est. 2005
-            </motion.p>
+              <div className="w-6 h-px" style={{ backgroundColor: "var(--amber)" }} />
+              <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(232,168,32,0.85)" }}>
+                Muzaffarpur · Est. 2005 · Non-profit
+              </span>
+            </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 22 }}
+            {/* Main headline — mixed weight, varied sizing */}
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              style={{
-                fontFamily: "var(--font-fraunces)",
-                fontSize: "clamp(2.2rem, 5.5vw, 3.75rem)",
-                fontWeight: 700,
-                lineHeight: 1.1,
-                letterSpacing: "-0.025em",
-                color: "#fff",
-                marginBottom: "20px",
-              }}
+              transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
-              Where every child<br />
-              <em style={{ fontStyle: "italic", color: "var(--amber-light)" }}>deserves</em> to learn.
-            </motion.h1>
+              <h1 style={{ lineHeight: 1.05, letterSpacing: "-0.03em", marginBottom: "24px" }}>
+                <span className="block text-white font-inter font-bold" style={{ fontSize: "clamp(2.4rem, 6vw, 4.5rem)" }}>
+                  Where every child
+                </span>
+                <span className="block font-fraunces italic" style={{ fontSize: "clamp(2.6rem, 6.5vw, 5rem)", color: "var(--amber-light)" }}>
+                  deserves to learn.
+                </span>
+              </h1>
+            </motion.div>
 
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.22 }}
-              style={{
-                fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
-                color: "rgba(255,255,255,0.65)",
-                lineHeight: 1.7,
-                maxWidth: "480px",
-                marginBottom: "32px",
-              }}
+              style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.1rem)", color: "rgba(255,255,255,0.58)", lineHeight: 1.75, maxWidth: "500px", marginBottom: "36px" }}
             >
-              {settings.hero_description || "A non-profit English-medium school in Muzaffarpur, run by the Daudi Welfare Trust. Quality education for all — regardless of background."}
+              {settings.hero_description || "A non-profit, English-medium school under the Daudi Welfare Trust — quality education for every child in Muzaffarpur, regardless of background."}
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.34 }}
               className="flex flex-wrap gap-3"
             >
-              <Link
-                to="/admissions"
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded transition-all duration-150 hover:opacity-90 active:scale-[0.98]"
-                style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}
-              >
+              <Link to="/admissions"
+                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-lg transition-all duration-200 hover:brightness-105 active:scale-[0.98]"
+                style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}>
                 Apply for admission
+                <ArrowRight size={14} />
               </Link>
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded transition-all duration-150"
-                style={{ border: "1px solid rgba(255,255,255,0.22)", color: "rgba(255,255,255,0.8)" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)"; e.currentTarget.style.color = "#fff"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.22)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
-              >
+              <Link to="/about"
+                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-medium rounded-lg transition-all duration-200"
+                style={{ border: "1px solid rgba(255,255,255,0.16)", color: "rgba(255,255,255,0.75)" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; e.currentTarget.style.color = "rgba(255,255,255,0.75)"; }}>
                 Our story
               </Link>
             </motion.div>
           </div>
 
-          {/* Logo badge — bottom right on desktop */}
+          {/* Bottom-right: floating stats card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="absolute bottom-0 right-5 sm:right-8 lg:right-10 hidden md:block"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
+            className="absolute bottom-16 right-5 sm:right-8 lg:right-10 hidden lg:flex flex-col gap-2"
           >
-            <img
-              src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
-              alt="DIS"
-              className="h-28 lg:h-36 w-auto opacity-90 drop-shadow-2xl"
-            />
+            {[
+              { v: "500+", l: "Students" },
+              { v: "20+", l: "Years" },
+              { v: "CBSE", l: "Curriculum" },
+            ].map((s, i) => (
+              <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg"
+                style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(8px)" }}>
+                <span className="font-bold text-white text-sm">{s.v}</span>
+                <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>{s.l}</span>
+              </div>
+            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ─── STATS STRIP ──────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════
+          STATS STRIP — dynamic from DB
+         ══════════════════════════════════════════ */}
       {stats.length > 0 && (
-        <section style={{ backgroundColor: "var(--cream-dark)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+        <section style={{ backgroundColor: "var(--cobalt-deep)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-            <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-black/8">
-              {stats.map((s, i) => {
+            <div className="flex flex-wrap">
+              {stats.slice(0, 4).map((s, i) => {
                 const Icon = ICON_MAP[s.icon] || Star;
                 return (
-                  <motion.div
-                    key={s.id}
-                    custom={i}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true }}
-                    variants={fadeUp}
-                    className="flex flex-col items-start px-5 py-7 sm:px-8"
-                  >
-                    <Icon size={17} style={{ color: "var(--amber)", marginBottom: "10px", strokeWidth: 1.75 }} />
-                    <span
-                      style={{
-                        fontFamily: "var(--font-fraunces)",
-                        fontSize: "1.75rem",
-                        fontWeight: 700,
-                        color: "var(--cobalt-deep)",
-                        lineHeight: 1,
-                        marginBottom: "4px",
-                      }}
-                    >
-                      {s.value}
-                    </span>
-                    <span style={{ fontSize: "12px", color: "var(--ink-muted)", fontWeight: 500 }}>{s.label}</span>
+                  <motion.div key={s.id} {...fadeUp(i * 0.06)}
+                    className="flex-1 min-w-[140px] flex items-center gap-4 px-6 py-7 border-r last:border-r-0"
+                    style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+                    <Icon size={16} strokeWidth={1.75} style={{ color: "var(--amber)", flexShrink: 0 }} />
+                    <div>
+                      <div className="font-fraunces font-bold text-white leading-none" style={{ fontSize: "1.6rem" }}>{s.value}</div>
+                      <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.38)", marginTop: "3px", fontWeight: 500 }}>{s.label}</div>
+                    </div>
                   </motion.div>
                 );
               })}
@@ -167,222 +154,184 @@ export default function Home() {
         </section>
       )}
 
-      {/* ─── ABOUT SPLIT ──────────────────────────────────────── */}
-      <section className="py-20 sm:py-28" style={{ backgroundColor: "#fff" }}>
+      {/* ══════════════════════════════════════════
+          ABOUT — editorial split, image left
+         ══════════════════════════════════════════ */}
+      <section className="py-20 sm:py-32 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-            {/* Image stack — asymmetric */}
+            {/* Image — with floating accent */}
             <motion.div
-              className="lg:col-span-5 relative"
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -24 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.55 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              className="relative"
             >
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80"
-                  alt="Students at DIS"
-                  className="w-full rounded-sm object-cover"
-                  style={{ height: "360px", objectPosition: "center 30%" }}
-                />
-                {/* Floating accent card */}
-                <div
-                  className="absolute -bottom-5 -right-4 sm:-right-6 px-5 py-4 rounded shadow-lg"
-                  style={{ backgroundColor: "var(--cobalt-deep)" }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "var(--font-fraunces)",
-                      fontSize: "1.5rem",
-                      fontWeight: 700,
-                      color: "var(--amber)",
-                      lineHeight: 1,
-                    }}
-                  >
-                    500+
-                  </div>
-                  <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.55)", marginTop: "3px" }}>
-                    students enrolled
-                  </div>
-                </div>
+              <img
+                src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80"
+                alt="Students at DIS"
+                className="w-full rounded-xl object-cover shadow-xl"
+                style={{ height: "clamp(280px, 40vw, 460px)", objectPosition: "center 30%" }}
+              />
+              {/* accent block */}
+              <div className="absolute -bottom-5 -right-5 px-6 py-5 rounded-xl shadow-2xl"
+                style={{ backgroundColor: "var(--cobalt-deep)" }}>
+                <div className="font-fraunces font-bold leading-none mb-1" style={{ fontSize: "2rem", color: "var(--amber)" }}>500+</div>
+                <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)" }}>students enrolled</div>
               </div>
+              {/* amber rule */}
+              <div className="absolute top-0 left-0 w-1 h-full rounded-l-xl" style={{ backgroundColor: "var(--amber)" }} />
             </motion.div>
 
-            {/* Text — left-aligned, not centered */}
-            <motion.div
-              className="lg:col-span-7 lg:pl-4"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <p
-                className="mb-4"
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  color: "var(--ink-muted)",
-                }}
-              >
-                Who we are
-              </p>
-              <h2
-                style={{
-                  fontFamily: "var(--font-fraunces)",
-                  fontSize: "clamp(1.7rem, 3.5vw, 2.5rem)",
-                  fontWeight: 700,
-                  color: "var(--cobalt-deep)",
-                  lineHeight: 1.2,
-                  letterSpacing: "-0.02em",
-                  marginBottom: "20px",
-                }}
-              >
+            {/* Text */}
+            <motion.div {...fadeUp(0.1)}>
+              <p className="label-stamp text-cobalt mb-5">Who we are</p>
+              <h2 className="font-fraunces font-bold tracking-tight leading-tight mb-6"
+                style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", color: "var(--cobalt-deep)" }}>
                 A school built on<br />trust, not profit.
               </h2>
-              <p
-                style={{
-                  fontSize: "1rem",
-                  color: "var(--ink-soft)",
-                  lineHeight: 1.75,
-                  marginBottom: "14px",
-                  maxWidth: "520px",
-                }}
-              >
-                Daudi International School was founded in 2005 under the Daudi Welfare Trust with one conviction: every child in Muzaffarpur, regardless of economic background, deserves a quality English-medium education.
+              <p style={{ fontSize: "1rem", color: "var(--ink-soft)", lineHeight: 1.8, marginBottom: "12px" }}>
+                Founded in 2005 under the Daudi Welfare Trust — DIS exists to prove that quality English-medium education in Muzaffarpur doesn't have to be a privilege.
               </p>
-              <p
-                style={{
-                  fontSize: "0.95rem",
-                  color: "var(--ink-muted)",
-                  lineHeight: 1.75,
-                  marginBottom: "28px",
-                  maxWidth: "520px",
-                }}
-              >
+              <p style={{ fontSize: "0.9rem", color: "var(--ink-muted)", lineHeight: 1.8, marginBottom: "32px" }}>
                 We're non-profit by design. Every rupee goes back into classrooms, teachers, and the students we serve.
               </p>
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-150 group"
-                style={{ color: "var(--cobalt)" }}
-              >
-                Read our story
-                <ArrowRight size={15} className="transition-transform duration-150 group-hover:translate-x-1" />
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
-      {/* ─── FOUNDER QUOTE ────────────────────────────────────── */}
-      <section style={{ backgroundColor: "var(--cream)", borderTop: "1px solid rgba(0,0,0,0.05)", borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-16 sm:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-1 hidden lg:flex items-center justify-center">
-              <div style={{ width: "2px", height: "80px", backgroundColor: "var(--amber)", opacity: 0.6 }} />
-            </div>
-            <motion.div
-              className="lg:col-span-8"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <p
-                style={{
-                  fontFamily: "var(--font-fraunces)",
-                  fontSize: "clamp(1.15rem, 2.5vw, 1.5rem)",
-                  fontWeight: 400,
-                  fontStyle: "italic",
-                  color: "var(--cobalt-deep)",
-                  lineHeight: 1.65,
-                  marginBottom: "20px",
-                }}
-              >
-                "{settings.founder_quote || "Education is not a privilege — it is a right. We built this school to prove it."}"
-              </p>
-              <div className="flex items-center gap-3">
-                <div style={{ width: "28px", height: "2px", backgroundColor: "var(--amber)" }} />
-                <div>
-                  <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--cobalt-deep)" }}>Altamash Daudi</span>
-                  <span style={{ fontSize: "12px", color: "var(--ink-muted)", marginLeft: "8px" }}>— Founder, DIS</span>
-                </div>
+              <div className="flex flex-col gap-3 mb-10">
+                {["English-medium, Nursery to Class X", "Scholarships for underprivileged students", "Dedicated mentors, not just instructors"].map((point, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: "var(--amber)" }} />
+                    <span style={{ fontSize: "14px", color: "var(--ink-soft)" }}>{point}</span>
+                  </div>
+                ))}
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
-      {/* ─── UPCOMING EVENTS ──────────────────────────────────── */}
-      {upcomingEvents.length > 0 && (
-        <section className="py-20 sm:py-24" style={{ backgroundColor: "#fff" }}>
-          <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-
-            <div className="flex items-end justify-between mb-10 gap-4">
-              <div>
-                <p
-                  className="mb-2"
-                  style={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "var(--ink-muted)",
-                  }}
-                >
-                  What's coming up
-                </p>
-                <h2
-                  style={{
-                    fontFamily: "var(--font-fraunces)",
-                    fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                    fontWeight: 700,
-                    color: "var(--cobalt-deep)",
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.2,
-                  }}
-                >
-                  School Calendar
-                </h2>
-              </div>
-              <Link
-                to="/events"
-                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium group shrink-0"
-                style={{ color: "var(--cobalt)" }}
-              >
-                All events
+              <Link to="/about"
+                className="inline-flex items-center gap-2 text-sm font-semibold group transition-colors duration-150"
+                style={{ color: "var(--cobalt)" }}>
+                Read our full story
                 <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-1" />
               </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          FOUNDER QUOTE — full-width, editorial
+         ══════════════════════════════════════════ */}
+      <section className="py-16 sm:py-20 relative overflow-hidden" style={{ backgroundColor: "var(--cream)", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
+        <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="relative"
+          >
+            {/* giant quote mark */}
+            <div className="absolute -top-4 -left-2 font-fraunces leading-none select-none"
+              style={{ fontSize: "8rem", color: "var(--amber)", opacity: 0.12, lineHeight: 1 }}>"</div>
+
+            <blockquote className="relative font-fraunces italic leading-[1.6] mb-8"
+              style={{ fontSize: "clamp(1.15rem, 2.5vw, 1.6rem)", color: "var(--cobalt-deep)" }}>
+              "{settings.founder_quote || "Education is not a privilege — it is a right. We built this school to prove it."}"
+            </blockquote>
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-0.5 rounded-full" style={{ backgroundColor: "var(--amber)" }} />
+              <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--cobalt-deep)" }}>Altamash Daudi</span>
+              <span style={{ fontSize: "12px", color: "var(--ink-muted)" }}>Founder & Director, DIS</span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          ACADEMICS — dark, grid layout
+         ══════════════════════════════════════════ */}
+      <section className="py-20 sm:py-28" style={{ backgroundColor: "var(--cobalt-deep)" }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
+            <motion.div {...fadeUp(0)}>
+              <p className="label-stamp mb-4" style={{ color: "rgba(232,168,32,0.75)" }}>Curriculum</p>
+              <h2 className="font-fraunces font-bold text-white tracking-tight leading-tight"
+                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)" }}>
+                Nursery to Class X,<br />taught in English.
+              </h2>
+            </motion.div>
+            <motion.div {...fadeUp(0.1)}>
+              <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.75, maxWidth: "340px" }}>
+                Small classes, dedicated teachers, a curriculum that builds thinkers — not just exam-passers.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
+            {[
+              { label: "Montessori & Nursery", sub: "Ages 3–5", accent: true },
+              { label: "Primary School", sub: "Class I – V" },
+              { label: "Middle School", sub: "Class VI – VIII" },
+              { label: "Secondary", sub: "Class IX – X" },
+            ].map((item, i) => (
+              <motion.div key={i} {...fadeUp(i * 0.07)}
+                className="rounded-xl p-5 sm:p-6 transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  backgroundColor: item.accent ? "var(--amber)" : "rgba(255,255,255,0.05)",
+                  border: item.accent ? "none" : "1px solid rgba(255,255,255,0.07)",
+                }}>
+                <div className="text-xs font-bold mb-3 rounded-full w-7 h-7 flex items-center justify-center"
+                  style={{ backgroundColor: item.accent ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.07)", color: item.accent ? "var(--cobalt-deep)" : "rgba(255,255,255,0.4)" }}>
+                  {i + 1}
+                </div>
+                <p className="font-semibold text-sm mb-1 leading-snug"
+                  style={{ color: item.accent ? "var(--cobalt-deep)" : "#fff" }}>
+                  {item.label}
+                </p>
+                <p style={{ fontSize: "12px", color: item.accent ? "var(--cobalt)" : "rgba(255,255,255,0.38)" }}>
+                  {item.sub}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          <Link to="/academics"
+            className="inline-flex items-center gap-2 text-sm font-semibold group transition-colors duration-150"
+            style={{ color: "var(--amber)" }}>
+            Explore the full curriculum
+            <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          EVENTS — editorial list, not card grid
+         ══════════════════════════════════════════ */}
+      {upcomingEvents.length > 0 && (
+        <section className="py-20 sm:py-28 bg-white">
+          <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
+            <div className="flex items-end justify-between mb-10 gap-4">
+              <motion.div {...fadeUp(0)}>
+                <p className="label-stamp text-cobalt mb-2">What's coming up</p>
+                <h2 className="font-fraunces font-bold tracking-tight" style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", color: "var(--cobalt-deep)" }}>
+                  School Calendar
+                </h2>
+              </motion.div>
+              <Link to="/events"
+                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium group shrink-0"
+                style={{ color: "var(--cobalt)" }}>
+                All events <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-1" />
+              </Link>
             </div>
 
-            {/* Non-uniform event list — not a card grid */}
-            <div className="space-y-0 divide-y" style={{ borderTop: "1px solid rgba(0,0,0,0.07)", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>
+            <div style={{ borderTop: "1px solid rgba(0,0,0,0.07)" }}>
               {upcomingEvents.slice(0, 4).map((ev, i) => (
-                <motion.div
-                  key={ev.id}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true }}
-                  variants={fadeUp}
-                  className="flex items-start gap-5 sm:gap-8 py-5 group"
-                  style={{ borderColor: "rgba(0,0,0,0.06)" }}
-                >
-                  <div className="shrink-0 w-11 text-right">
-                    <span
-                      style={{
-                        fontFamily: "var(--font-fraunces)",
-                        fontSize: "1.4rem",
-                        fontWeight: 600,
-                        color: "var(--amber)",
-                        lineHeight: 1,
-                        display: "block",
-                      }}
-                    >
+                <motion.div key={ev.id} {...fadeUp(i * 0.06)}
+                  className="flex items-start gap-5 sm:gap-8 py-5 border-b group cursor-default"
+                  style={{ borderColor: "rgba(0,0,0,0.06)" }}>
+                  <div className="shrink-0 w-10 text-right">
+                    <span className="font-fraunces font-bold" style={{ fontSize: "1.35rem", color: "var(--amber)", lineHeight: 1 }}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -390,10 +339,8 @@ export default function Home() {
                     <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-muted)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>
                       {ev.category} · {ev.date}
                     </p>
-                    <h3
-                      className="transition-colors duration-150 group-hover:text-cobalt"
-                      style={{ fontSize: "1rem", fontWeight: 600, color: "var(--ink)", lineHeight: 1.35 }}
-                    >
+                    <h3 className="transition-colors duration-150 group-hover:text-cobalt"
+                      style={{ fontSize: "1rem", fontWeight: 600, color: "var(--ink)", lineHeight: 1.35 }}>
                       {ev.title}
                     </h3>
                     {ev.description && (
@@ -410,13 +357,8 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
-
             <div className="mt-6 sm:hidden">
-              <Link
-                to="/events"
-                className="inline-flex items-center gap-1.5 text-sm font-medium"
-                style={{ color: "var(--cobalt)" }}
-              >
+              <Link to="/events" className="inline-flex items-center gap-1.5 text-sm font-medium" style={{ color: "var(--cobalt)" }}>
                 View all events <ArrowRight size={14} />
               </Link>
             </div>
@@ -424,133 +366,68 @@ export default function Home() {
         </section>
       )}
 
-      {/* ─── ACADEMICS TEASER ─────────────────────────────────── */}
-      <section style={{ backgroundColor: "var(--cobalt-deep)" }} className="py-20 sm:py-24">
+      {/* ══════════════════════════════════════════
+          VISUAL GALLERY TEASER
+         ══════════════════════════════════════════ */}
+      <section className="py-20 sm:py-24" style={{ backgroundColor: "var(--cream)" }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            <div className="lg:col-span-5">
-              <p
-                className="mb-4"
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  color: "var(--amber)",
-                }}
-              >
-                Curriculum
-              </p>
-              <h2
-                style={{
-                  fontFamily: "var(--font-fraunces)",
-                  fontSize: "clamp(1.7rem, 3.5vw, 2.4rem)",
-                  fontWeight: 700,
-                  color: "#fff",
-                  lineHeight: 1.2,
-                  letterSpacing: "-0.02em",
-                  marginBottom: "16px",
-                }}
-              >
-                Nursery to Class X,<br />taught in English.
+          <div className="flex items-end justify-between mb-8">
+            <motion.div {...fadeUp(0)}>
+              <p className="label-stamp text-cobalt mb-2">Campus life</p>
+              <h2 className="font-fraunces font-bold tracking-tight" style={{ fontSize: "clamp(1.4rem, 2.5vw, 2rem)", color: "var(--cobalt-deep)" }}>
+                Real moments, real stories.
               </h2>
-              <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.75, marginBottom: "28px", maxWidth: "400px" }}>
-                Small classes, dedicated teachers, and a curriculum that builds thinkers — not just exam-passers.
-              </p>
-              <Link
-                to="/academics"
-                className="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-150 group"
-                style={{ color: "var(--amber)" }}
-              >
-                See the curriculum
-                <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-1" />
-              </Link>
-            </div>
-            <div className="lg:col-span-7">
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { label: "Montessori & Nursery", sub: "Ages 3–5" },
-                  { label: "Primary", sub: "Class I – V" },
-                  { label: "Middle School", sub: "Class VI – VIII" },
-                  { label: "Secondary", sub: "Class IX – X" },
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    custom={i}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true }}
-                    variants={fadeUp}
-                    className="p-5 rounded"
-                    style={{
-                      backgroundColor: i === 0 ? "var(--amber)" : "rgba(255,255,255,0.06)",
-                      border: i !== 0 ? "1px solid rgba(255,255,255,0.08)" : "none",
-                    }}
-                  >
-                    <p
-                      style={{
-                        fontSize: "0.95rem",
-                        fontWeight: 600,
-                        color: i === 0 ? "var(--cobalt-deep)" : "#fff",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      {item.label}
-                    </p>
-                    <p style={{ fontSize: "12px", color: i === 0 ? "var(--cobalt)" : "rgba(255,255,255,0.45)" }}>
-                      {item.sub}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+            </motion.div>
+            <Link to="/gallery"
+              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium group shrink-0"
+              style={{ color: "var(--cobalt)" }}>
+              Full gallery <ArrowUpRight size={14} />
+            </Link>
           </div>
+
+          <motion.div {...fadeUp(0.08)} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
+            {[
+              { src: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&q=80", span: "col-span-2 row-span-2", h: "h-64 sm:h-80" },
+              { src: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=400&q=80", span: "", h: "h-32 sm:h-36" },
+              { src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&q=80", span: "", h: "h-32 sm:h-36" },
+              { src: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80", span: "", h: "h-32 sm:h-36" },
+              { src: "https://images.unsplash.com/photo-1573495627361-d9b87960b12d?w=400&q=80", span: "", h: "h-32 sm:h-36" },
+            ].map((img, i) => (
+              <div key={i} className={`${img.span} overflow-hidden rounded-xl group cursor-pointer`}>
+                <img src={img.src} alt="" className={`w-full ${img.h} object-cover group-hover:scale-105 transition-transform duration-500`} />
+              </div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* ─── CTA ──────────────────────────────────────────────── */}
-      <section
-        style={{ backgroundColor: "var(--cream)", borderTop: "1px solid rgba(0,0,0,0.05)" }}
-        className="py-16 sm:py-20"
-      >
+      {/* ══════════════════════════════════════════
+          CTA — clean, direct
+         ══════════════════════════════════════════ */}
+      <section className="py-16 sm:py-24 bg-white" style={{ borderTop: "1px solid rgba(0,0,0,0.05)" }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8">
-            <div>
-              <h2
-                style={{
-                  fontFamily: "var(--font-fraunces)",
-                  fontSize: "clamp(1.5rem, 3.5vw, 2.2rem)",
-                  fontWeight: 700,
-                  color: "var(--cobalt-deep)",
-                  lineHeight: 1.2,
-                  letterSpacing: "-0.02em",
-                  marginBottom: "8px",
-                }}
-              >
+            <motion.div {...fadeUp(0)}>
+              <h2 className="font-fraunces font-bold tracking-tight leading-tight mb-2"
+                style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", color: "var(--cobalt-deep)" }}>
                 Admissions open for 2026–27.
               </h2>
-              <p style={{ fontSize: "0.95rem", color: "var(--ink-soft)" }}>
-                Get in touch — we'd love to show you around.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3 shrink-0">
-              <Link
-                to="/admissions"
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded transition-all duration-150 hover:opacity-90"
-                style={{ backgroundColor: "var(--cobalt-deep)", color: "#fff" }}
-              >
+              <p style={{ fontSize: "0.95rem", color: "var(--ink-soft)" }}>Get in touch — we'd love to show you around.</p>
+            </motion.div>
+            <motion.div {...fadeUp(0.1)} className="flex flex-wrap gap-3 shrink-0">
+              <Link to="/admissions"
+                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-lg transition-all duration-150 hover:opacity-90"
+                style={{ backgroundColor: "var(--cobalt-deep)", color: "#fff" }}>
                 Apply now
               </Link>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded transition-all duration-150"
-                style={{ border: "1px solid rgba(0,0,0,0.18)", color: "var(--ink-soft)" }}
+              <Link to="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-medium rounded-lg transition-all duration-200 border"
+                style={{ borderColor: "rgba(0,0,0,0.14)", color: "var(--ink-soft)" }}
                 onMouseEnter={e => e.currentTarget.style.borderColor = "var(--cobalt)"}
-                onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(0,0,0,0.18)"}
-              >
+                onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(0,0,0,0.14)"}>
                 Contact us
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
