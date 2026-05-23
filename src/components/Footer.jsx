@@ -164,9 +164,14 @@ export default function Footer() {
           <p className="text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
             © 2026 Daudi International School, Muzaffarpur
           </p>
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
-            A Daudi Welfare Trust initiative
-          </p>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <p className="text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
+              A Daudi Welfare Trust initiative
+            </p>
+            <p className="text-xs" style={{ color: "rgba(255,255,255,0.15)" }}>
+              Made by Hacker!
+            </p>
+          </div>
         </div>
       </div>
     </footer>
