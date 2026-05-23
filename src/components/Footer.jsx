@@ -168,8 +168,8 @@ export default function Footer() {
             <p className="text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
               A Daudi Welfare Trust initiative
             </p>
-            <p className="text-xs" style={{ color: "rgba(255,255,255,0.15)" }}>
-              Made by Hacker!
+            <p className="text-xs font-semibold tracking-wider" style={{ color: "#00ff41", textShadow: "0 0 8px rgba(0, 255, 65, 0.4)" }}>
+              {'> Made by Hacker!'}
             </p>
           </div>
         </div>
