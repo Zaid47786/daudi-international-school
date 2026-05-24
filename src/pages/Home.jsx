@@ -178,8 +178,8 @@ export default function Home() {
               {/* accent block */}
               <div className="absolute -bottom-5 -right-5 px-6 py-5 rounded-xl shadow-2xl"
                 style={{ backgroundColor: "var(--cobalt-deep)" }}>
-                <div className="font-fraunces font-bold leading-none mb-1" style={{ fontSize: "2rem", color: "var(--amber)" }}>500+</div>
-                <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)" }}>students enrolled</div>
+                <div className="font-fraunces font-bold leading-none mb-1" style={{ fontSize: "2rem", color: "var(--amber)" }}>1000+</div>
+                <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)" }}>students taught</div>
               </div>
               {/* amber rule */}
               <div className="absolute top-0 left-0 w-1 h-full rounded-l-xl" style={{ backgroundColor: "var(--amber)" }} />

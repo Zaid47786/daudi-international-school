@@ -18,7 +18,7 @@ const milestones = [
   { year: "2012", event: "Awarded the DIS Development & Extension Award for community impact." },
   { year: "2018", event: "Secondary classes introduced; enrollment crosses 300 students." },
   { year: "2023", event: "Community scholarship program launched for underprivileged families." },
-  { year: "2026", event: "500+ students enrolled. One of Muzaffarpur's most trusted non-profit schools.", highlight: true },
+  { year: "2026", event: "Thousands of students enrolled. One of Muzaffarpur's most trusted non-profit schools.", highlight: true },
 ];
 
 const values = [
@@ -55,7 +55,7 @@ export default function About() {
                 Daudi International School was founded on a single conviction: quality English-medium education in Muzaffarpur should not be reserved for the wealthy.
               </p>
               <p>
-                Under the <strong style={{ color: "var(--ink)", fontWeight: 600 }}>Daudi Welfare Trust</strong>, what began as a small community classroom now serves 500+ students across Nursery through Secondary levels.
+                Under the <strong style={{ color: "var(--ink)", fontWeight: 600 }}>Daudi Welfare Trust</strong>, what began as a small community classroom now serves thousands of students across Nursery through Secondary levels.
               </p>
               <p>
                 Every rupee collected goes back into the school. No surplus. No shareholders. Just better classrooms, better teachers, and better futures.
@@ -69,7 +69,7 @@ export default function About() {
             <motion.div {...fadeUp(0.1)} className="w-full lg:w-auto">
               <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:flex lg:flex-col lg:gap-4">
                 {[
-                  { v: "500+", l: "Students enrolled" },
+                  { v: "1000+", l: "Students taught" },
                   { v: "20+", l: "Years of service" },
                   { v: "Non-profit", l: "Institution" },
                 ].map((s, i) => (
@@ -196,7 +196,7 @@ export default function About() {
               <span className="font-fraunces italic" style={{ color: "var(--amber)" }}>in the making</span>
             </h2>
             <p className="mt-3 text-[14px] leading-[1.75] max-w-md" style={{ color: "rgba(255,255,255,0.45)" }}>
-              From a single classroom to a 500-student institution — every year brought a new chapter.
+              From a single classroom to an institution serving thousands — every year brought a new chapter.
             </p>
           </motion.div>
 
