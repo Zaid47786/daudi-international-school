@@ -39,7 +39,7 @@ export default function Admin() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen bg-navy flex items-center justify-center px-4 font-poppins">
+      <div className="min-h-screen bg-cobalt-deep flex items-center justify-center px-4 font-inter">
         <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm">
           <div className="text-center mb-8">
             <img
@@ -87,7 +87,7 @@ export default function Admin() {
   }[activeTab];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-poppins">
+    <div className="min-h-screen bg-gray-50 flex font-inter">
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-navy text-white flex flex-col transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:flex`}>
         {/* Logo */}

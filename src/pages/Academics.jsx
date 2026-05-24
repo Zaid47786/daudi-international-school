@@ -18,28 +18,28 @@ const levels = [
     age: "Ages 3–5",
     desc: "Child-led, hands-on learning focused on motor skills, language, creativity, and social confidence.",
     subjects: ["English", "Hindi", "Basic Maths", "Drawing & Art", "Sensorial Activities", "Practical Life"],
-    border: "border-l-amber",
+    borderColor: "var(--amber)",
   },
   {
     level: "Primary — Class I to V",
     age: "Ages 6–10",
     desc: "Core academic foundations: literacy, numeracy, and an introduction to the world around them.",
     subjects: ["English", "Hindi", "Mathematics", "EVS / Science", "Social Studies", "Computer Basics"],
-    border: "border-l-cobalt",
+    borderColor: "var(--cobalt)",
   },
   {
     level: "Middle School — Class VI to VIII",
     age: "Ages 11–13",
     desc: "Expanding subject depth, critical thinking, and introduction to structured sciences.",
     subjects: ["English", "Hindi", "Mathematics", "Science", "Social Science", "Computer Science", "Sanskrit"],
-    border: "border-l-cobalt",
+    borderColor: "var(--cobalt)",
   },
   {
     level: "Secondary — Class IX & X",
     age: "Ages 14–15",
     desc: "Board-aligned curriculum with focused preparation for BSEB secondary examinations.",
     subjects: ["English", "Hindi", "Mathematics", "Science", "Social Science", "Computer Applications"],
-    border: "border-l-ink",
+    borderColor: "var(--ink)",
   },
 ];
 
@@ -103,7 +103,8 @@ export default function Academics() {
           <div className="space-y-5">
             {levels.map((lv, i) => (
               <motion.div key={i} {...fadeUp(i * 0.07)}
-                className={`bg-white rounded-lg p-6 sm:p-8 border-l-4 ${lv.border} border border-gray-100 hover:shadow-sm transition-shadow duration-200`}>
+                className="bg-white rounded-lg p-6 sm:p-8 border-l-4 border border-gray-100 hover:shadow-sm transition-shadow duration-200"
+                style={{ borderLeftColor: lv.borderColor }}>
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                   <div>
                     <h3 className="font-semibold text-ink text-[16px] tracking-tight">{lv.level}</h3>

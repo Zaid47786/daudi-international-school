@@ -13,13 +13,13 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay },
 });
 
-const CATEGORY_DOT = {
-  "National Event": "bg-blue-500",
-  "Academic": "bg-emerald-500",
-  "Sports": "bg-orange-500",
-  "Cultural": "bg-purple-500",
-  "Trust Event": "bg-amber",
-  "School Event": "bg-gray-400",
+const CATEGORY_COLOR = {
+  "National Event": "#3b82f6",
+  "Academic": "#10b981",
+  "Sports": "#f97316",
+  "Cultural": "#a855f7",
+  "Trust Event": "var(--amber)",
+  "School Event": "#9ca3af",
 };
 
 export default function Events() {
@@ -63,7 +63,7 @@ export default function Events() {
 
                   {/* Dot */}
                   <div className="col-span-1 hidden sm:flex justify-center pt-2">
-                    <div className={`w-2 h-2 rounded-full mt-1 flex-shrink-0 ${CATEGORY_DOT[ev.category] || "bg-gray-400"}`} />
+                    <div className="w-2 h-2 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: CATEGORY_COLOR[ev.category] || "#9ca3af" }} />
                   </div>
 
                   {/* Content */}
@@ -126,7 +126,7 @@ export default function Events() {
                 <motion.div key={ev.id} {...fadeUp(i * 0.06)}
                   className="bg-white rounded-lg p-5 border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-200 group">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`w-1.5 h-1.5 rounded-full ${CATEGORY_DOT[ev.category] || "bg-gray-400"}`} />
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: CATEGORY_COLOR[ev.category] || "#9ca3af" }} />
                     <span className="text-ink-muted text-[11px] font-semibold tracking-wide uppercase">{ev.category}</span>
                   </div>
                   <h3 className="font-semibold text-ink text-[14px] leading-snug mb-2 group-hover:text-cobalt transition-colors">{ev.title}</h3>
