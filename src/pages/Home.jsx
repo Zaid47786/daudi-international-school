@@ -46,6 +46,20 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col justify-end" style={{ minHeight: "100svh", paddingTop: "120px", paddingBottom: "72px" }}>
           <div className="max-w-3xl">
 
+            {/* Logo */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45 }}
+              className="mb-8"
+            >
+              <img
+                src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+                alt="Daudi International School"
+                className="h-16 w-auto"
+              />
+            </motion.div>
+
             {/* Eyebrow */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}
