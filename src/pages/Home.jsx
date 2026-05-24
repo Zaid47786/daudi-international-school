@@ -55,7 +55,7 @@ export default function Home() {
             <img
               src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
               alt="Daudi International School"
-              className="w-auto drop-shadow-2xl h-16 sm:h-24 md:h-28 lg:h-32 xl:h-36"
+              className="w-auto drop-shadow-2xl h-24 sm:h-32 md:h-36 lg:h-40 xl:h-44"
             />
             <p className="mt-2 font-inter font-semibold text-white uppercase tracking-widest text-center text-[9px] sm:text-[10px] lg:text-[11px]" style={{ letterSpacing: "0.22em", opacity: 0.45 }}>
               Daudi International School
