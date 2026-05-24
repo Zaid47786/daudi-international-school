@@ -26,6 +26,21 @@ export default function AdminStats() {
         const created = await base44.entities.Stat.create(d);
         records.push(created);
       }
+    } else {
+      // Deduplicate by label — keep the one with lowest sort_order (first seen)
+      const seen = new Set();
+      const dupes = [];
+      records.forEach((r) => {
+        if (seen.has(r.label)) {
+          dupes.push(r.id);
+        } else {
+          seen.add(r.label);
+        }
+      });
+      if (dupes.length > 0) {
+        await Promise.all(dupes.map((id) => base44.entities.Stat.delete(id)));
+        records = records.filter((r) => !dupes.includes(r.id));
+      }
     }
     setStats(records);
     setLoading(false);
