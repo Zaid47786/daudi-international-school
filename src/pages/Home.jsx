@@ -114,9 +114,9 @@ export default function Home() {
             className="absolute bottom-16 right-5 sm:right-8 lg:right-10 hidden lg:flex flex-col gap-2"
           >
             {[
-              { v: "500+", l: "Students" },
-              { v: "20+", l: "Years" },
-              { v: "CBSE", l: "Curriculum" },
+              { v: "Non-profit", l: "Institution" },
+              { v: "English", l: "Medium" },
+              { v: "Nursery–X", l: "Classes" },
             ].map((s, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg"
                 style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(8px)" }}>
