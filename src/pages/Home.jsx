@@ -43,28 +43,27 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 
-        {/* Centered logo — absolute, vertically centered in upper third */}
-        <div className="absolute inset-x-0 flex justify-center" style={{ top: "clamp(80px, 12vw, 140px)" }}>
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col" style={{ minHeight: "100svh", paddingTop: "88px", paddingBottom: "72px" }}>
+
+          {/* Centered logo — in flow, not absolute */}
           <motion.div
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center"
+            className="flex flex-col items-center mb-10 sm:mb-14"
           >
             <img
               src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
               alt="Daudi International School"
               className="w-auto drop-shadow-2xl"
-              style={{ height: "clamp(72px, 10vw, 130px)" }}
+              style={{ height: "clamp(80px, 12vw, 140px)" }}
             />
-            <p className="mt-2 font-inter font-semibold text-white uppercase tracking-widest" style={{ fontSize: "clamp(9px, 1.2vw, 12px)", letterSpacing: "0.22em", opacity: 0.5 }}>
+            <p className="mt-2 font-inter font-semibold text-white uppercase tracking-widest text-center" style={{ fontSize: "clamp(9px, 1.1vw, 12px)", letterSpacing: "0.22em", opacity: 0.5 }}>
               Daudi International School
             </p>
           </motion.div>
-        </div>
 
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col justify-end" style={{ minHeight: "100svh", paddingTop: "120px", paddingBottom: "72px" }}>
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mt-auto">
 
             {/* Eyebrow */}
             <motion.div
