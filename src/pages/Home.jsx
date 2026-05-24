@@ -43,34 +43,33 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col" style={{ minHeight: "100svh", paddingTop: "88px", paddingBottom: "72px" }}>
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col items-center justify-center" style={{ minHeight: "100svh", paddingTop: "80px", paddingBottom: "64px", gap: "clamp(24px, 5vw, 56px)" }}>
 
-          {/* Centered logo — in flow, not absolute */}
+          {/* Logo — responsive size per breakpoint */}
           <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center mb-10 sm:mb-14"
+            className="flex flex-col items-center"
           >
             <img
               src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
               alt="Daudi International School"
-              className="w-auto drop-shadow-2xl"
-              style={{ height: "clamp(80px, 12vw, 140px)" }}
+              className="w-auto drop-shadow-2xl h-16 sm:h-24 md:h-28 lg:h-32 xl:h-36"
             />
-            <p className="mt-2 font-inter font-semibold text-white uppercase tracking-widest text-center" style={{ fontSize: "clamp(9px, 1.1vw, 12px)", letterSpacing: "0.22em", opacity: 0.5 }}>
+            <p className="mt-2 font-inter font-semibold text-white uppercase tracking-widest text-center text-[9px] sm:text-[10px] lg:text-[11px]" style={{ letterSpacing: "0.22em", opacity: 0.45 }}>
               Daudi International School
             </p>
           </motion.div>
 
-          <div className="max-w-3xl mt-auto">
+          <div className="w-full max-w-3xl text-center sm:text-left">
 
             {/* Eyebrow */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="flex items-center gap-3 mb-8"
+              className="flex items-center justify-center sm:justify-start gap-3 mb-6 sm:mb-8"
             >
               <div className="w-6 h-px" style={{ backgroundColor: "var(--amber)" }} />
               <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(232,168,32,0.85)" }}>
@@ -107,7 +106,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.34 }}
-              className="flex flex-wrap gap-3"
+              className="flex flex-wrap gap-3 justify-center sm:justify-start"
             >
               <Link to="/admissions"
                 className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-lg transition-all duration-200 hover:brightness-105 active:scale-[0.98]"
