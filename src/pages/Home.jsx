@@ -43,23 +43,25 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 
-        {/* Large centered logo — responsive, top of hero */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute top-0 left-0 right-0 flex flex-col items-center justify-center pt-24 sm:pt-28 pb-8 pointer-events-none"
-        >
-          <img
-            src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
-            alt="Daudi International School"
-            className="w-auto drop-shadow-2xl"
-            style={{ height: "clamp(80px, 14vw, 160px)" }}
-          />
-          <p className="mt-3 font-inter font-semibold text-white tracking-widest uppercase" style={{ fontSize: "clamp(10px, 1.5vw, 13px)", letterSpacing: "0.25em", opacity: 0.6 }}>
-            Daudi International School
-          </p>
-        </motion.div>
+        {/* Centered logo — absolute, vertically centered in upper third */}
+        <div className="absolute inset-x-0 flex justify-center" style={{ top: "clamp(80px, 12vw, 140px)" }}>
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center"
+          >
+            <img
+              src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+              alt="Daudi International School"
+              className="w-auto drop-shadow-2xl"
+              style={{ height: "clamp(72px, 10vw, 130px)" }}
+            />
+            <p className="mt-2 font-inter font-semibold text-white uppercase tracking-widest" style={{ fontSize: "clamp(9px, 1.2vw, 12px)", letterSpacing: "0.22em", opacity: 0.5 }}>
+              Daudi International School
+            </p>
+          </motion.div>
+        </div>
 
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col justify-end" style={{ minHeight: "100svh", paddingTop: "120px", paddingBottom: "72px" }}>
           <div className="max-w-3xl">
