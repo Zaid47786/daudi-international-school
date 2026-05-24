@@ -106,25 +106,7 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Bottom-right: floating stats card */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.55 }}
-            className="absolute bottom-16 right-5 sm:right-8 lg:right-10 hidden lg:flex flex-col gap-2"
-          >
-            {[
-              { v: "Non-profit", l: "Institution" },
-              { v: "English", l: "Medium" },
-              { v: "Nursery–X", l: "Classes" },
-            ].map((s, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg"
-                style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(8px)" }}>
-                <span className="font-bold text-white text-sm">{s.v}</span>
-                <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>{s.l}</span>
-              </div>
-            ))}
-          </motion.div>
+
         </div>
       </section>
 
