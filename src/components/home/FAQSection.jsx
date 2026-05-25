@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -28,33 +27,26 @@ export default function FAQSection() {
   const [open, setOpen] = useState(null);
 
   return (
-    <section className="py-20 sm:py-28" style={{ backgroundColor: "var(--cream)" }}>
+    <section className="py-16 sm:py-28" style={{ backgroundColor: "var(--cream)" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
-          className="mb-12">
+        <div className="mb-10">
           <p className="label-stamp text-cobalt mb-3">Have questions?</p>
-          <h2 className="font-fraunces font-bold tracking-tight" style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", color: "var(--cobalt-deep)" }}>
+          <h2 className="font-fraunces font-bold tracking-tight"
+            style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", color: "var(--cobalt-deep)" }}>
             Frequently asked questions
           </h2>
-        </motion.div>
+        </div>
         <div className="space-y-2">
           {faqs.map((faq, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.05 }}
               className="rounded-xl overflow-hidden"
               style={{ backgroundColor: "#fff", border: "1px solid rgba(0,0,0,0.07)" }}>
               <button
                 onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+                className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
+                aria-expanded={open === i}
               >
                 <span className="font-semibold text-sm leading-snug" style={{ color: "var(--ink)" }}>{faq.q}</span>
                 <ChevronDown
@@ -63,19 +55,10 @@ export default function FAQSection() {
                   style={{ color: "var(--ink-muted)", transform: open === i ? "rotate(180deg)" : "rotate(0deg)" }}
                 />
               </button>
-              <AnimatePresence>
-                {open === i && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.22 }}
-                    className="overflow-hidden">
-                    <p className="px-6 pb-5 text-[13.5px] leading-[1.8]" style={{ color: "var(--ink-soft)" }}>{faq.a}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+              {open === i && (
+                <p className="px-5 pb-4 text-[13.5px] leading-[1.8]" style={{ color: "var(--ink-soft)" }}>{faq.a}</p>
+              )}
+            </div>
           ))}
         </div>
         <div className="mt-8 text-center">
