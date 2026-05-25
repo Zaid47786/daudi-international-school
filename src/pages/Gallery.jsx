@@ -34,7 +34,7 @@ export default function Gallery() {
       <PageHero
         title="Gallery"
         subtitle="Moments from DIS — real events, real students, real stories"
-        bgImage="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1400&q=80"
+        bgImage="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=900&q=70&fm=webp"
       />
 
       <section className="py-14 sm:py-20">

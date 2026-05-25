@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { BookOpen, Users, Award, Heart, Star, Globe, Trophy, ArrowRight, GraduationCap, MapPin, Phone } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -23,10 +22,6 @@ export default function Home() {
   const { settings } = useSettings();
   const { stats } = useStats();
   const { events: upcomingEvents } = useEvents("upcoming");
-  const heroRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroImgY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
     <div id="main-content" className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
@@ -38,20 +33,23 @@ export default function Home() {
       <Navbar />
 
       {/* ═══════════════════════════════════════════════════
-          HERO — cinematic parallax, left-anchored storytelling
+          HERO
          ═══════════════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative overflow-hidden" style={{ minHeight: "100svh", backgroundColor: "var(--cobalt-deep)" }}>
+      <section className="relative overflow-hidden" style={{ minHeight: "100svh", backgroundColor: "var(--cobalt-deep)" }}>
 
-        {/* Parallax background */}
-        <motion.div className="absolute inset-0" style={{ y: heroImgY }}>
+        {/* Background image — no parallax for LCP */}
+        <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=1800&q=85"
+            src="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=1200&q=75&fm=webp"
             alt=""
             className="w-full h-full object-cover"
             style={{ objectPosition: "center 20%", opacity: 0.18 }}
             fetchpriority="high"
+            decoding="async"
+            width="1200"
+            height="800"
           />
-        </motion.div>
+        </div>
 
         {/* Layered gradient — more atmospheric */}
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(14,31,82,0.97) 0%, rgba(14,31,82,0.75) 50%, rgba(26,53,128,0.5) 100%)" }} />
@@ -63,8 +61,8 @@ export default function Home() {
         {/* Amber accent — thin top line */}
         <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: "linear-gradient(90deg, transparent 0%, var(--amber) 30%, var(--amber-light) 60%, transparent 100%)" }} />
 
-        <motion.div
-          style={{ opacity: heroOpacity, minHeight: "100svh", paddingTop: "90px", paddingBottom: "80px" }}
+        <div
+          style={{ minHeight: "100svh", paddingTop: "90px", paddingBottom: "80px" }}
           className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-16 flex flex-col lg:flex-row lg:items-center lg:gap-20"
         >
           {/* Left — text content */}
@@ -135,10 +133,10 @@ export default function Home() {
               className="flex items-center gap-4 mt-10"
             >
               <div className="flex -space-x-2">
-                 {["https://images.unsplash.com/photo-1606155566195-cc12e2b4dfe3?w=60&h=60&fit=crop",
-                   "https://images.unsplash.com/photo-1595152772835-219674b2a163?w=60&h=60&fit=crop",
-                   "https://images.unsplash.com/photo-1588072432836-e10032774350?w=60&h=60&fit=crop"].map((src, i) => (
-                  <img key={i} src={src} alt="DIS parent" width="32" height="32" className="w-8 h-8 rounded-full object-cover ring-2"
+                 {["https://images.unsplash.com/photo-1606155566195-cc12e2b4dfe3?w=60&h=60&fit=crop&fm=webp",
+                   "https://images.unsplash.com/photo-1595152772835-219674b2a163?w=60&h=60&fit=crop&fm=webp",
+                   "https://images.unsplash.com/photo-1588072432836-e10032774350?w=60&h=60&fit=crop&fm=webp"].map((src, i) => (
+                  <img key={i} src={src} alt="DIS parent" width="32" height="32" loading="lazy" decoding="async" className="w-8 h-8 rounded-full object-cover ring-2"
                     style={{ ringColor: "var(--cobalt-deep)" }} />
                 ))}
               </div>
@@ -169,7 +167,7 @@ export default function Home() {
               />
             </div>
           </motion.div>
-        </motion.div>
+        </div>
 
         {/* Scroll cue */}
         <motion.div
@@ -240,9 +238,11 @@ export default function Home() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl"
                 style={{ height: "clamp(300px, 40vw, 500px)" }}>
                 <img
-                  src="https://images.unsplash.com/photo-1573894999291-f440466112cc?w=900&q=85"
+                  src="https://images.unsplash.com/photo-1573894999291-f440466112cc?w=700&q=75&fm=webp"
                   alt="Students learning at Daudi International School Muzaffarpur"
                   loading="lazy"
+                  decoding="async"
+                  width="700" height="500"
                   className="w-full h-full object-cover"
                   style={{ objectPosition: "center 30%" }}
                 />
@@ -267,9 +267,11 @@ export default function Home() {
               <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-xl overflow-hidden hidden sm:block shadow-lg"
                 style={{ border: "3px solid white" }}>
                 <img
-                  src="https://images.unsplash.com/photo-1636772523547-5577d04e8dc1?w=200&q=75"
+                  src="https://images.unsplash.com/photo-1636772523547-5577d04e8dc1?w=200&q=65&fm=webp"
                   alt="DIS school activity"
                   loading="lazy"
+                  decoding="async"
+                  width="96" height="96"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -424,30 +426,24 @@ export default function Home() {
           VISUAL INTERLUDE — full bleed campus photos
          ═══════════════════════════════════════════════════ */}
       <section className="overflow-hidden" style={{ backgroundColor: "var(--ink)" }}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="flex gap-1"
-          style={{ height: "clamp(200px, 35vw, 420px)" }}
-        >
+        <div className="flex gap-1" style={{ height: "clamp(200px, 35vw, 420px)" }}>
           {[
-            { src: "https://images.unsplash.com/photo-1719159381916-062fa9f435a6?w=800&q=85", flex: 2 },
-            { src: "https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=600&q=80", flex: 1 },
-            { src: "https://images.unsplash.com/photo-1636772523547-5577d04e8dc1?w=600&q=80", flex: 1 },
-            { src: "https://images.unsplash.com/photo-1573894999291-f440466112cc?w=600&q=80", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1719159381916-062fa9f435a6?w=700&q=75&fm=webp", flex: 2 },
+            { src: "https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=500&q=70&fm=webp", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1636772523547-5577d04e8dc1?w=500&q=70&fm=webp", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1573894999291-f440466112cc?w=500&q=70&fm=webp", flex: 1 },
           ].map((img, i) => (
             <div key={i} className="overflow-hidden relative group" style={{ flex: img.flex }}>
               <img src={img.src} alt=""
                 loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                decoding="async"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 style={{ objectPosition: "center" }} />
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{ background: "linear-gradient(to top, rgba(14,31,82,0.5), transparent)" }} />
             </div>
           ))}
-        </motion.div>
+        </div>
 
         {/* Caption */}
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-5 flex items-center justify-between">
