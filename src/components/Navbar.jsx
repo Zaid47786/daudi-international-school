@@ -55,6 +55,7 @@ export default function Navbar() {
               alt="Daudi International School Muzaffarpur"
               width="36" height="36"
               className="h-8 md:h-9 w-auto"
+              style={{ filter: "brightness(1.2) contrast(1.1)" }}
             />
             <div className="hidden sm:flex flex-col leading-none">
               <span className="text-white font-semibold text-[13px] tracking-tight">Daudi International</span>
