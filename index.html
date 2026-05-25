@@ -53,8 +53,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://media.base44.com" crossorigin />
-    <!-- Preload hero image (LCP) -->
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=1200&q=75&fm=webp" fetchpriority="high" />
+    <!-- NON-BLOCKING Google Fonts (print trick = zero render-block) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,400&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,400&display=swap" /></noscript>
+    <!-- Preload hero image (LCP) — mobile-sized -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=800&q=70&fm=webp" fetchpriority="high" />
     <!-- Preload logo -->
     <link rel="preload" as="image" href="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png" />
 
@@ -191,12 +194,20 @@
       ]
     }
     </script>
-    <!-- Critical perf: font-display swap + content-visibility hints -->
+    <!-- Critical CSS: system font fallback + hero animations (no JS needed) -->
     <style>
-      @font-face { font-family: 'Inter'; font-display: swap; }
-      @font-face { font-family: 'Fraunces'; font-display: swap; }
-      /* Avoid layout shift on load */
-      body { font-family: system-ui, -apple-system, sans-serif; }
+      /* System font until web fonts swap in — prevents invisible text */
+      body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+      /* Hero CSS animations — no framer-motion needed above the fold */
+      @keyframes heroFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes heroFadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes scrollPulse { 0%,100% { transform: translateY(0); } 50% { transform: translateY(16px); } }
+      .hero-chip { animation: heroFadeUp 0.45s ease-out 0.05s both; }
+      .hero-h1   { animation: heroFadeUp 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both; }
+      .hero-sub  { animation: heroFadeUp 0.55s ease-out 0.2s both; }
+      .hero-cta  { animation: heroFadeUp 0.45s ease-out 0.3s both; }
+      .hero-proof{ animation: heroFadeIn 0.5s ease-out 0.45s both; }
+      .scroll-dot { animation: scrollPulse 1.8s ease-in-out infinite; }
     </style>
   </head>
   <body>

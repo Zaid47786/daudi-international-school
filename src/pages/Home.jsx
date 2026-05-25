@@ -1,22 +1,17 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { BookOpen, Users, Award, Heart, Star, Globe, Trophy, ArrowRight, GraduationCap, MapPin, Phone } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEOHead from "../components/SEOHead";
-import TestimonialsSection from "../components/home/TestimonialsSection";
-import FAQSection from "../components/home/FAQSection";
-import TrustSignals from "../components/home/TrustSignals";
 import { useSettings, useStats, useEvents } from "../lib/useSchoolData";
 
-const ICON_MAP = { BookOpen, Users, Award, Heart, Star, Globe, Trophy, GraduationCap };
+// Lazy-load below-fold heavy components
+const TestimonialsSection = lazy(() => import("../components/home/TestimonialsSection"));
+const FAQSection = lazy(() => import("../components/home/FAQSection"));
+const TrustSignals = lazy(() => import("../components/home/TrustSignals"));
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-30px" },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
-});
+const ICON_MAP = { BookOpen, Users, Award, Heart, Star, Globe, Trophy, GraduationCap };
 
 export default function Home() {
   const { settings } = useSettings();
@@ -40,7 +35,7 @@ export default function Home() {
         {/* Background image — no parallax for LCP */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=1200&q=75&fm=webp"
+            src="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=800&q=70&fm=webp"
             alt=""
             className="w-full h-full object-cover"
             style={{ objectPosition: "center 20%", opacity: 0.18 }}
@@ -68,50 +63,31 @@ export default function Home() {
           {/* Left — text content */}
           <div className="flex-1 flex flex-col justify-center">
 
-            {/* Eyebrow chip */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2.5 self-start mb-8"
-              style={{ border: "1px solid rgba(232,168,32,0.3)", borderRadius: "100px", padding: "6px 14px 6px 8px", backgroundColor: "rgba(232,168,32,0.07)" }}
-            >
+            {/* Eyebrow chip — CSS animated */}
+            <div className="hero-chip inline-flex items-center gap-2.5 self-start mb-8"
+              style={{ border: "1px solid rgba(232,168,32,0.3)", borderRadius: "100px", padding: "6px 14px 6px 8px", backgroundColor: "rgba(232,168,32,0.07)" }}>
               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--amber)", boxShadow: "0 0 6px var(--amber)" }} />
               <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(232,168,32,0.9)" }}>
                 Muzaffarpur · Est. 2004 · Non-profit
               </span>
-            </motion.div>
+            </div>
 
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.75, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
-              style={{ lineHeight: 1.06, letterSpacing: "-0.03em", marginBottom: "28px" }}
-            >
+            {/* Headline — CSS animated */}
+            <h1 className="hero-h1" style={{ lineHeight: 1.06, letterSpacing: "-0.03em", marginBottom: "28px" }}>
               <span className="block text-white font-inter font-bold" style={{ fontSize: "clamp(2.6rem, 5.5vw, 4.4rem)" }}>
                 Where every child
               </span>
               <span className="block font-fraunces italic" style={{ fontSize: "clamp(2.8rem, 6vw, 4.9rem)", color: "var(--amber-light)", lineHeight: 1.1 }}>
                 deserves to learn.
               </span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              style={{ fontSize: "clamp(1rem, 1.6vw, 1.1rem)", color: "rgba(255,255,255,0.52)", lineHeight: 1.85, maxWidth: "480px", marginBottom: "40px" }}
-            >
+            <p className="hero-sub"
+              style={{ fontSize: "clamp(1rem, 1.6vw, 1.1rem)", color: "rgba(255,255,255,0.52)", lineHeight: 1.85, maxWidth: "480px", marginBottom: "40px" }}>
               {settings.hero_description || "A non-profit, English-medium school under the Daudi Welfare Trust — quality education for every child in Muzaffarpur, regardless of background."}
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.42 }}
-              className="flex flex-wrap gap-3"
-            >
+            <div className="hero-cta flex flex-wrap gap-3">
               <Link to="/admissions"
                 className="inline-flex items-center gap-2.5 px-7 py-3.5 text-sm font-semibold rounded-xl transition-all duration-200 hover:brightness-110 active:scale-[0.97]"
                 style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)", letterSpacing: "0.01em" }}>
@@ -123,19 +99,14 @@ export default function Home() {
                 style={{ border: "1px solid rgba(255,255,255,0.14)", color: "rgba(255,255,255,0.7)" }}>
                 Our story
               </Link>
-            </motion.div>
+            </div>
 
-            {/* Micro social proof */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.62 }}
-              className="flex items-center gap-4 mt-10"
-            >
+            {/* Micro social proof — CSS animated */}
+            <div className="hero-proof flex items-center gap-4 mt-10">
               <div className="flex -space-x-2">
-                 {["https://images.unsplash.com/photo-1606155566195-cc12e2b4dfe3?w=60&h=60&fit=crop&fm=webp",
-                   "https://images.unsplash.com/photo-1595152772835-219674b2a163?w=60&h=60&fit=crop&fm=webp",
-                   "https://images.unsplash.com/photo-1588072432836-e10032774350?w=60&h=60&fit=crop&fm=webp"].map((src, i) => (
+                {["https://images.unsplash.com/photo-1606155566195-cc12e2b4dfe3?w=60&h=60&fit=crop&fm=webp",
+                  "https://images.unsplash.com/photo-1595152772835-219674b2a163?w=60&h=60&fit=crop&fm=webp",
+                  "https://images.unsplash.com/photo-1588072432836-e10032774350?w=60&h=60&fit=crop&fm=webp"].map((src, i) => (
                   <img key={i} src={src} alt="DIS parent" width="32" height="32" loading="lazy" decoding="async" className="w-8 h-8 rounded-full object-cover ring-2"
                     style={{ ringColor: "var(--cobalt-deep)" }} />
                 ))}
@@ -146,46 +117,30 @@ export default function Home() {
                 </div>
                 <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>Trusted by <strong style={{ color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>1,000+ families</strong> in Muzaffarpur</p>
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          {/* Right — logo mark, larger screens */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="hidden lg:flex flex-col items-center shrink-0"
-            style={{ width: "280px" }}
-          >
+          {/* Right — logo mark, larger screens only */}
+          <div className="hidden lg:flex flex-col items-center shrink-0 hero-proof" style={{ width: "280px" }}>
             <div className="relative">
               <div className="absolute inset-0 rounded-full blur-3xl opacity-20" style={{ backgroundColor: "var(--amber)" }} />
               <img
                 src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
                 alt="Daudi International School Muzaffarpur official logo"
                 fetchpriority="high"
+                width="192" height="192"
                 className="relative w-48 h-auto drop-shadow-2xl"
               />
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Scroll cue */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          style={{ opacity: 0.35 }}
-        >
+        {/* Scroll cue — pure CSS */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center" style={{ opacity: 0.35 }}>
           <div className="w-px h-10 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
-            <motion.div
-              className="w-px rounded-full"
-              style={{ backgroundColor: "var(--amber)", height: "40%" }}
-              animate={{ y: [0, 24, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            />
+            <div className="scroll-dot w-px rounded-full" style={{ backgroundColor: "var(--amber)", height: "40%" }} />
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
@@ -198,11 +153,7 @@ export default function Home() {
               {stats.slice(0, 4).map((s, i) => {
                 const Icon = ICON_MAP[s.icon] || Star;
                 return (
-                  <motion.div key={s.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: i * 0.08 }}
+                  <div key={s.id}
                     className="flex-1 min-w-[160px] flex flex-col justify-center px-7 py-8 relative"
                     style={{ borderRight: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none", scrollSnapAlign: "start" }}>
                     <div className="flex items-center gap-2 mb-2">
@@ -210,7 +161,7 @@ export default function Home() {
                     </div>
                     <div className="font-fraunces font-bold text-white" style={{ fontSize: "clamp(1.8rem, 3vw, 2.5rem)", lineHeight: 1, letterSpacing: "-0.02em" }}>{s.value}</div>
                     <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)", marginTop: "6px", fontWeight: 500, letterSpacing: "0.03em" }}>{s.label}</div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -226,14 +177,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-0 items-center">
 
             {/* Image column — 5 cols with organic offset */}
-            <motion.div
-              initial={{ opacity: 0, x: -32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-              className="lg:col-span-5 relative"
-              style={{ paddingBottom: "40px" }}
-            >
+            <div className="lg:col-span-5 relative" style={{ paddingBottom: "40px" }}>
               {/* Main image */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl"
                 style={{ height: "clamp(300px, 40vw, 500px)" }}>
@@ -252,16 +196,11 @@ export default function Home() {
               </div>
 
               {/* Floating stat card — offset bottom right */}
-              <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55, delay: 0.3 }}
-                className="absolute bottom-0 right-0 sm:-right-6 rounded-2xl shadow-xl px-6 py-5"
+              <div className="absolute bottom-0 right-0 sm:-right-6 rounded-2xl shadow-xl px-6 py-5"
                 style={{ backgroundColor: "var(--cobalt-deep)", minWidth: "160px" }}>
                 <div className="font-fraunces font-bold leading-none mb-1.5" style={{ fontSize: "2.2rem", color: "var(--amber)", letterSpacing: "-0.02em" }}>1000+</div>
                 <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>children taught<br />since 2004</div>
-              </motion.div>
+              </div>
 
               {/* Small accent image — stacked behind */}
               <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-xl overflow-hidden hidden sm:block shadow-lg"
@@ -275,13 +214,10 @@ export default function Home() {
                   className="w-full h-full object-cover"
                 />
               </div>
-            </motion.div>
+            </div>
 
             {/* Text column — 6 cols, offset by 1 */}
-            <motion.div
-              {...fadeUp(0.12)}
-              className="lg:col-span-6 lg:col-start-7 flex flex-col"
-            >
+            <div className="lg:col-span-6 lg:col-start-7 flex flex-col">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-px" style={{ backgroundColor: "var(--amber)" }} />
                 <span className="label-stamp text-cobalt">Who we are</span>
@@ -317,7 +253,7 @@ export default function Home() {
                 Read our full story
                 <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5"><ArrowRight size={14} /></span>
               </Link>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -331,12 +267,7 @@ export default function Home() {
           style={{ backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.5) 0, rgba(255,255,255,0.5) 1px, transparent 0, transparent 50%)", backgroundSize: "24px 24px" }} />
 
         <div className="relative max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9 }}
-          >
+          <div>
             {/* Oversized amber quote */}
             <div className="font-fraunces select-none leading-none mb-4" aria-hidden
               style={{ fontSize: "clamp(5rem, 12vw, 9rem)", color: "var(--amber)", opacity: 0.1, lineHeight: 0.8, marginLeft: "-0.1em" }}>"</div>
@@ -353,7 +284,7 @@ export default function Home() {
                 <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.38)", marginTop: "2px" }}>Founder & Director, Daudi International School</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -365,7 +296,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Left — heading */}
-            <motion.div {...fadeUp(0)} className="lg:col-span-5">
+            <div className="lg:col-span-5">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-px" style={{ backgroundColor: "var(--amber)" }} />
                 <span className="label-stamp text-cobalt">Curriculum</span>
@@ -379,12 +310,12 @@ export default function Home() {
                 Small classes, dedicated teachers, a curriculum that builds thinkers — not just exam-passers.
               </p>
               <Link to="/academics"
-                className="inline-flex items-center gap-2 text-sm font-semibold group"
-                style={{ color: "var(--cobalt)" }}>
-                Explore the full curriculum
-                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5"><ArrowRight size={14} /></span>
+              className="inline-flex items-center gap-2 text-sm font-semibold group"
+              style={{ color: "var(--cobalt)" }}>
+              Explore the full curriculum
+              <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5"><ArrowRight size={14} /></span>
               </Link>
-            </motion.div>
+              </div>
 
             {/* Right — programme list, editorial style */}
             <div className="lg:col-span-7">
@@ -394,11 +325,7 @@ export default function Home() {
                 { num: "03", label: "Middle School", sub: "Class VI – VIII · Critical thinking & STEM focus" },
                 { num: "04", label: "Secondary", sub: "Class IX – X · Board preparation & career readiness" },
               ].map((item, i) => (
-                <motion.div key={i}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.55, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                <div key={i}
                   className="flex items-start gap-6 py-6 group cursor-default"
                   style={{ borderBottom: "1px solid rgba(0,0,0,0.07)" }}>
                   <span className="font-fraunces font-bold shrink-0 mt-0.5 transition-colors duration-200 group-hover:text-amber"
@@ -415,7 +342,7 @@ export default function Home() {
                   <span className="self-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <ArrowRight size={16} style={{ color: "var(--cobalt)" }} />
                   </span>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -463,7 +390,7 @@ export default function Home() {
         <section className="py-24 sm:py-32 bg-white">
           <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
             <div className="flex items-end justify-between mb-12 gap-4">
-              <motion.div {...fadeUp(0)}>
+              <div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-px" style={{ backgroundColor: "var(--amber)" }} />
                   <span className="label-stamp text-cobalt">What's coming up</span>
@@ -472,7 +399,7 @@ export default function Home() {
                   style={{ fontSize: "clamp(1.6rem, 3vw, 2.5rem)", color: "var(--ink)", letterSpacing: "-0.025em" }}>
                   School Calendar
                 </h2>
-              </motion.div>
+              </div>
               <Link to="/events"
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium group shrink-0 pb-1"
                 style={{ color: "var(--cobalt)", borderBottom: "1px solid rgba(26,53,128,0.2)" }}>
@@ -482,11 +409,7 @@ export default function Home() {
 
             <div>
               {upcomingEvents.slice(0, 4).map((ev, i) => (
-                <motion.div key={ev.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.07 }}
+                <div key={ev.id}
                   className="flex items-start gap-6 sm:gap-10 py-6 border-b group cursor-default"
                   style={{ borderColor: "rgba(0,0,0,0.06)" }}>
                   <div className="shrink-0 w-12 text-right">
@@ -514,7 +437,7 @@ export default function Home() {
                       {ev.location}
                     </p>
                   )}
-                </motion.div>
+                </div>
               ))}
             </div>
 
@@ -558,13 +481,19 @@ export default function Home() {
       </section>
 
       {/* Trust Signals */}
-      <TrustSignals />
+      <Suspense fallback={null}>
+        <TrustSignals />
+      </Suspense>
 
       {/* Testimonials */}
-      <TestimonialsSection />
+      <Suspense fallback={null}>
+        <TestimonialsSection />
+      </Suspense>
 
       {/* FAQ */}
-      <FAQSection />
+      <Suspense fallback={null}>
+        <FAQSection />
+      </Suspense>
 
       {/* ═══════════════════════════════════════════════════
           CTA — warm, personal, inviting
@@ -573,7 +502,7 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "radial-gradient(var(--cobalt) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
         <div className="relative max-w-4xl mx-auto px-5 sm:px-8 lg:px-10 text-center">
-          <motion.div {...fadeUp(0)}>
+          <div>
             <p className="label-stamp text-cobalt mb-5">Join the DIS family</p>
             <h2 className="font-inter font-bold tracking-tight leading-tight mb-5"
               style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", color: "var(--ink)", letterSpacing: "-0.025em" }}>
@@ -596,7 +525,7 @@ export default function Home() {
                 Contact us
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
