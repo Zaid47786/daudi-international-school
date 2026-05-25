@@ -95,7 +95,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact — NAP consistent */}
           <div className="col-span-6 sm:col-span-4 lg:col-span-3">
             <h4
               className="mb-4"
@@ -103,38 +103,44 @@ export default function Footer() {
             >
               Contact
             </h4>
-            <ul className="space-y-3.5">
-              <li className="flex items-start gap-2.5">
+            <address className="not-italic space-y-3.5">
+              <div className="flex items-start gap-2.5">
                 <MapPin size={13} className="mt-0.5 shrink-0" style={{ color: "var(--amber)" }} />
                 <span className="text-sm leading-snug" style={{ color: "rgba(255,255,255,0.48)" }}>
-                  {settings.address}
+                  Shafi Manzil, Daudi Market,<br />Motijheel, Muzaffarpur,<br />Bihar — 842001
                 </span>
-              </li>
-              <li className="flex items-center gap-2.5">
+              </div>
+              <div className="flex items-center gap-2.5">
                 <Phone size={13} className="shrink-0" style={{ color: "var(--amber)" }} />
                 <a
-                  href={`tel:${settings.phone}`}
+                  href="tel:+916212243314"
                   className="text-sm transition-colors duration-150"
                   style={{ color: "rgba(255,255,255,0.48)" }}
                   onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                   onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.48)"}
                 >
-                  {settings.phone}
+                  +91 621 224 3314
                 </a>
-              </li>
-              <li className="flex items-center gap-2.5">
+              </div>
+              <div className="flex items-center gap-2.5">
                 <Mail size={13} className="shrink-0" style={{ color: "var(--amber)" }} />
                 <a
-                  href={`mailto:${settings.email}`}
+                  href="mailto:daudischool.muz@gmail.com"
                   className="text-sm transition-colors duration-150 break-all"
                   style={{ color: "rgba(255,255,255,0.48)" }}
                   onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                   onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.48)"}
                 >
-                  {settings.email}
+                  daudischool.muz@gmail.com
                 </a>
-              </li>
-            </ul>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="mt-0.5 shrink-0 text-xs" style={{ color: "var(--amber)" }}>🕐</span>
+                <span className="text-sm leading-snug" style={{ color: "rgba(255,255,255,0.38)" }}>
+                  Mon – Sat: 8:00 AM – 3:00 PM
+                </span>
+              </div>
+            </address>
           </div>
 
           {/* Admission nudge */}
@@ -160,14 +166,14 @@ export default function Footer() {
       </div>
 
       <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-4 flex flex-col sm:flex-row justify-between gap-1.5">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-3 flex flex-col sm:flex-row justify-between gap-1.5">
           <p className="text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
-            © 2026 Daudi International School, Muzaffarpur
+            © 2026 Daudi International School, Motijheel, Muzaffarpur, Bihar 842001
           </p>
-          <div className="flex items-center gap-4 sm:gap-6">
-            <p className="text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
-              A Daudi Welfare Trust initiative
-            </p>
+          <div className="flex items-center flex-wrap gap-3 sm:gap-5">
+            <Link to="/best-school-in-muzaffarpur" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>Best School in Muzaffarpur</Link>
+            <Link to="/cbse-school-in-muzaffarpur" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>CBSE School</Link>
+            <Link to="/school-near-me" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>School Near Me</Link>
             <p className="text-xs font-semibold tracking-wider" style={{ color: "#00ff41", textShadow: "0 0 8px rgba(0, 255, 65, 0.4)" }}>
               {'> Made by Hacker!'}
             </p>

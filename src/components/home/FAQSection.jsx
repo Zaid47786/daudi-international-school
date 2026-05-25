@@ -6,11 +6,12 @@ import { Link } from "react-router-dom";
 const faqs = [
   { q: "What classes does DIS offer?", a: "DIS offers classes from Nursery (Montessori) all the way through Class X — a complete English-medium school journey under one roof in Muzaffarpur." },
   { q: "Is DIS affiliated with CBSE?", a: "DIS follows a rigorous English-medium curriculum aligned with national educational standards. Our academic structure mirrors CBSE guidelines, with a strong emphasis on conceptual learning and holistic development." },
+  { q: "Where exactly is DIS located in Muzaffarpur?", a: "We are located at Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001 — near Motijheel Park, centrally situated and easily reachable from Saraiyaganj, Brahmpura, Juran Chapra, and all major areas of the city." },
   { q: "How much are the school fees?", a: "DIS offers transparent and affordable fee structures designed to be accessible to families across income levels. Scholarship programs are available for deserving students. Contact our admissions office for current fee details." },
   { q: "Does DIS have smart classrooms?", a: "Yes. DIS has invested in modern classroom technology including projectors and interactive learning tools to make education more engaging and effective for every child." },
   { q: "Are admissions currently open?", a: "Yes! Admissions for the 2026–27 academic year are open across all classes. We recommend applying early as seats are limited. Visit our Admissions page to get started." },
   { q: "Does the school offer scholarships for underprivileged students?", a: "Absolutely. Under the Daudi Welfare Trust mission, DIS has scholarship and fee-waiver programs to ensure no child is denied quality education due to financial constraints." },
-  { q: "What is the location of the school?", a: "We are located at Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001 — a central and accessible location within the city." },
+  { q: "Is there a school near Motijheel with English medium instruction?", a: "Yes — Daudi International School is located right at Motijheel, Muzaffarpur. It is one of the very few non-profit, English-medium schools in the area, serving students from Nursery to Class X." },
 ];
 
 const schema = {

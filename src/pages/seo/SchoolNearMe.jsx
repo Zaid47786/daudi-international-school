@@ -5,6 +5,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import SEOHead from "../../components/SEOHead";
 import Breadcrumb from "../../components/Breadcrumb";
+import LocalPresence from "../../components/LocalPresence";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -17,9 +18,11 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: [
-    { "@type": "Question", name: "Where is Daudi International School located?", acceptedAnswer: { "@type": "Answer", text: "DIS is located at Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001 — centrally situated and easily accessible from all parts of the city." } },
-    { "@type": "Question", name: "What are the school timings?", acceptedAnswer: { "@type": "Answer", text: "School timings are Monday to Saturday, 8:00 AM to 3:00 PM." } },
-    { "@type": "Question", name: "How do I get to DIS Muzaffarpur?", acceptedAnswer: { "@type": "Answer", text: "The school is located near Motijheel, a well-known area in central Muzaffarpur. You can search 'Daudi International School Muzaffarpur' on Google Maps for directions." } },
+    { "@type": "Question", name: "Where is Daudi International School located?", acceptedAnswer: { "@type": "Answer", text: "DIS is located at Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001 — centrally situated near Motijheel Park and easily accessible from all parts of Muzaffarpur." } },
+    { "@type": "Question", name: "How far is DIS from Muzaffarpur Railway Station?", acceptedAnswer: { "@type": "Answer", text: "Daudi International School is approximately 15 minutes by auto-rickshaw from Muzaffarpur Railway Station via Station Road to Motijheel." } },
+    { "@type": "Question", name: "Which areas of Muzaffarpur is DIS near?", acceptedAnswer: { "@type": "Answer", text: "DIS is centrally located at Motijheel and is easily accessible from Saraiyaganj, Brahmpura, Juran Chapra, Bela, Mithanpura, and all major residential localities of Muzaffarpur." } },
+    { "@type": "Question", name: "What are the school timings?", acceptedAnswer: { "@type": "Answer", text: "School timings are Monday to Saturday, 8:00 AM to 3:00 PM. The administrative office is open from 9:00 AM to 4:00 PM." } },
+    { "@type": "Question", name: "Is there a school bus service?", acceptedAnswer: { "@type": "Answer", text: "Please contact the school at +91 621 224 3314 to enquire about transport facilities available in your area." } },
   ],
 };
 
@@ -72,21 +75,21 @@ export default function SchoolNearMe() {
         </div>
       </section>
 
-      {/* Location info */}
-      <section className="py-16 sm:py-24 bg-white">
+      {/* NAP + Map */}
+      <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
             <motion.div {...fadeUp(0)}>
               <p className="label-stamp text-cobalt mb-4">Find us</p>
-              <h2 className="font-inter font-bold text-ink tracking-tight mb-6" style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)" }}>
-                Centrally located,<br />
-                <span className="font-fraunces italic" style={{ color: "var(--cobalt)" }}>easily accessible</span>
+              <h2 className="font-inter font-bold text-ink tracking-tight mb-6" style={{ fontSize: "clamp(1.4rem, 2.8vw, 2rem)" }}>
+                Centrally located at Motijheel,<br />
+                <span className="font-fraunces italic" style={{ color: "var(--cobalt)" }}>easily accessible from all areas</span>
               </h2>
-              <div className="space-y-4 mb-8">
+              <div className="space-y-3 mb-8">
                 {[
-                  { icon: <MapPin size={16} />, label: "Address", val: "Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001" },
-                  { icon: <Phone size={16} />, label: "Phone", val: "+91 621 224 3314" },
-                  { icon: <Clock size={16} />, label: "School Hours", val: "Monday – Saturday: 8:00 AM – 3:00 PM" },
+                  { icon: <MapPin size={15} />, label: "Address", val: "Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001" },
+                  { icon: <Phone size={15} />, label: "Phone", val: "+91 621 224 3314" },
+                  { icon: <Clock size={15} />, label: "School Hours", val: "Monday – Saturday: 8:00 AM – 3:00 PM" },
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: "var(--cream)" }}>
                     <div className="mt-0.5 shrink-0" style={{ color: "var(--amber)" }}>{item.icon}</div>
@@ -97,30 +100,40 @@ export default function SchoolNearMe() {
                   </div>
                 ))}
               </div>
-              <Link to="/admissions"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-sm"
-                style={{ backgroundColor: "var(--cobalt-deep)", color: "#fff" }}>
-                Apply Now <ArrowRight size={14} />
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link to="/admissions"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-sm"
+                  style={{ backgroundColor: "var(--cobalt-deep)", color: "#fff" }}>
+                  Apply Now <ArrowRight size={14} />
+                </Link>
+                <a href="https://www.google.com/maps/search/Daudi+International+School+Muzaffarpur"
+                  target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-sm"
+                  style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}>
+                  <Navigation size={14} /> Get Directions
+                </a>
+              </div>
             </motion.div>
 
             <motion.div {...fadeUp(0.1)}>
-              <div className="rounded-2xl overflow-hidden shadow-xl" style={{ height: "400px" }}>
+              <div className="rounded-2xl overflow-hidden shadow-xl" style={{ height: "420px" }}>
                 <iframe
-                  title="Daudi International School Location Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3566.2!2d85.3910!3d26.1197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA3JzEwLjkiTiA4NcKwMjMnMjcuNiJF!5e0!3m2!1sen!2sin!4v1"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
+                  title="Daudi International School Muzaffarpur — Google Maps"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3566.0867756994097!2d85.38412621503748!3d26.11876298346217!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39ed2f5f1ede1555%3A0x7b72e39bb65d4d8b!2sMotijheel%2C%20Muzaffarpur%2C%20Bihar!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin"
+                  width="100%" height="100%" style={{ border: 0 }}
+                  allowFullScreen loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
+              <p className="text-xs mt-2.5" style={{ color: "var(--ink-muted)" }}>
+                Near Motijheel Park, central Muzaffarpur — easy access from Saraiyaganj, Brahmpura, Juran Chapra, and all major localities.
+              </p>
             </motion.div>
           </div>
         </div>
       </section>
+
+      <LocalPresence />
 
       <Footer />
     </div>

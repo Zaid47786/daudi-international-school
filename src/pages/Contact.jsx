@@ -5,7 +5,33 @@ import { useToast } from "@/components/ui/use-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import SEOHead from "../components/SEOHead";
+import LocalPresence from "../components/LocalPresence";
 import { useSettings } from "../lib/useSchoolData";
+
+const contactSchema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact Daudi International School Muzaffarpur",
+  "description": "Contact DIS Muzaffarpur for admissions, academic queries, or a campus visit. Located at Motijheel, Muzaffarpur, Bihar.",
+  "mainEntity": {
+    "@type": "LocalBusiness",
+    "name": "Daudi International School",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Shafi Manzil, Daudi Market, Motijheel",
+      "addressLocality": "Muzaffarpur",
+      "addressRegion": "Bihar",
+      "postalCode": "842001",
+      "addressCountry": "IN"
+    },
+    "telephone": "+916212243314",
+    "email": "daudischool.muz@gmail.com",
+    "openingHours": "Mo-Sa 08:00-15:00",
+    "geo": { "@type": "GeoCoordinates", "latitude": 26.1197, "longitude": 85.3910 },
+    "hasMap": "https://www.google.com/maps/search/Daudi+International+School+Muzaffarpur"
+  }
+};
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -31,6 +57,12 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-white font-inter">
+      <SEOHead
+        title="Contact Us | DIS Muzaffarpur — Motijheel, Bihar"
+        description="Contact Daudi International School in Muzaffarpur. Located at Shafi Manzil, Motijheel, Muzaffarpur — call +91 621 224 3314 or email daudischool.muz@gmail.com. Open Mon–Sat."
+        canonical="https://daudischool.in/contact"
+        schema={contactSchema}
+      />
       <Navbar />
       <PageHero
         title="Contact"
@@ -145,19 +177,24 @@ export default function Contact() {
                 )}
               </div>
 
-              {/* Map */}
-              <div className="mt-5 rounded-lg overflow-hidden border border-gray-100 h-52 sm:h-64">
+              {/* Map — full address embed */}
+              <div className="mt-5 rounded-xl overflow-hidden border border-gray-100 shadow-sm" style={{ height: "340px" }}>
                 <iframe
-                  title="DIS Location"
+                  title="Daudi International School Muzaffarpur — Motijheel Location Map"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3566.0867756994097!2d85.38412621503748!3d26.11876298346217!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39ed2f5f1ede1555%3A0x7b72e39bb65d4d8b!2sMotijheel%2C%20Muzaffarpur%2C%20Bihar!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin"
                   width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
+              <p className="text-xs mt-2.5 leading-relaxed" style={{ color: "var(--ink-muted)" }}>
+                📍 <strong>Daudi International School</strong> — Shafi Manzil, Daudi Market, Motijheel, Muzaffarpur, Bihar 842001
+              </p>
             </motion.div>
           </div>
         </div>
       </section>
 
+      <LocalPresence />
       <Footer />
     </div>
   );

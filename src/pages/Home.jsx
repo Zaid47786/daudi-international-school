@@ -410,6 +410,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Local presence strip */}
+      <section style={{ backgroundColor: "var(--cobalt-deep)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-5">
+          <div className="flex flex-wrap items-center justify-center sm:justify-between gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-2">
+              <span style={{ fontSize: "12px", color: "rgba(232,168,32,0.85)" }}>📍</span>
+              <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>
+                Shafi Manzil, Motijheel, <strong style={{ color: "rgba(255,255,255,0.8)" }}>Muzaffarpur</strong>, Bihar 842001
+              </span>
+            </div>
+            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <div className="flex items-center gap-2">
+              <span style={{ fontSize: "12px", color: "rgba(232,168,32,0.85)" }}>📞</span>
+              <a href="tel:+916212243314" className="text-xs font-medium hover:text-white transition-colors" style={{ color: "rgba(255,255,255,0.55)" }}>
+                +91 621 224 3314
+              </a>
+            </div>
+            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <div className="flex items-center gap-2">
+              <span style={{ fontSize: "12px", color: "rgba(232,168,32,0.85)" }}>🕐</span>
+              <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>Mon – Sat · 8:00 AM – 3:00 PM</span>
+            </div>
+            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <a href="https://www.google.com/maps/search/Daudi+International+School+Muzaffarpur"
+              target="_blank" rel="noopener noreferrer"
+              className="text-xs font-semibold px-3 py-1.5 rounded transition-opacity hover:opacity-80"
+              style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}>
+              Get Directions →
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Trust Signals */}
       <TrustSignals />
 
