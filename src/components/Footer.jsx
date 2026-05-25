@@ -22,7 +22,6 @@ export default function Footer() {
                 loading="lazy"
                 width="44" height="44"
                 className="h-11 w-auto"
-                style={{ filter: "brightness(1.8) contrast(1.5) drop-shadow(0 0 3px rgba(232,168,32,0.4))" }}
               />
               <div className="leading-none">
                 <div className="text-white font-semibold text-sm leading-snug">Daudi International School</div>
