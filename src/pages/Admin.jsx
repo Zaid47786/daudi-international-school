@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Settings, Calendar, Image, BarChart3, Home, LogOut, Menu, X, Inbox } from "lucide-react";
+import { Settings, Calendar, Image, BarChart3, Home, LogOut, Menu, X, Inbox, BookOpen } from "lucide-react";
 import AdminSettings from "../components/admin/AdminSettings";
 import AdminEvents from "../components/admin/AdminEvents";
 import AdminGallery from "../components/admin/AdminGallery";
 import AdminStats from "../components/admin/AdminStats";
 import AdminInquiries from "../components/admin/AdminInquiries";
+import AdminBlog from "../components/admin/AdminBlog";
 import { base44 } from "@/api/base44Client";
 
 const tabs = [
@@ -14,6 +15,7 @@ const tabs = [
   { id: "events", label: "Events", icon: Calendar },
   { id: "gallery", label: "Gallery", icon: Image },
   { id: "inquiries", label: "Inquiries", icon: Inbox },
+  { id: "blog", label: "Blog", icon: BookOpen },
 ];
 
 const ADMIN_PASSWORD = "Me2DIS";
@@ -84,6 +86,7 @@ export default function Admin() {
     events: AdminEvents,
     gallery: AdminGallery,
     inquiries: AdminInquiries,
+    blog: AdminBlog,
   }[activeTab];
 
   return (

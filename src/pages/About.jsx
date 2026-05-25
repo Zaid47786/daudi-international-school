@@ -4,6 +4,7 @@ import { Heart, BookOpen, Users, Star, ArrowRight, Quote } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import SEOHead from "../components/SEOHead";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -31,6 +32,11 @@ const values = [
 export default function About() {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
+      <SEOHead
+        title="About Us | DIS Muzaffarpur — Non-Profit English Medium School"
+        description="Learn about Daudi International School, founded in 2005 under the Daudi Welfare Trust. A non-profit English-medium school in Muzaffarpur, Bihar built on purpose, not profit."
+        canonical="https://daudischool.in/about"
+      />
       <Navbar />
       <PageHero
         title="About DIS"

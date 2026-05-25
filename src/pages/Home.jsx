@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { BookOpen, Users, Award, Heart, Star, Globe, Trophy, ArrowRight, ArrowUpRight, GraduationCap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
+import TestimonialsSection from "../components/home/TestimonialsSection";
+import FAQSection from "../components/home/FAQSection";
+import TrustSignals from "../components/home/TrustSignals";
 import { useSettings, useStats, useEvents } from "../lib/useSchoolData";
 
 const ICON_MAP = { BookOpen, Users, Award, Heart, Star, Globe, Trophy, GraduationCap };
@@ -21,6 +25,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
+      <SEOHead
+        title="Best School in Muzaffarpur | English Medium Education"
+        description="Daudi International School — one of the best English-medium schools in Muzaffarpur, Bihar. Non-profit, Nursery to Class X, quality education under Daudi Welfare Trust. Admissions open 2026–27."
+        canonical="https://daudischool.in/"
+      />
       <Navbar />
 
       {/* ══════════════════════════════════════════
@@ -400,6 +409,15 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Trust Signals */}
+      <TrustSignals />
+
+      {/* Testimonials */}
+      <TestimonialsSection />
+
+      {/* FAQ */}
+      <FAQSection />
 
       {/* ══════════════════════════════════════════
           CTA — clean, direct

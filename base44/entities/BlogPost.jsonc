@@ -1,0 +1,62 @@
+{
+  "name": "BlogPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier, e.g. 'dis-toppers-2025'"
+    },
+    "excerpt": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "cover_image": {
+      "type": "string",
+      "description": "Image URL"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Events",
+        "Academics",
+        "Achievements",
+        "Admissions",
+        "Science & Tech",
+        "School Life",
+        "Announcements"
+      ]
+    },
+    "author": {
+      "type": "string",
+      "default": "DIS Team"
+    },
+    "published": {
+      "type": "boolean",
+      "default": false
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "meta_description": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "tags": {
+      "type": "string",
+      "description": "Comma-separated tags"
+    }
+  },
+  "required": [
+    "title",
+    "slug",
+    "category"
+  ]
+}

@@ -15,6 +15,13 @@ import Events from './pages/Events';
 import Gallery from './pages/Gallery';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+import BestSchoolMuzaffarpur from './pages/seo/BestSchoolMuzaffarpur';
+import CBSESchoolMuzaffarpur from './pages/seo/CBSESchoolMuzaffarpur';
+import EnglishMediumSchool from './pages/seo/EnglishMediumSchool';
+import AdmissionsOpen from './pages/seo/AdmissionsOpen';
+import SchoolNearMe from './pages/seo/SchoolNearMe';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -54,6 +61,13 @@ const AuthenticatedApp = () => {
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
+      <Route path="/best-school-in-muzaffarpur" element={<BestSchoolMuzaffarpur />} />
+      <Route path="/cbse-school-in-muzaffarpur" element={<CBSESchoolMuzaffarpur />} />
+      <Route path="/english-medium-school-in-muzaffarpur" element={<EnglishMediumSchool />} />
+      <Route path="/admissions-open" element={<AdmissionsOpen />} />
+      <Route path="/school-near-me" element={<SchoolNearMe />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
