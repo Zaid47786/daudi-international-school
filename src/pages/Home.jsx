@@ -29,7 +29,7 @@ export default function Home() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
+    <div id="main-content" className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
       <SEOHead
         title="Best School in Muzaffarpur | English Medium Education"
         description="Daudi International School — one of the best English-medium schools in Muzaffarpur, Bihar. Non-profit, Nursery to Class X, quality education under Daudi Welfare Trust. Admissions open 2026–27."
@@ -49,6 +49,7 @@ export default function Home() {
             alt=""
             className="w-full h-full object-cover"
             style={{ objectPosition: "center 20%", opacity: 0.18 }}
+            fetchpriority="high"
           />
         </motion.div>
 
@@ -137,7 +138,7 @@ export default function Home() {
                 {["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop",
                   "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop",
                   "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=60&h=60&fit=crop"].map((src, i) => (
-                  <img key={i} src={src} alt="" className="w-8 h-8 rounded-full object-cover ring-2"
+                  <img key={i} src={src} alt="DIS parent" width="32" height="32" className="w-8 h-8 rounded-full object-cover ring-2"
                     style={{ ringColor: "var(--cobalt-deep)" }} />
                 ))}
               </div>
@@ -162,7 +163,8 @@ export default function Home() {
               <div className="absolute inset-0 rounded-full blur-3xl opacity-20" style={{ backgroundColor: "var(--amber)" }} />
               <img
                 src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
-                alt="Daudi International School"
+                alt="Daudi International School Muzaffarpur official logo"
+                fetchpriority="high"
                 className="relative w-48 h-auto drop-shadow-2xl"
               />
             </div>
@@ -239,7 +241,8 @@ export default function Home() {
                 style={{ height: "clamp(300px, 40vw, 500px)" }}>
                 <img
                   src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=85"
-                  alt="Students learning at DIS Muzaffarpur"
+                  alt="Students learning at Daudi International School Muzaffarpur"
+                  loading="lazy"
                   className="w-full h-full object-cover"
                   style={{ objectPosition: "center 25%" }}
                 />
@@ -265,7 +268,8 @@ export default function Home() {
                 style={{ border: "3px solid white" }}>
                 <img
                   src="https://images.unsplash.com/photo-1588072432836-e10032774350?w=200&q=75"
-                  alt=""
+                  alt="DIS school activity"
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -436,6 +440,7 @@ export default function Home() {
           ].map((img, i) => (
             <div key={i} className="overflow-hidden relative group" style={{ flex: img.flex }}>
               <img src={img.src} alt=""
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 style={{ objectPosition: "center" }} />
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"

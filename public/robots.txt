@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages
+Disallow: /admin
+Disallow: /admin/
+
+# Sitemaps
+Sitemap: https://daudischool.in/sitemap.xml

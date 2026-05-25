@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 
 /**
- * SEOHead — dynamically updates <head> meta tags for each page.
- * Usage: <SEOHead title="..." description="..." canonical="..." />
+ * SEOHead — dynamically sets all critical <head> meta for each page.
+ * Handles: title, description, canonical, OG tags, Twitter Card, JSON-LD schema.
  */
 export default function SEOHead({
   title,
   description,
   canonical,
   ogImage = "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+  ogType = "website",
   schema = null,
+  noindex = false,
 }) {
   const fullTitle = title
     ? `${title} | Daudi International School Muzaffarpur`
@@ -19,27 +21,39 @@ export default function SEOHead({
     // Title
     document.title = fullTitle;
 
-    // Helper to set/create meta
-    const setMeta = (selector, content) => {
-      let el = document.querySelector(selector);
+    // Helper: find or create <meta>
+    const setMeta = (attrKey, attrVal, content) => {
+      let el = document.querySelector(`meta[${attrKey}="${attrVal}"]`);
       if (!el) {
         el = document.createElement("meta");
-        const attr = selector.includes("property") ? "property" : "name";
-        const val = selector.match(/["']([^"']+)["']/)?.[1];
-        if (attr && val) el.setAttribute(attr, val);
+        el.setAttribute(attrKey, attrVal);
         document.head.appendChild(el);
       }
       el.setAttribute("content", content);
     };
 
+    // Robots
+    setMeta("name", "robots", noindex ? "noindex, nofollow" : "index, follow, max-snippet:-1, max-image-preview:large");
+
+    // Description
     if (description) {
-      setMeta('meta[name="description"]', description);
-      setMeta('meta[property="og:description"]', description);
-      setMeta('meta[name="twitter:description"]', description);
+      setMeta("name", "description", description);
+      setMeta("property", "og:description", description);
+      setMeta("name", "twitter:description", description);
     }
-    setMeta('meta[property="og:title"]', fullTitle);
-    setMeta('meta[name="twitter:title"]', fullTitle);
-    if (ogImage) setMeta('meta[property="og:image"]', ogImage);
+
+    // OG
+    setMeta("property", "og:title", fullTitle);
+    setMeta("property", "og:type", ogType);
+    setMeta("property", "og:image", ogImage);
+    setMeta("property", "og:image:alt", "Daudi International School Muzaffarpur");
+    setMeta("property", "og:locale", "en_IN");
+    if (canonical) setMeta("property", "og:url", canonical);
+
+    // Twitter
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:title", fullTitle);
+    setMeta("name", "twitter:image", ogImage);
 
     // Canonical
     if (canonical) {
@@ -67,11 +81,13 @@ export default function SEOHead({
     }
 
     return () => {
-      // On unmount, clean up page-specific schema
       const s = document.getElementById("page-schema");
       if (s) s.remove();
+      // Reset canonical to home on unmount
+      const canon = document.querySelector('link[rel="canonical"]');
+      if (canon) canon.setAttribute("href", "https://daudischool.in/");
     };
-  }, [fullTitle, description, canonical, ogImage, schema]);
+  }, [fullTitle, description, canonical, ogImage, ogType, schema, noindex]);
 
   return null;
 }

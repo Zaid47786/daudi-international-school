@@ -6,6 +6,22 @@ import { base44 } from "@/api/base44Client";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import SEOHead from "../components/SEOHead";
+
+const admissionsSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Admissions — Daudi International School Muzaffarpur",
+  "description": "Apply for admission to Daudi International School Muzaffarpur for session 2026–27. Enrolment open for Nursery to Class X. Affordable fees, scholarships available.",
+  "url": "https://daudischool.in/admissions",
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://daudischool.in/"},
+      {"@type": "ListItem", "position": 2, "name": "Admissions", "item": "https://daudischool.in/admissions"}
+    ]
+  }
+};
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -50,6 +66,12 @@ export default function Admissions() {
 
   return (
     <div className="min-h-screen bg-white font-inter">
+      <SEOHead
+        title="Admissions Open 2026–27 | Apply to DIS Muzaffarpur"
+        description="Admissions open at Daudi International School Muzaffarpur for 2026–27. Simple 4-step process, affordable fees, scholarships available. Apply for Nursery to Class X."
+        canonical="https://daudischool.in/admissions"
+        schema={admissionsSchema}
+      />
       <Navbar />
       <PageHero
         title="Admissions"

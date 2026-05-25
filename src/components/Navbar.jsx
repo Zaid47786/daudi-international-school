@@ -35,6 +35,7 @@ export default function Navbar() {
 
   return (
     <nav
+      aria-label="Main navigation"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-cobalt-deep shadow-[0_1px_0_rgba(255,255,255,0.06)]"
@@ -51,7 +52,8 @@ export default function Navbar() {
           <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             <img
               src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
-              alt="DIS"
+              alt="Daudi International School Muzaffarpur"
+              width="36" height="36"
               className="h-8 md:h-9 w-auto"
             />
             <div className="hidden sm:flex flex-col leading-none">

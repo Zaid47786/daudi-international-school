@@ -1,0 +1,25 @@
+{
+  "name": "Daudi International School Muzaffarpur",
+  "short_name": "DIS Muzaffarpur",
+  "description": "Best English-medium school in Muzaffarpur, Bihar. Non-profit, Nursery to Class X.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1f52",
+  "theme_color": "#0e1f52",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education"],
+  "related_applications": []
+}

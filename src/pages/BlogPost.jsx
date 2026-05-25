@@ -53,16 +53,25 @@ export default function BlogPostPage() {
     "@type": "Article",
     headline: post.title,
     description: post.meta_description || post.excerpt,
-    image: post.cover_image,
-    author: { "@type": "Organization", name: post.author || "DIS Team" },
+    image: post.cover_image || "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+    url: `https://daudischool.in/blog/${post.slug}`,
+    author: {
+      "@type": "Organization",
+      name: "Daudi International School",
+      url: "https://daudischool.in"
+    },
     publisher: {
       "@type": "Organization",
       name: "Daudi International School",
-      logo: "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+      },
     },
     datePublished: post.created_date,
-    dateModified: post.updated_date,
+    dateModified: post.updated_date || post.created_date,
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://daudischool.in/blog/${post.slug}` },
+    isPartOf: { "@type": "Blog", "@id": "https://daudischool.in/blog" },
   };
 
   return (
@@ -71,7 +80,8 @@ export default function BlogPostPage() {
         title={post.title}
         description={post.meta_description || post.excerpt || `${post.title} — DIS Muzaffarpur`}
         canonical={`https://daudischool.in/blog/${post.slug}`}
-        ogImage={post.cover_image}
+        ogImage={post.cover_image || undefined}
+        ogType="article"
         schema={schema}
       />
       <Navbar />

@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Calendar, Clock, MapPin } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import SEOHead from "../components/SEOHead";
 import { useEvents } from "../lib/useSchoolData";
 
 const fadeUp = (delay = 0) => ({
@@ -29,6 +29,11 @@ export default function Events() {
 
   return (
     <div className="min-h-screen bg-white font-inter">
+      <SEOHead
+        title="School Events | DIS Muzaffarpur Calendar"
+        description="Upcoming and past events at Daudi International School, Muzaffarpur — sports days, cultural festivals, academic competitions, and national celebrations."
+        canonical="https://daudischool.in/events"
+      />
       <Navbar />
       <PageHero
         title="Events"

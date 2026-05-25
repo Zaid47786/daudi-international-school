@@ -4,6 +4,7 @@ import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import SEOHead from "../components/SEOHead";
 import { useGalleryPhotos } from "../lib/useSchoolData";
 
 const categories = ["All", "Campus", "Events", "Classrooms", "Sports", "Cultural"];
@@ -24,6 +25,11 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
+      <SEOHead
+        title="Gallery | Campus Life & Events at DIS Muzaffarpur"
+        description="Browse photos from Daudi International School, Muzaffarpur — classrooms, sports, cultural events, and campus life. Real moments from our school community."
+        canonical="https://daudischool.in/gallery"
+      />
       <Navbar />
       <PageHero
         title="Gallery"

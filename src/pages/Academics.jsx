@@ -4,6 +4,25 @@ import { ArrowRight } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import SEOHead from "../components/SEOHead";
+
+const academicsSchema = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Daudi International School",
+  "url": "https://daudischool.in/academics",
+  "description": "English-medium academic programs from Nursery to Class X at Daudi International School, Muzaffarpur. Holistic education combining NCERT curriculum with activity-based learning.",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Academic Programs at DIS Muzaffarpur",
+    "itemListElement": [
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Montessori & Nursery (Ages 3–5)", "description": "Play-based foundational learning focusing on motor skills, language, creativity, and social confidence."}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Primary School — Class I to V (Ages 6–10)", "description": "Core academic foundations: English, Hindi, Mathematics, Science, and Social Studies."}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Middle School — Class VI to VIII (Ages 11–13)", "description": "Expanding subject depth with structured sciences, critical thinking, and Computer Science."}},
+      {"@type": "Offer", "itemOffered": {"@type": "Course", "name": "Secondary — Class IX & X (Ages 14–15)", "description": "Board-aligned curriculum with focused preparation for BSEB secondary examinations."}}
+    ]
+  }
+};
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -48,6 +67,12 @@ const activities = ["Annual Sports Day", "Republic Day Parade", "Cultural Festiv
 export default function Academics() {
   return (
     <div className="min-h-screen bg-white font-inter">
+      <SEOHead
+        title="Academics | English-Medium Nursery to Class X — DIS Muzaffarpur"
+        description="Explore the academic programs at Daudi International School, Muzaffarpur — from Montessori & Nursery through Class X. English-medium, NCERT-aligned, activity-based learning."
+        canonical="https://daudischool.in/academics"
+        schema={academicsSchema}
+      />
       <Navbar />
       <PageHero
         title="Academics"
@@ -133,7 +158,7 @@ export default function Academics() {
               <div className="rounded-lg overflow-hidden aspect-video">
                 <img
                   src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=900&q=80"
-                  alt="Students at activities"
+                  alt="DIS Muzaffarpur students participating in co-curricular activities"
                   className="w-full h-full object-cover"
                 />
               </div>

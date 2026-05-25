@@ -8,14 +8,15 @@ export default function PageHero({ title, subtitle, bgImage }) {
     >
       {/* Background */}
       {bgImage && (
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url(${bgImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center 35%",
-          }}
-        />
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src={bgImage}
+            alt=""
+            loading="lazy"
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center 35%" }}
+          />
+        </div>
       )}
       {/* Overlay */}
       <div className={`absolute inset-0 ${bgImage ? "bg-cobalt-deep/80" : "bg-cobalt-deep"}`} />

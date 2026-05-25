@@ -92,13 +92,15 @@ export default function About() {
               <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 <img
                   src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80"
-                  alt="Students in classroom"
+                  alt="Students learning in classroom at Daudi International School Muzaffarpur"
+                  loading="lazy"
                   className="rounded-xl w-full object-cover col-span-2"
                   style={{ height: "clamp(160px, 25vw, 240px)" }}
                 />
                 <img
                   src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&q=80"
-                  alt="Books and learning"
+                  alt="Books and study materials — quality learning at DIS Muzaffarpur"
+                  loading="lazy"
                   className="rounded-xl w-full object-cover"
                   style={{ height: "clamp(120px, 18vw, 180px)" }}
                 />
@@ -126,7 +128,8 @@ export default function About() {
                 <div className="rounded-2xl overflow-hidden shadow-xl" style={{ aspectRatio: "3/4" }}>
                   <img
                     src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80"
-                    alt="Founder"
+                    alt="Altamash Daudi, Founder and Director of Daudi International School Muzaffarpur"
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </div>
