@@ -80,7 +80,7 @@ export default function Home() {
             >
               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--amber)", boxShadow: "0 0 6px var(--amber)" }} />
               <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(232,168,32,0.9)" }}>
-                Muzaffarpur · Est. 2005 · Non-profit
+                Muzaffarpur · Est. 2004 · Non-profit
               </span>
             </motion.div>
 
@@ -260,7 +260,7 @@ export default function Home() {
                 className="absolute bottom-0 right-0 sm:-right-6 rounded-2xl shadow-xl px-6 py-5"
                 style={{ backgroundColor: "var(--cobalt-deep)", minWidth: "160px" }}>
                 <div className="font-fraunces font-bold leading-none mb-1.5" style={{ fontSize: "2.2rem", color: "var(--amber)", letterSpacing: "-0.02em" }}>1000+</div>
-                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>children taught<br />since 2005</div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>children taught<br />since 2004</div>
               </motion.div>
 
               {/* Small accent image — stacked behind */}
@@ -292,7 +292,7 @@ export default function Home() {
               </h2>
 
               <p style={{ fontSize: "1.05rem", color: "var(--ink-soft)", lineHeight: 1.85, marginBottom: "10px" }}>
-                Founded in 2005 under the Daudi Welfare Trust — DIS exists to prove that quality English-medium education in Muzaffarpur doesn't have to be a privilege.
+                Founded in 2004 under the Daudi Welfare Trust — DIS exists to prove that quality English-medium education in Muzaffarpur doesn't have to be a privilege.
               </p>
               <p style={{ fontSize: "0.92rem", color: "var(--ink-muted)", lineHeight: 1.85, marginBottom: "36px" }}>
                 We're non-profit by design. Every rupee goes back into classrooms, teachers, and the futures of the students we serve.

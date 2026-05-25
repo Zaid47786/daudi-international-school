@@ -59,7 +59,7 @@ export default function Navbar() {
             <div className="hidden sm:flex flex-col leading-none">
               <span className="text-white font-semibold text-[13px] tracking-tight">Daudi International</span>
               <span style={{ color: "var(--amber)", fontSize: "10px", letterSpacing: "0.12em", fontWeight: 600 }}>
-                MUZAFFARPUR
+                EST. 2004
               </span>
             </div>
           </Link>
