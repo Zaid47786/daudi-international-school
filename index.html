@@ -53,10 +53,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://media.base44.com" crossorigin />
-    <!-- Fonts: load only critical subset upfront -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,600&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,600&display=swap" media="print" onload="this.media='all'" />
-    <!-- Preload logo (used on mobile hero, no bg image) -->
+    <!-- Preload hero image (LCP) -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=1200&q=75&fm=webp" fetchpriority="high" />
+    <!-- Preload logo -->
     <link rel="preload" as="image" href="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png" />
 
     <!-- Structured Data: Organization + School + LocalBusiness -->
@@ -192,36 +191,12 @@
       ]
     }
     </script>
-    <!-- Critical inline CSS: prevent FOUT, establish layout before JS -->
+    <!-- Critical perf: font-display swap + content-visibility hints -->
     <style>
-      /* System font during web-font load to prevent invisible text */
-      body {
-        margin: 0;
-        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-        background: #0e1f52;
-        color: #fff;
-      }
-      /* Hero placeholder — prevents layout shift while React hydrates */
-      #root:empty::before {
-        content: '';
-        display: block;
-        min-height: 100svh;
-        background: linear-gradient(160deg, #0e1f52 0%, #1a3580 100%);
-      }
-      /* Font-display swap overrides */
-      @font-face { font-family: 'Inter'; font-display: swap; src: local('Inter'); }
-      @font-face { font-family: 'Fraunces'; font-display: swap; src: local('Fraunces'); }
-      /* Disable heavy animations on low-end/reduced-motion */
-      @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
-          animation-duration: 0.01ms !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
-      /* Mobile: content-visibility for below-fold sections */
-      @media (max-width: 768px) {
-        .cv-auto { content-visibility: auto; contain-intrinsic-size: 0 400px; }
-      }
+      @font-face { font-family: 'Inter'; font-display: swap; }
+      @font-face { font-family: 'Fraunces'; font-display: swap; }
+      /* Avoid layout shift on load */
+      body { font-family: system-ui, -apple-system, sans-serif; }
     </style>
   </head>
   <body>

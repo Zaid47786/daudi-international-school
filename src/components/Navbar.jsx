@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const navLinks = [
   { label: "About", path: "/about" },
@@ -109,8 +110,13 @@ export default function Navbar() {
       </div>
 
       {/* Mobile drawer */}
+      <AnimatePresence>
         {isOpen && (
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
             className="lg:hidden overflow-hidden"
             style={{ background: "var(--cobalt-deep)", borderTop: "1px solid rgba(255,255,255,0.07)" }}
           >
@@ -140,8 +146,9 @@ export default function Navbar() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
+      </AnimatePresence>
     </nav>
   );
 }
