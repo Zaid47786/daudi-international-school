@@ -4,9 +4,9 @@ import { Star, Quote } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const FALLBACK = [
-  { parent_name: "Anjali Singh", child_class: "Class VII", quote: "DIS has transformed my daughter. The teachers here don't just teach — they genuinely care about each child's future. Best decision we made.", rating: 5 },
-  { parent_name: "Mohammed Raza", child_class: "Class IV", quote: "The English-medium instruction from day one gave my son a confidence I never expected. His vocabulary and communication have improved dramatically.", rating: 5 },
-  { parent_name: "Sunita Devi", child_class: "Class IX", quote: "As a middle-income family, we worried about quality education being out of reach. DIS proved us wrong — excellent faculty, affordable fees, and real results.", rating: 5 },
+  { parent_name: "Shabana Parveen", child_class: "Class V", quote: "The teachers are very caring and they bring out the best in every student. The school provides a nurturing and supportive environment for holistic development.", rating: 5 },
+  { parent_name: "Rajan Kumar", child_class: "Class VIII", quote: "Bahut achha school hai. Yahan ke teachers bahut mehnat karte hain aur bacchon ko personally dhyan dete hain. Mera beta yahan se bahut kuch seekh raha hai.", rating: 5 },
+  { parent_name: "Nasreen Begum", child_class: "Class III", quote: "DIS is the best school in Motijheel area. Fee bhi reasonable hai aur padhai ka level bhi bahut achha hai. Hamari beti English mein bahut confident ho gayi hai.", rating: 5 },
 ];
 
 const fadeUp = (delay = 0) => ({

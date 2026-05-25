@@ -45,7 +45,7 @@ export default function Home() {
         {/* Parallax background */}
         <motion.div className="absolute inset-0" style={{ y: heroImgY }}>
           <img
-            src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1800&q=85"
+            src="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=1800&q=85"
             alt=""
             className="w-full h-full object-cover"
             style={{ objectPosition: "center 20%", opacity: 0.18 }}
@@ -135,9 +135,9 @@ export default function Home() {
               className="flex items-center gap-4 mt-10"
             >
               <div className="flex -space-x-2">
-                {["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop",
-                  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop",
-                  "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=60&h=60&fit=crop"].map((src, i) => (
+                 {["https://images.unsplash.com/photo-1606155566195-cc12e2b4dfe3?w=60&h=60&fit=crop",
+                   "https://images.unsplash.com/photo-1595152772835-219674b2a163?w=60&h=60&fit=crop",
+                   "https://images.unsplash.com/photo-1588072432836-e10032774350?w=60&h=60&fit=crop"].map((src, i) => (
                   <img key={i} src={src} alt="DIS parent" width="32" height="32" className="w-8 h-8 rounded-full object-cover ring-2"
                     style={{ ringColor: "var(--cobalt-deep)" }} />
                 ))}
@@ -240,11 +240,11 @@ export default function Home() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl"
                 style={{ height: "clamp(300px, 40vw, 500px)" }}>
                 <img
-                  src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=85"
+                  src="https://images.unsplash.com/photo-1573894999291-f440466112cc?w=900&q=85"
                   alt="Students learning at Daudi International School Muzaffarpur"
                   loading="lazy"
                   className="w-full h-full object-cover"
-                  style={{ objectPosition: "center 25%" }}
+                  style={{ objectPosition: "center 30%" }}
                 />
                 {/* Soft vignette bottom */}
                 <div className="absolute inset-x-0 bottom-0 h-24"
@@ -267,7 +267,7 @@ export default function Home() {
               <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-xl overflow-hidden hidden sm:block shadow-lg"
                 style={{ border: "3px solid white" }}>
                 <img
-                  src="https://images.unsplash.com/photo-1588072432836-e10032774350?w=200&q=75"
+                  src="https://images.unsplash.com/photo-1636772523547-5577d04e8dc1?w=200&q=75"
                   alt="DIS school activity"
                   loading="lazy"
                   className="w-full h-full object-cover"
@@ -433,10 +433,10 @@ export default function Home() {
           style={{ height: "clamp(200px, 35vw, 420px)" }}
         >
           {[
-            { src: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=85", flex: 2 },
-            { src: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=600&q=80", flex: 1 },
-            { src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80", flex: 1 },
-            { src: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&q=80", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1719159381916-062fa9f435a6?w=800&q=85", flex: 2 },
+            { src: "https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=600&q=80", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1636772523547-5577d04e8dc1?w=600&q=80", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1573894999291-f440466112cc?w=600&q=80", flex: 1 },
           ].map((img, i) => (
             <div key={i} className="overflow-hidden relative group" style={{ flex: img.flex }}>
               <img src={img.src} alt=""
