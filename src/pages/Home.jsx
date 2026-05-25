@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { BookOpen, Users, Award, Heart, Star, Globe, Trophy, ArrowRight, ArrowUpRight, GraduationCap } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { BookOpen, Users, Award, Heart, Star, Globe, Trophy, ArrowRight, GraduationCap, MapPin, Phone } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEOHead from "../components/SEOHead";
@@ -12,16 +13,20 @@ import { useSettings, useStats, useEvents } from "../lib/useSchoolData";
 const ICON_MAP = { BookOpen, Users, Award, Heart, Star, Globe, Trophy, GraduationCap };
 
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-40px" },
-  transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay },
+  viewport: { once: true, margin: "-30px" },
+  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
 });
 
 export default function Home() {
   const { settings } = useSettings();
   const { stats } = useStats();
   const { events: upcomingEvents } = useEvents("upcoming");
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroImgY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "var(--font-inter)" }}>
@@ -32,129 +37,179 @@ export default function Home() {
       />
       <Navbar />
 
-      {/* ══════════════════════════════════════════
-          HERO — asymmetric, editorial, full-bleed
-         ══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden" style={{ minHeight: "100svh", backgroundColor: "var(--cobalt-deep)" }}>
+      {/* ═══════════════════════════════════════════════════
+          HERO — cinematic parallax, left-anchored storytelling
+         ═══════════════════════════════════════════════════ */}
+      <section ref={heroRef} className="relative overflow-hidden" style={{ minHeight: "100svh", backgroundColor: "var(--cobalt-deep)" }}>
 
-        {/* Background image — right-side crop */}
-        <div className="absolute inset-0">
+        {/* Parallax background */}
+        <motion.div className="absolute inset-0" style={{ y: heroImgY }}>
           <img
             src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1800&q=85"
             alt=""
             className="w-full h-full object-cover"
-            style={{ objectPosition: "center 20%", opacity: 0.25 }}
+            style={{ objectPosition: "center 20%", opacity: 0.18 }}
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(110deg, var(--cobalt-deep) 50%, rgba(14,31,82,0.6) 100%)" }} />
-        </div>
+        </motion.div>
 
-        {/* Fine grid overlay */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+        {/* Layered gradient — more atmospheric */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(14,31,82,0.97) 0%, rgba(14,31,82,0.75) 50%, rgba(26,53,128,0.5) 100%)" }} />
 
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col items-center justify-center" style={{ minHeight: "100svh", paddingTop: "80px", paddingBottom: "64px", gap: "clamp(24px, 5vw, 56px)" }}>
+        {/* Subtle noise texture */}
+        <div className="absolute inset-0 opacity-[0.025]"
+          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")" }} />
 
-          {/* Logo — responsive size per breakpoint */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center"
-          >
-            <img
-              src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
-              alt="Daudi International School"
-              className="w-auto drop-shadow-2xl h-24 sm:h-32 md:h-36 lg:h-40 xl:h-44"
-            />
-            <p className="mt-2 font-inter font-semibold text-white uppercase tracking-widest text-center text-[9px] sm:text-[10px] lg:text-[11px]" style={{ letterSpacing: "0.22em", opacity: 0.45 }}>
-              Daudi International School
-            </p>
-          </motion.div>
+        {/* Amber accent — thin top line */}
+        <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: "linear-gradient(90deg, transparent 0%, var(--amber) 30%, var(--amber-light) 60%, transparent 100%)" }} />
 
-          <div className="w-full max-w-3xl text-center sm:text-left">
+        <motion.div
+          style={{ opacity: heroOpacity, minHeight: "100svh", paddingTop: "90px", paddingBottom: "80px" }}
+          className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-16 flex flex-col lg:flex-row lg:items-center lg:gap-20"
+        >
+          {/* Left — text content */}
+          <div className="flex-1 flex flex-col justify-center">
 
-            {/* Eyebrow */}
+            {/* Eyebrow chip */}
             <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center justify-center sm:justify-start gap-3 mb-6 sm:mb-8"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="inline-flex items-center gap-2.5 self-start mb-8"
+              style={{ border: "1px solid rgba(232,168,32,0.3)", borderRadius: "100px", padding: "6px 14px 6px 8px", backgroundColor: "rgba(232,168,32,0.07)" }}
             >
-              <div className="w-6 h-px" style={{ backgroundColor: "var(--amber)" }} />
-              <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(232,168,32,0.85)" }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--amber)", boxShadow: "0 0 6px var(--amber)" }} />
+              <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(232,168,32,0.9)" }}>
                 Muzaffarpur · Est. 2005 · Non-profit
               </span>
             </motion.div>
 
-            {/* Main headline — mixed weight, varied sizing */}
-            <motion.div
-              initial={{ opacity: 0, y: 28 }}
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.75, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              style={{ lineHeight: 1.06, letterSpacing: "-0.03em", marginBottom: "28px" }}
             >
-              <h1 style={{ lineHeight: 1.05, letterSpacing: "-0.03em", marginBottom: "24px" }}>
-                <span className="block text-white font-inter font-bold" style={{ fontSize: "clamp(2.4rem, 6vw, 4.5rem)" }}>
-                  Where every child
-                </span>
-                <span className="block font-fraunces italic" style={{ fontSize: "clamp(2.6rem, 6.5vw, 5rem)", color: "var(--amber-light)" }}>
-                  deserves to learn.
-                </span>
-              </h1>
-            </motion.div>
+              <span className="block text-white font-inter font-bold" style={{ fontSize: "clamp(2.6rem, 5.5vw, 4.4rem)" }}>
+                Where every child
+              </span>
+              <span className="block font-fraunces italic" style={{ fontSize: "clamp(2.8rem, 6vw, 4.9rem)", color: "var(--amber-light)", lineHeight: 1.1 }}>
+                deserves to learn.
+              </span>
+            </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.22 }}
-              style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.1rem)", color: "rgba(255,255,255,0.58)", lineHeight: 1.75, maxWidth: "500px", marginBottom: "36px" }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              style={{ fontSize: "clamp(1rem, 1.6vw, 1.1rem)", color: "rgba(255,255,255,0.52)", lineHeight: 1.85, maxWidth: "480px", marginBottom: "40px" }}
             >
               {settings.hero_description || "A non-profit, English-medium school under the Daudi Welfare Trust — quality education for every child in Muzaffarpur, regardless of background."}
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.34 }}
-              className="flex flex-wrap gap-3 justify-center sm:justify-start"
+              transition={{ duration: 0.5, delay: 0.42 }}
+              className="flex flex-wrap gap-3"
             >
               <Link to="/admissions"
-                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-lg transition-all duration-200 hover:brightness-105 active:scale-[0.98]"
-                style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}>
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 text-sm font-semibold rounded-xl transition-all duration-200 hover:brightness-110 active:scale-[0.97]"
+                style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)", letterSpacing: "0.01em" }}>
                 Apply for admission
-                <ArrowRight size={14} />
+                <ArrowRight size={14} strokeWidth={2.5} />
               </Link>
               <Link to="/about"
-                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-medium rounded-lg transition-all duration-200"
-                style={{ border: "1px solid rgba(255,255,255,0.16)", color: "rgba(255,255,255,0.75)" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)"; e.currentTarget.style.color = "#fff"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; e.currentTarget.style.color = "rgba(255,255,255,0.75)"; }}>
+                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium rounded-xl transition-all duration-200 hover:bg-white/8"
+                style={{ border: "1px solid rgba(255,255,255,0.14)", color: "rgba(255,255,255,0.7)" }}>
                 Our story
               </Link>
             </motion.div>
+
+            {/* Micro social proof */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.62 }}
+              className="flex items-center gap-4 mt-10"
+            >
+              <div className="flex -space-x-2">
+                {["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop",
+                  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop",
+                  "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=60&h=60&fit=crop"].map((src, i) => (
+                  <img key={i} src={src} alt="" className="w-8 h-8 rounded-full object-cover ring-2"
+                    style={{ ringColor: "var(--cobalt-deep)" }} />
+                ))}
+              </div>
+              <div>
+                <div className="flex gap-px mb-0.5">
+                  {[1,2,3,4,5].map(i => <Star key={i} size={11} fill="var(--amber)" style={{ color: "var(--amber)" }} />)}
+                </div>
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>Trusted by <strong style={{ color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>1,000+ families</strong> in Muzaffarpur</p>
+              </div>
+            </motion.div>
           </div>
 
+          {/* Right — logo mark, larger screens */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="hidden lg:flex flex-col items-center shrink-0"
+            style={{ width: "280px" }}
+          >
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full blur-3xl opacity-20" style={{ backgroundColor: "var(--amber)" }} />
+              <img
+                src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+                alt="Daudi International School"
+                className="relative w-48 h-auto drop-shadow-2xl"
+              />
+            </div>
+          </motion.div>
+        </motion.div>
 
-        </div>
+        {/* Scroll cue */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          style={{ opacity: 0.35 }}
+        >
+          <div className="w-px h-10 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
+            <motion.div
+              className="w-px rounded-full"
+              style={{ backgroundColor: "var(--amber)", height: "40%" }}
+              animate={{ y: [0, 24, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </div>
+        </motion.div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          STATS STRIP — dynamic from DB
-         ══════════════════════════════════════════ */}
+      {/* ═══════════════════════════════════════════════════
+          STATS — horizontal scroll feel, not a rigid grid
+         ═══════════════════════════════════════════════════ */}
       {stats.length > 0 && (
-        <section style={{ backgroundColor: "var(--cobalt-deep)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <section style={{ backgroundColor: "var(--ink)", overflow: "hidden" }}>
           <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-            <div className="flex flex-wrap">
+            <div className="flex overflow-x-auto scrollbar-hide" style={{ scrollSnapType: "x mandatory" }}>
               {stats.slice(0, 4).map((s, i) => {
                 const Icon = ICON_MAP[s.icon] || Star;
                 return (
-                  <motion.div key={s.id} {...fadeUp(i * 0.06)}
-                    className="flex-1 min-w-[140px] flex items-center gap-4 px-6 py-7 border-r last:border-r-0"
-                    style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-                    <Icon size={16} strokeWidth={1.75} style={{ color: "var(--amber)", flexShrink: 0 }} />
-                    <div>
-                      <div className="font-fraunces font-bold text-white leading-none" style={{ fontSize: "1.6rem" }}>{s.value}</div>
-                      <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.38)", marginTop: "3px", fontWeight: 500 }}>{s.label}</div>
+                  <motion.div key={s.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.08 }}
+                    className="flex-1 min-w-[160px] flex flex-col justify-center px-7 py-8 relative"
+                    style={{ borderRight: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none", scrollSnapAlign: "start" }}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon size={14} strokeWidth={1.75} style={{ color: "var(--amber)", opacity: 0.85 }} />
                     </div>
+                    <div className="font-fraunces font-bold text-white" style={{ fontSize: "clamp(1.8rem, 3vw, 2.5rem)", lineHeight: 1, letterSpacing: "-0.02em" }}>{s.value}</div>
+                    <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)", marginTop: "6px", fontWeight: 500, letterSpacing: "0.03em" }}>{s.label}</div>
                   </motion.div>
                 );
               })}
@@ -163,280 +218,338 @@ export default function Home() {
         </section>
       )}
 
-      {/* ══════════════════════════════════════════
-          ABOUT — editorial split, image left
-         ══════════════════════════════════════════ */}
-      <section className="py-20 sm:py-32 bg-white overflow-hidden">
+      {/* ═══════════════════════════════════════════════════
+          ABOUT — organic, offset, editorial
+         ═══════════════════════════════════════════════════ */}
+      <section className="py-24 sm:py-36 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-0 items-center">
 
-            {/* Image — with floating accent */}
+            {/* Image column — 5 cols with organic offset */}
             <motion.div
-              initial={{ opacity: 0, x: -24 }}
+              initial={{ opacity: 0, x: -32 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-              className="relative"
+              transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:col-span-5 relative"
+              style={{ paddingBottom: "40px" }}
             >
-              <img
-                src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80"
-                alt="Students at DIS"
-                className="w-full rounded-xl object-cover shadow-xl"
-                style={{ height: "clamp(280px, 40vw, 460px)", objectPosition: "center 30%" }}
-              />
-              {/* accent block */}
-              <div className="absolute -bottom-5 -right-5 px-6 py-5 rounded-xl shadow-2xl"
-                style={{ backgroundColor: "var(--cobalt-deep)" }}>
-                <div className="font-fraunces font-bold leading-none mb-1" style={{ fontSize: "2rem", color: "var(--amber)" }}>1000+</div>
-                <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)" }}>students taught</div>
+              {/* Main image */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl"
+                style={{ height: "clamp(300px, 40vw, 500px)" }}>
+                <img
+                  src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=85"
+                  alt="Students learning at DIS Muzaffarpur"
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: "center 25%" }}
+                />
+                {/* Soft vignette bottom */}
+                <div className="absolute inset-x-0 bottom-0 h-24"
+                  style={{ background: "linear-gradient(to top, rgba(14,31,82,0.35), transparent)" }} />
               </div>
-              {/* amber rule */}
-              <div className="absolute top-0 left-0 w-1 h-full rounded-l-xl" style={{ backgroundColor: "var(--amber)" }} />
+
+              {/* Floating stat card — offset bottom right */}
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.3 }}
+                className="absolute bottom-0 right-0 sm:-right-6 rounded-2xl shadow-xl px-6 py-5"
+                style={{ backgroundColor: "var(--cobalt-deep)", minWidth: "160px" }}>
+                <div className="font-fraunces font-bold leading-none mb-1.5" style={{ fontSize: "2.2rem", color: "var(--amber)", letterSpacing: "-0.02em" }}>1000+</div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>children taught<br />since 2005</div>
+              </motion.div>
+
+              {/* Small accent image — stacked behind */}
+              <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-xl overflow-hidden hidden sm:block shadow-lg"
+                style={{ border: "3px solid white" }}>
+                <img
+                  src="https://images.unsplash.com/photo-1588072432836-e10032774350?w=200&q=75"
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </motion.div>
 
-            {/* Text */}
-            <motion.div {...fadeUp(0.1)}>
-              <p className="label-stamp text-cobalt mb-5">Who we are</p>
-              <h2 className="font-fraunces font-bold tracking-tight leading-tight mb-6"
-                style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", color: "var(--cobalt-deep)" }}>
-                A school built on<br />trust, not profit.
+            {/* Text column — 6 cols, offset by 1 */}
+            <motion.div
+              {...fadeUp(0.12)}
+              className="lg:col-span-6 lg:col-start-7 flex flex-col"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-px" style={{ backgroundColor: "var(--amber)" }} />
+                <span className="label-stamp text-cobalt">Who we are</span>
+              </div>
+
+              <h2 className="font-inter font-bold tracking-tight leading-[1.1] mb-6"
+                style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)", color: "var(--ink)", letterSpacing: "-0.025em" }}>
+                A school built on<br />
+                <span style={{ color: "var(--cobalt)" }}>trust, not profit.</span>
               </h2>
-              <p style={{ fontSize: "1rem", color: "var(--ink-soft)", lineHeight: 1.8, marginBottom: "12px" }}>
+
+              <p style={{ fontSize: "1.05rem", color: "var(--ink-soft)", lineHeight: 1.85, marginBottom: "10px" }}>
                 Founded in 2005 under the Daudi Welfare Trust — DIS exists to prove that quality English-medium education in Muzaffarpur doesn't have to be a privilege.
               </p>
-              <p style={{ fontSize: "0.9rem", color: "var(--ink-muted)", lineHeight: 1.8, marginBottom: "32px" }}>
-                We're non-profit by design. Every rupee goes back into classrooms, teachers, and the students we serve.
+              <p style={{ fontSize: "0.92rem", color: "var(--ink-muted)", lineHeight: 1.85, marginBottom: "36px" }}>
+                We're non-profit by design. Every rupee goes back into classrooms, teachers, and the futures of the students we serve.
               </p>
 
-              <div className="flex flex-col gap-3 mb-10">
-                {["English-medium, Nursery to Class X", "Scholarships for underprivileged students", "Dedicated mentors, not just instructors"].map((point, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: "var(--amber)" }} />
-                    <span style={{ fontSize: "14px", color: "var(--ink-soft)" }}>{point}</span>
+              {/* Proof points — horizontal lines, not bullets */}
+              <div className="space-y-0 mb-10" style={{ borderTop: "1px solid rgba(0,0,0,0.07)" }}>
+                {["English-medium instruction, Nursery to Class X", "Scholarships for underprivileged students", "Dedicated mentors, not just instructors"].map((point, i) => (
+                  <div key={i} className="flex items-center gap-4 py-4"
+                    style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                    <span className="font-fraunces font-bold text-xs shrink-0" style={{ color: "var(--amber)", minWidth: "20px" }}>0{i+1}</span>
+                    <span style={{ fontSize: "14px", color: "var(--ink-soft)", lineHeight: 1.5 }}>{point}</span>
                   </div>
                 ))}
               </div>
 
               <Link to="/about"
-                className="inline-flex items-center gap-2 text-sm font-semibold group transition-colors duration-150"
+                className="inline-flex items-center gap-2 text-sm font-semibold self-start group"
                 style={{ color: "var(--cobalt)" }}>
                 Read our full story
-                <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-1" />
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5"><ArrowRight size={14} /></span>
               </Link>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          FOUNDER QUOTE — full-width, editorial
-         ══════════════════════════════════════════ */}
-      <section className="py-16 sm:py-20 relative overflow-hidden" style={{ backgroundColor: "var(--cream)", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
-        <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
+      {/* ═══════════════════════════════════════════════════
+          FOUNDER QUOTE — handwritten feel, warm
+         ═══════════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden" style={{ backgroundColor: "var(--cobalt-deep)", padding: "clamp(60px, 8vw, 100px) 0" }}>
+        {/* Background texture — subtle diagonal lines */}
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{ backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.5) 0, rgba(255,255,255,0.5) 1px, transparent 0, transparent 50%)", backgroundSize: "24px 24px" }} />
+
+        <div className="relative max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="relative"
+            transition={{ duration: 0.9 }}
           >
-            {/* giant quote mark */}
-            <div className="absolute -top-4 -left-2 font-fraunces leading-none select-none"
-              style={{ fontSize: "8rem", color: "var(--amber)", opacity: 0.12, lineHeight: 1 }}>"</div>
+            {/* Oversized amber quote */}
+            <div className="font-fraunces select-none leading-none mb-4" aria-hidden
+              style={{ fontSize: "clamp(5rem, 12vw, 9rem)", color: "var(--amber)", opacity: 0.1, lineHeight: 0.8, marginLeft: "-0.1em" }}>"</div>
 
-            <blockquote className="relative font-fraunces italic leading-[1.6] mb-8"
-              style={{ fontSize: "clamp(1.15rem, 2.5vw, 1.6rem)", color: "var(--cobalt-deep)" }}>
-              "{settings.founder_quote || "Education is not a privilege — it is a right. We built this school to prove it."}"
+            <blockquote className="relative font-fraunces italic leading-[1.65] mb-10"
+              style={{ fontSize: "clamp(1.2rem, 2.4vw, 1.65rem)", color: "rgba(255,255,255,0.88)" }}>
+              {settings.founder_quote || "Education is not a privilege — it is a right. We built this school to prove it."}
             </blockquote>
-            <div className="flex items-center gap-4">
-              <div className="w-8 h-0.5 rounded-full" style={{ backgroundColor: "var(--amber)" }} />
-              <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--cobalt-deep)" }}>Altamash Daudi</span>
-              <span style={{ fontSize: "12px", color: "var(--ink-muted)" }}>Founder & Director, DIS</span>
+
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-0.5 rounded-full" style={{ background: "linear-gradient(90deg, var(--amber), transparent)" }} />
+              <div>
+                <p className="font-semibold text-white text-sm">Altamash Daudi</p>
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.38)", marginTop: "2px" }}>Founder & Director, Daudi International School</p>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          ACADEMICS — dark, grid layout
-         ══════════════════════════════════════════ */}
-      <section className="py-20 sm:py-28" style={{ backgroundColor: "var(--cobalt-deep)" }}>
+      {/* ═══════════════════════════════════════════════════
+          ACADEMICS — clean, spacious, not card-griddy
+         ═══════════════════════════════════════════════════ */}
+      <section className="py-24 sm:py-32" style={{ backgroundColor: "var(--cream)" }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
-            <motion.div {...fadeUp(0)}>
-              <p className="label-stamp mb-4" style={{ color: "rgba(232,168,32,0.75)" }}>Curriculum</p>
-              <h2 className="font-fraunces font-bold text-white tracking-tight leading-tight"
-                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.6rem)" }}>
-                Nursery to Class X,<br />taught in English.
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Left — heading */}
+            <motion.div {...fadeUp(0)} className="lg:col-span-5">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-px" style={{ backgroundColor: "var(--amber)" }} />
+                <span className="label-stamp text-cobalt">Curriculum</span>
+              </div>
+              <h2 className="font-inter font-bold leading-tight mb-6"
+                style={{ fontSize: "clamp(1.9rem, 3.5vw, 2.9rem)", color: "var(--ink)", letterSpacing: "-0.025em" }}>
+                Nursery to Class X,<br />
+                <span style={{ color: "var(--cobalt)" }}>taught in English.</span>
               </h2>
-            </motion.div>
-            <motion.div {...fadeUp(0.1)}>
-              <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.75, maxWidth: "340px" }}>
+              <p style={{ fontSize: "1rem", color: "var(--ink-muted)", lineHeight: 1.85, maxWidth: "380px", marginBottom: "32px" }}>
                 Small classes, dedicated teachers, a curriculum that builds thinkers — not just exam-passers.
               </p>
+              <Link to="/academics"
+                className="inline-flex items-center gap-2 text-sm font-semibold group"
+                style={{ color: "var(--cobalt)" }}>
+                Explore the full curriculum
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5"><ArrowRight size={14} /></span>
+              </Link>
             </motion.div>
-          </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
-            {[
-              { label: "Montessori & Nursery", sub: "Ages 3–5", accent: true },
-              { label: "Primary School", sub: "Class I – V" },
-              { label: "Middle School", sub: "Class VI – VIII" },
-              { label: "Secondary", sub: "Class IX – X" },
-            ].map((item, i) => (
-              <motion.div key={i} {...fadeUp(i * 0.07)}
-                className="rounded-xl p-5 sm:p-6 transition-all duration-200 hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: item.accent ? "var(--amber)" : "rgba(255,255,255,0.05)",
-                  border: item.accent ? "none" : "1px solid rgba(255,255,255,0.07)",
-                }}>
-                <div className="text-xs font-bold mb-3 rounded-full w-7 h-7 flex items-center justify-center"
-                  style={{ backgroundColor: item.accent ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.07)", color: item.accent ? "var(--cobalt-deep)" : "rgba(255,255,255,0.4)" }}>
-                  {i + 1}
-                </div>
-                <p className="font-semibold text-sm mb-1 leading-snug"
-                  style={{ color: item.accent ? "var(--cobalt-deep)" : "#fff" }}>
-                  {item.label}
-                </p>
-                <p style={{ fontSize: "12px", color: item.accent ? "var(--cobalt)" : "rgba(255,255,255,0.38)" }}>
-                  {item.sub}
-                </p>
-              </motion.div>
-            ))}
+            {/* Right — programme list, editorial style */}
+            <div className="lg:col-span-7">
+              {[
+                { num: "01", label: "Montessori & Nursery", sub: "Ages 3–5 · Play-based foundational learning", accent: true },
+                { num: "02", label: "Primary School", sub: "Class I – V · Core subjects, English immersion" },
+                { num: "03", label: "Middle School", sub: "Class VI – VIII · Critical thinking & STEM focus" },
+                { num: "04", label: "Secondary", sub: "Class IX – X · Board preparation & career readiness" },
+              ].map((item, i) => (
+                <motion.div key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.55, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex items-start gap-6 py-6 group cursor-default"
+                  style={{ borderBottom: "1px solid rgba(0,0,0,0.07)" }}>
+                  <span className="font-fraunces font-bold shrink-0 mt-0.5 transition-colors duration-200 group-hover:text-amber"
+                    style={{ fontSize: "0.8rem", color: item.accent ? "var(--amber)" : "rgba(0,0,0,0.2)", letterSpacing: "0.05em" }}>
+                    {item.num}
+                  </span>
+                  <div className="flex-1">
+                    <h3 className="font-semibold transition-colors duration-200 group-hover:text-cobalt"
+                      style={{ fontSize: "1.05rem", color: "var(--ink)", marginBottom: "4px" }}>
+                      {item.label}
+                    </h3>
+                    <p style={{ fontSize: "13px", color: "var(--ink-muted)" }}>{item.sub}</p>
+                  </div>
+                  <span className="self-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <ArrowRight size={16} style={{ color: "var(--cobalt)" }} />
+                  </span>
+                </motion.div>
+              ))}
+            </div>
           </div>
+        </div>
+      </section>
 
-          <Link to="/academics"
-            className="inline-flex items-center gap-2 text-sm font-semibold group transition-colors duration-150"
+      {/* ═══════════════════════════════════════════════════
+          VISUAL INTERLUDE — full bleed campus photos
+         ═══════════════════════════════════════════════════ */}
+      <section className="overflow-hidden" style={{ backgroundColor: "var(--ink)" }}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="flex gap-1"
+          style={{ height: "clamp(200px, 35vw, 420px)" }}
+        >
+          {[
+            { src: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=85", flex: 2 },
+            { src: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=600&q=80", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80", flex: 1 },
+            { src: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&q=80", flex: 1 },
+          ].map((img, i) => (
+            <div key={i} className="overflow-hidden relative group" style={{ flex: img.flex }}>
+              <img src={img.src} alt=""
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                style={{ objectPosition: "center" }} />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ background: "linear-gradient(to top, rgba(14,31,82,0.5), transparent)" }} />
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Caption */}
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-5 flex items-center justify-between">
+          <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", fontStyle: "italic" }}>Campus life at Daudi International School, Muzaffarpur</p>
+          <Link to="/gallery"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold group transition-colors duration-150"
             style={{ color: "var(--amber)" }}>
-            Explore the full curriculum
-            <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-1" />
+            View full gallery <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform duration-150" />
           </Link>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          EVENTS — editorial list, not card grid
-         ══════════════════════════════════════════ */}
+      {/* ═══════════════════════════════════════════════════
+          EVENTS — timeline feel, not a card deck
+         ═══════════════════════════════════════════════════ */}
       {upcomingEvents.length > 0 && (
-        <section className="py-20 sm:py-28 bg-white">
+        <section className="py-24 sm:py-32 bg-white">
           <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-            <div className="flex items-end justify-between mb-10 gap-4">
+            <div className="flex items-end justify-between mb-12 gap-4">
               <motion.div {...fadeUp(0)}>
-                <p className="label-stamp text-cobalt mb-2">What's coming up</p>
-                <h2 className="font-fraunces font-bold tracking-tight" style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", color: "var(--cobalt-deep)" }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-px" style={{ backgroundColor: "var(--amber)" }} />
+                  <span className="label-stamp text-cobalt">What's coming up</span>
+                </div>
+                <h2 className="font-inter font-bold tracking-tight"
+                  style={{ fontSize: "clamp(1.6rem, 3vw, 2.5rem)", color: "var(--ink)", letterSpacing: "-0.025em" }}>
                   School Calendar
                 </h2>
               </motion.div>
               <Link to="/events"
-                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium group shrink-0"
-                style={{ color: "var(--cobalt)" }}>
-                All events <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-1" />
+                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium group shrink-0 pb-1"
+                style={{ color: "var(--cobalt)", borderBottom: "1px solid rgba(26,53,128,0.2)" }}>
+                All events <ArrowRight size={13} className="transition-transform duration-150 group-hover:translate-x-1" />
               </Link>
             </div>
 
-            <div style={{ borderTop: "1px solid rgba(0,0,0,0.07)" }}>
+            <div>
               {upcomingEvents.slice(0, 4).map((ev, i) => (
-                <motion.div key={ev.id} {...fadeUp(i * 0.06)}
-                  className="flex items-start gap-5 sm:gap-8 py-5 border-b group cursor-default"
+                <motion.div key={ev.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.07 }}
+                  className="flex items-start gap-6 sm:gap-10 py-6 border-b group cursor-default"
                   style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-                  <div className="shrink-0 w-10 text-right">
-                    <span className="font-fraunces font-bold" style={{ fontSize: "1.35rem", color: "var(--amber)", lineHeight: 1 }}>
+                  <div className="shrink-0 w-12 text-right">
+                    <span className="font-fraunces font-bold block" style={{ fontSize: "1.6rem", color: "var(--amber)", lineHeight: 1, letterSpacing: "-0.02em" }}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-muted)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--ink-muted)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "5px" }}>
                       {ev.category} · {ev.date}
                     </p>
-                    <h3 className="transition-colors duration-150 group-hover:text-cobalt"
-                      style={{ fontSize: "1rem", fontWeight: 600, color: "var(--ink)", lineHeight: 1.35 }}>
+                    <h3 className="font-semibold transition-colors duration-150 group-hover:text-cobalt leading-snug"
+                      style={{ fontSize: "1rem", color: "var(--ink)" }}>
                       {ev.title}
                     </h3>
                     {ev.description && (
-                      <p className="mt-1 line-clamp-1" style={{ fontSize: "0.875rem", color: "var(--ink-muted)" }}>
+                      <p className="mt-1.5 line-clamp-1" style={{ fontSize: "0.875rem", color: "var(--ink-muted)" }}>
                         {ev.description}
                       </p>
                     )}
                   </div>
                   {ev.location && (
-                    <p className="hidden sm:block shrink-0 text-xs" style={{ color: "var(--ink-muted)", paddingTop: "3px" }}>
+                    <p className="hidden sm:flex items-center gap-1.5 shrink-0 text-xs" style={{ color: "var(--ink-muted)", paddingTop: "4px" }}>
+                      <MapPin size={11} style={{ color: "var(--amber)" }} />
                       {ev.location}
                     </p>
                   )}
                 </motion.div>
               ))}
             </div>
+
             <div className="mt-6 sm:hidden">
               <Link to="/events" className="inline-flex items-center gap-1.5 text-sm font-medium" style={{ color: "var(--cobalt)" }}>
-                View all events <ArrowRight size={14} />
+                View all events <ArrowRight size={13} />
               </Link>
             </div>
           </div>
         </section>
       )}
 
-      {/* ══════════════════════════════════════════
-          VISUAL GALLERY TEASER
-         ══════════════════════════════════════════ */}
-      <section className="py-20 sm:py-24" style={{ backgroundColor: "var(--cream)" }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-          <div className="flex items-end justify-between mb-8">
-            <motion.div {...fadeUp(0)}>
-              <p className="label-stamp text-cobalt mb-2">Campus life</p>
-              <h2 className="font-fraunces font-bold tracking-tight" style={{ fontSize: "clamp(1.4rem, 2.5vw, 2rem)", color: "var(--cobalt-deep)" }}>
-                Real moments, real stories.
-              </h2>
-            </motion.div>
-            <Link to="/gallery"
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium group shrink-0"
-              style={{ color: "var(--cobalt)" }}>
-              Full gallery <ArrowUpRight size={14} />
-            </Link>
-          </div>
-
-          <motion.div {...fadeUp(0.08)} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
-            {[
-              { src: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&q=80", span: "col-span-2 row-span-2", h: "h-64 sm:h-80" },
-              { src: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=400&q=80", span: "", h: "h-32 sm:h-36" },
-              { src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&q=80", span: "", h: "h-32 sm:h-36" },
-              { src: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80", span: "", h: "h-32 sm:h-36" },
-              { src: "https://images.unsplash.com/photo-1573495627361-d9b87960b12d?w=400&q=80", span: "", h: "h-32 sm:h-36" },
-            ].map((img, i) => (
-              <div key={i} className={`${img.span} overflow-hidden rounded-xl group cursor-pointer`}>
-                <img src={img.src} alt="" className={`w-full ${img.h} object-cover group-hover:scale-105 transition-transform duration-500`} />
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Local presence strip */}
+      {/* Local presence — info strip */}
       <section style={{ backgroundColor: "var(--cobalt-deep)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-5">
           <div className="flex flex-wrap items-center justify-center sm:justify-between gap-4 text-center sm:text-left">
             <div className="flex items-center gap-2">
-              <span style={{ fontSize: "12px", color: "rgba(232,168,32,0.85)" }}>📍</span>
-              <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>
-                Shafi Manzil, Motijheel, <strong style={{ color: "rgba(255,255,255,0.8)" }}>Muzaffarpur</strong>, Bihar 842001
+              <MapPin size={12} style={{ color: "var(--amber)", opacity: 0.85 }} />
+              <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
+                Shafi Manzil, Motijheel, <strong style={{ color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>Muzaffarpur</strong>, Bihar 842001
               </span>
             </div>
-            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.09)" }} />
             <div className="flex items-center gap-2">
-              <span style={{ fontSize: "12px", color: "rgba(232,168,32,0.85)" }}>📞</span>
-              <a href="tel:+916212243314" className="text-xs font-medium hover:text-white transition-colors" style={{ color: "rgba(255,255,255,0.55)" }}>
+              <Phone size={12} style={{ color: "var(--amber)", opacity: 0.85 }} />
+              <a href="tel:+916212243314" className="text-xs font-medium transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.5)" }}>
                 +91 621 224 3314
               </a>
             </div>
-            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
-            <div className="flex items-center gap-2">
-              <span style={{ fontSize: "12px", color: "rgba(232,168,32,0.85)" }}>🕐</span>
-              <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>Mon – Sat · 8:00 AM – 3:00 PM</span>
-            </div>
-            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.09)" }} />
+            <span className="text-xs" style={{ color: "rgba(255,255,255,0.38)" }}>Mon – Sat · 8:00 AM – 3:00 PM</span>
+            <div className="hidden sm:block w-px h-4" style={{ backgroundColor: "rgba(255,255,255,0.09)" }} />
             <a href="https://www.google.com/maps/search/Daudi+International+School+Muzaffarpur"
               target="_blank" rel="noopener noreferrer"
-              className="text-xs font-semibold px-3 py-1.5 rounded transition-opacity hover:opacity-80"
-              style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}>
+              className="text-xs font-semibold px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+              style={{ backgroundColor: "rgba(232,168,32,0.12)", color: "var(--amber)", border: "1px solid rgba(232,168,32,0.25)" }}>
               Get Directions →
             </a>
           </div>
@@ -452,34 +565,37 @@ export default function Home() {
       {/* FAQ */}
       <FAQSection />
 
-      {/* ══════════════════════════════════════════
-          CTA — clean, direct
-         ══════════════════════════════════════════ */}
-      <section className="py-16 sm:py-24 bg-white" style={{ borderTop: "1px solid rgba(0,0,0,0.05)" }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8">
-            <motion.div {...fadeUp(0)}>
-              <h2 className="font-fraunces font-bold tracking-tight leading-tight mb-2"
-                style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", color: "var(--cobalt-deep)" }}>
-                Admissions open for 2026–27.
-              </h2>
-              <p style={{ fontSize: "0.95rem", color: "var(--ink-soft)" }}>Get in touch — we'd love to show you around.</p>
-            </motion.div>
-            <motion.div {...fadeUp(0.1)} className="flex flex-wrap gap-3 shrink-0">
+      {/* ═══════════════════════════════════════════════════
+          CTA — warm, personal, inviting
+         ═══════════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden py-20 sm:py-28" style={{ backgroundColor: "var(--cream)" }}>
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: "radial-gradient(var(--cobalt) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+        <div className="relative max-w-4xl mx-auto px-5 sm:px-8 lg:px-10 text-center">
+          <motion.div {...fadeUp(0)}>
+            <p className="label-stamp text-cobalt mb-5">Join the DIS family</p>
+            <h2 className="font-inter font-bold tracking-tight leading-tight mb-5"
+              style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", color: "var(--ink)", letterSpacing: "-0.025em" }}>
+              Admissions open for 2026–27.<br />
+              <span style={{ color: "var(--cobalt)" }}>We'd love to meet your family.</span>
+            </h2>
+            <p style={{ fontSize: "1rem", color: "var(--ink-muted)", maxWidth: "460px", margin: "0 auto 40px", lineHeight: 1.8 }}>
+              Visit the campus, meet the teachers, and see for yourself what makes DIS different.
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
               <Link to="/admissions"
-                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-lg transition-all duration-150 hover:opacity-90"
+                className="inline-flex items-center gap-2.5 px-8 py-4 text-sm font-semibold rounded-xl transition-all duration-200 hover:brightness-105 active:scale-[0.97]"
                 style={{ backgroundColor: "var(--cobalt-deep)", color: "#fff" }}>
                 Apply now
+                <ArrowRight size={14} strokeWidth={2.5} />
               </Link>
               <Link to="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-medium rounded-lg transition-all duration-200 border"
-                style={{ borderColor: "rgba(0,0,0,0.14)", color: "var(--ink-soft)" }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = "var(--cobalt)"}
-                onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(0,0,0,0.14)"}>
+                className="inline-flex items-center gap-2 px-8 py-4 text-sm font-medium rounded-xl transition-all duration-200 border"
+                style={{ borderColor: "rgba(0,0,0,0.12)", color: "var(--ink-soft)", backgroundColor: "white" }}>
                 Contact us
               </Link>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
