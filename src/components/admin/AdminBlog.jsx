@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Eye, EyeOff, Star } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, Star, Pencil, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
+import ReactQuill from "react-quill";
 
 const CATEGORIES = ["Events", "Academics", "Achievements", "Admissions", "Science & Tech", "School Life", "Announcements"];
 
@@ -15,6 +16,7 @@ export default function AdminBlog() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -30,13 +32,21 @@ export default function AdminBlog() {
 
   const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+  const openNew = () => { setEditingPost(null); setForm(EMPTY); setShowForm(true); };
+  const openEdit = (post) => { setEditingPost(post); setForm({ ...post }); setShowForm(true); };
+  const closeForm = () => { setShowForm(false); setEditingPost(null); setForm(EMPTY); };
+
   const save = async (e) => {
     e.preventDefault();
     setSaving(true);
-    await base44.entities.BlogPost.create({ ...form, slug: form.slug || slugify(form.title) });
-    toast({ title: "Post created!" });
-    setForm(EMPTY);
-    setShowForm(false);
+    if (editingPost) {
+      await base44.entities.BlogPost.update(editingPost.id, { ...form });
+      toast({ title: "Post updated!" });
+    } else {
+      await base44.entities.BlogPost.create({ ...form, slug: form.slug || slugify(form.title) });
+      toast({ title: "Post created!" });
+    }
+    closeForm();
     load();
     setSaving(false);
   };
@@ -55,7 +65,7 @@ export default function AdminBlog() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-semibold text-lg" style={{ color: "var(--ink)" }}>Blog Posts</h2>
-        <button onClick={() => setShowForm(!showForm)}
+        <button onClick={openNew}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
           style={{ backgroundColor: "var(--cobalt-deep)", color: "#fff" }}>
           <Plus size={14} /> New Post
@@ -64,7 +74,10 @@ export default function AdminBlog() {
 
       {showForm && (
         <form onSubmit={save} className="mb-8 p-6 rounded-2xl border space-y-4" style={{ backgroundColor: "var(--cream)", borderColor: "var(--cream-dark)" }}>
-          <h3 className="font-semibold text-sm mb-2" style={{ color: "var(--ink)" }}>Create New Post</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm" style={{ color: "var(--ink)" }}>{editingPost ? "Edit Post" : "Create New Post"}</h3>
+            <button type="button" onClick={closeForm} className="p-1 rounded hover:bg-black/5"><X size={16} style={{ color: "var(--ink-muted)" }} /></button>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { key: "title", label: "Title", required: true },
@@ -113,23 +126,33 @@ export default function AdminBlog() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--ink-muted)" }}>Content (Markdown supported)</label>
-              <textarea
-                rows={8}
-                value={form.content}
-                onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
-                className="w-full px-3 py-2.5 rounded-lg text-sm border outline-none resize-none font-mono"
-                style={{ borderColor: "var(--cream-dark)", backgroundColor: "#fff" }}
-              />
+              <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--ink-muted)" }}>Content</label>
+              <div className="rounded-lg overflow-hidden" style={{ border: "1px solid var(--cream-dark)", backgroundColor: "#fff" }}>
+                <ReactQuill
+                  theme="snow"
+                  value={form.content}
+                  onChange={(val) => setForm(p => ({ ...p, content: val }))}
+                  style={{ minHeight: "220px" }}
+                  modules={{
+                    toolbar: [
+                      [{ header: [1, 2, 3, false] }],
+                      ["bold", "italic", "underline"],
+                      [{ list: "ordered" }, { list: "bullet" }],
+                      ["link", "blockquote"],
+                      ["clean"],
+                    ],
+                  }}
+                />
+              </div>
             </div>
           </div>
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={saving}
               className="px-5 py-2.5 rounded-lg text-sm font-semibold disabled:opacity-60"
               style={{ backgroundColor: "var(--cobalt-deep)", color: "#fff" }}>
-              {saving ? "Saving..." : "Publish Post"}
+              {saving ? "Saving..." : editingPost ? "Update Post" : "Publish Post"}
             </button>
-            <button type="button" onClick={() => setShowForm(false)}
+            <button type="button" onClick={closeForm}
               className="px-5 py-2.5 rounded-lg text-sm border"
               style={{ borderColor: "var(--cream-dark)", color: "var(--ink-soft)" }}>
               Cancel
@@ -162,6 +185,10 @@ export default function AdminBlog() {
                 <p className="text-xs mt-0.5" style={{ color: "var(--ink-muted)" }}>{post.category} · /blog/{post.slug}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                <button onClick={() => openEdit(post)} title="Edit"
+                  className="p-2 rounded-lg transition-colors hover:bg-gray-100">
+                  <Pencil size={14} style={{ color: "var(--cobalt)" }} />
+                </button>
                 <button onClick={() => toggle(post, "published")} title={post.published ? "Unpublish" : "Publish"}
                   className="p-2 rounded-lg transition-colors hover:bg-gray-100">
                   {post.published ? <EyeOff size={14} style={{ color: "var(--ink-muted)" }} /> : <Eye size={14} style={{ color: "var(--cobalt)" }} />}

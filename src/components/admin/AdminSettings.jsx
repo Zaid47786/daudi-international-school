@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, Globe, Phone, Mail, MapPin, Image, MessageSquare, CheckCircle2 } from "lucide-react";
 
 const DEFAULT_SETTINGS = [
   { key: "school_name", label: "School Name", value: "Daudi International School", group: "general" },
@@ -16,10 +16,10 @@ const DEFAULT_SETTINGS = [
 ];
 
 const GROUP_LABELS = {
-  general: "General",
-  hero: "Homepage Hero",
-  contact: "Contact Info",
-  social: "Social Media",
+  general: { label: "General", icon: "🏫", desc: "School name, tagline and founder quote" },
+  hero: { label: "Homepage Hero", icon: "🖼️", desc: "Text displayed on the homepage banner" },
+  contact: { label: "Contact Info", icon: "📍", desc: "Address, phone and email shown site-wide" },
+  social: { label: "Social Media", icon: "🔗", desc: "Facebook and YouTube profile links" },
 };
 
 export default function AdminSettings() {
@@ -56,11 +56,12 @@ export default function AdminSettings() {
     }));
   };
 
-  const handleSave = async () => {
+  const handleSave = async (groupKeys) => {
     setSaving(true);
-    for (const key of Object.keys(settings)) {
+    const keysToSave = groupKeys || Object.keys(settings);
+    for (const key of keysToSave) {
       const s = settings[key];
-      if (s.id) {
+      if (s?.id) {
         await base44.entities.SchoolSettings.update(s.id, { value: s.value });
       }
     }
@@ -78,50 +79,58 @@ export default function AdminSettings() {
   });
 
   return (
-    <div className="max-w-3xl space-y-8">
-      {Object.entries(grouped).map(([group, keys]) => (
-        <div key={group} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-100">
-            <h2 className="font-bold text-navy text-sm tracking-wide uppercase">{GROUP_LABELS[group]}</h2>
-          </div>
-          <div className="p-6 space-y-5">
-            {keys.map((key) => {
-              const def = DEFAULT_SETTINGS.find((d) => d.key === key);
-              const val = settings[key]?.value ?? "";
-              const isLong = key.includes("description") || key.includes("quote") || key.includes("address");
-              return (
-                <div key={key}>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">{def.label}</label>
-                  {isLong ? (
-                    <textarea
-                      value={val}
-                      onChange={(e) => handleChange(key, e.target.value)}
-                      rows={3}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-royal-blue/30 resize-none"
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      value={val}
-                      onChange={(e) => handleChange(key, e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
-                    />
-                  )}
+    <div className="max-w-3xl space-y-6">
+      {Object.entries(grouped).map(([group, keys]) => {
+        const meta = GROUP_LABELS[group] || { label: group, icon: "⚙️", desc: "" };
+        return (
+          <div key={group} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">{meta.icon}</span>
+                <div>
+                  <h2 className="font-bold text-navy text-sm">{meta.label}</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">{meta.desc}</p>
                 </div>
-              );
-            })}
+              </div>
+              <button
+                onClick={() => handleSave(keys)}
+                disabled={saving}
+                className="flex items-center gap-1.5 px-4 py-2 bg-royal-blue text-white text-xs font-bold rounded-lg hover:bg-navy transition disabled:opacity-60"
+              >
+                {saving ? <Loader2 size={12} className="animate-spin" /> : saved ? <CheckCircle2 size={12} /> : <Save size={12} />}
+                {saved ? "Saved!" : "Save"}
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              {keys.map((key) => {
+                const def = DEFAULT_SETTINGS.find((d) => d.key === key);
+                const val = settings[key]?.value ?? "";
+                const isLong = key.includes("description") || key.includes("quote") || key.includes("address");
+                return (
+                  <div key={key}>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">{def.label}</label>
+                    {isLong ? (
+                      <textarea
+                        value={val}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                        rows={3}
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-royal-blue/30 resize-none"
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={val}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="flex items-center gap-2 px-8 py-3 bg-royal-blue text-white font-bold rounded-full hover:bg-navy transition-all shadow-lg disabled:opacity-60"
-      >
-        {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-        {saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}
-      </button>
+        );
+      })}
     </div>
   );
 }

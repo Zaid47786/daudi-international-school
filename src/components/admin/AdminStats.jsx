@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Plus, Trash2, Save, Loader2, GripVertical } from "lucide-react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const DEFAULT_STATS = [
   { label: "Years of Excellence", value: "10+", icon: "BookOpen", sort_order: 0 },
@@ -66,6 +67,16 @@ export default function AdminStats() {
     setStats((prev) => [...prev, created]);
   };
 
+  const handleDragEnd = async (result) => {
+    if (!result.destination) return;
+    const reordered = Array.from(stats);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+    const updated = reordered.map((s, i) => ({ ...s, sort_order: i }));
+    setStats(updated);
+    await Promise.all(updated.map((s) => base44.entities.Stat.update(s.id, { sort_order: s.sort_order })));
+  };
+
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-royal-blue" size={32} /></div>;
 
   return (
@@ -77,58 +88,65 @@ export default function AdminStats() {
             <Plus size={14} /> Add Stat
           </button>
         </div>
-        <div className="divide-y divide-gray-50">
-          {stats.map((stat) => (
-            <div key={stat.id} className="p-5 flex items-center gap-4">
-              <GripVertical size={16} className="text-gray-300 flex-shrink-0" />
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Label</label>
-                  <input
-                    value={stat.label}
-                    onChange={(e) => handleChange(stat.id, "label", e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Value</label>
-                  <input
-                    value={stat.value}
-                    onChange={(e) => handleChange(stat.id, "value", e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Icon</label>
-                  <select
-                    value={stat.icon}
-                    onChange={(e) => handleChange(stat.id, "icon", e.target.value)}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
-                  >
-                    {ICON_OPTIONS.map((ic) => <option key={ic} value={ic}>{ic}</option>)}
-                  </select>
-                </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="stats">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps} className="divide-y divide-gray-50">
+                {stats.map((stat, index) => (
+                  <Draggable key={stat.id} draggableId={String(stat.id)} index={index}>
+                    {(provided, snapshot) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps}
+                        className={`p-5 flex items-center gap-4 ${snapshot.isDragging ? "bg-blue-50 shadow-lg rounded-xl" : ""}`}>
+                        <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                          <GripVertical size={16} className="text-gray-300 flex-shrink-0" />
+                        </div>
+                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="text-xs text-gray-500 mb-1 block">Label</label>
+                            <input
+                              value={stat.label}
+                              onChange={(e) => handleChange(stat.id, "label", e.target.value)}
+                              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-500 mb-1 block">Value</label>
+                            <input
+                              value={stat.value}
+                              onChange={(e) => handleChange(stat.id, "value", e.target.value)}
+                              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-500 mb-1 block">Icon</label>
+                            <select
+                              value={stat.icon}
+                              onChange={(e) => handleChange(stat.id, "icon", e.target.value)}
+                              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
+                            >
+                              {ICON_OPTIONS.map((ic) => <option key={ic} value={ic}>{ic}</option>)}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 flex-shrink-0">
+                          <button onClick={() => handleSave(stat)} disabled={saving === stat.id}
+                            className="p-2 bg-royal-blue text-white rounded-lg hover:bg-navy transition disabled:opacity-60" title="Save">
+                            {saving === stat.id ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                          </button>
+                          <button onClick={() => handleDelete(stat.id)}
+                            className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition" title="Delete">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
               </div>
-              <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => handleSave(stat)}
-                  disabled={saving === stat.id}
-                  className="p-2 bg-royal-blue text-white rounded-lg hover:bg-navy transition disabled:opacity-60"
-                  title="Save"
-                >
-                  {saving === stat.id ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                </button>
-                <button
-                  onClick={() => handleDelete(stat.id)}
-                  className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition"
-                  title="Delete"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );

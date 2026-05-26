@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Plus, Trash2, Loader2, X, Check, Image } from "lucide-react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { GripVertical } from "lucide-react";
 
 const CATEGORIES = ["Campus", "Events", "Classrooms", "Sports", "Cultural"];
 const EMPTY_PHOTO = { title: "", src: "", category: "Events", is_real: false, sort_order: 0 };
@@ -35,6 +37,16 @@ export default function AdminGallery() {
   const handleDelete = async (id) => {
     await base44.entities.GalleryPhoto.delete(id);
     setPhotos((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleDragEnd = async (result) => {
+    if (!result.destination) return;
+    const reordered = Array.from(photos);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+    const updated = reordered.map((p, i) => ({ ...p, sort_order: i }));
+    setPhotos(updated);
+    await Promise.all(updated.map((p) => base44.entities.GalleryPhoto.update(p.id, { sort_order: p.sort_order })));
   };
 
   const filtered = filter === "All" ? photos : photos.filter((p) => p.category === filter);
@@ -105,12 +117,48 @@ export default function AdminGallery() {
         </div>
       )}
 
-      {/* Grid */}
+      {/* Grid with D&D (only when showing All, otherwise static) */}
       {filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 text-center py-20 text-gray-400">
           <Image size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">No photos yet. Add your first photo!</p>
         </div>
+      ) : filter === "All" ? (
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="gallery" direction="horizontal">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {photos.map((photo, index) => (
+                  <Draggable key={photo.id} draggableId={String(photo.id)} index={index}>
+                    {(provided, snapshot) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps}
+                        className={`group relative rounded-2xl overflow-hidden aspect-square bg-gray-100 shadow-sm ${snapshot.isDragging ? "shadow-xl ring-2 ring-royal-blue" : ""}`}>
+                        <div {...provided.dragHandleProps}
+                          className="absolute top-2 right-2 z-10 p-1 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
+                          <GripVertical size={12} className="text-white" />
+                        </div>
+                        <img src={photo.src} alt={photo.title} className="w-full h-full object-cover" />
+                        {photo.is_real && (
+                          <div className="absolute top-2 left-2 bg-gold text-navy text-[10px] font-bold px-2 py-0.5 rounded-full">DIS</div>
+                        )}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2 p-3">
+                          <p className="text-white text-xs font-semibold text-center line-clamp-2">{photo.title}</p>
+                          <span className="text-gold text-[10px]">{photo.category}</span>
+                          <button onClick={() => handleDelete(photo.id)}
+                            className="mt-2 flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded-full hover:bg-red-600 transition">
+                            <Trash2 size={12} /> Remove
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {filtered.map((photo) => (
