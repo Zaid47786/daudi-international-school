@@ -1,8 +1,10 @@
+/* eslint-disable no-undef */
 /**
  * PM2 ecosystem config — Asura Hosting / cPanel Node.js / DirectAdmin
  * Start with: pm2 start ecosystem.config.js --env production
+ * NOTE: PM2 ecosystem files must use CommonJS (module.exports), not ESM export default.
  */
-export default {
+module.exports = {
   apps: [
     {
       name: "dis-server",

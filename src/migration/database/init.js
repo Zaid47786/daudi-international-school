@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-disable no-undef */
 /**
  * Run with: node database/init.js
  * Applies schema.sql to create all tables from scratch.

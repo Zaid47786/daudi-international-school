@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-disable no-undef */
 /**
  * Run with: node database/seed.js
  * Seeds admin user + default school settings.

@@ -1,3 +1,4 @@
+/* eslint-env node */
 import { Router } from "express";
 import db from "../database/db.js";
 import { listRows, getRow, createRow, updateRow, deleteRow } from "../utils/crud.js";
@@ -7,9 +8,17 @@ const router = Router();
 const TABLE = "blog_posts";
 
 // Public: published posts only; admin can see all
+// Supports ?slug=xxx for single post lookup (used by apiClient.filter({ slug }))
 router.get("/", (req, res) => {
-  const { category, featured } = req.query;
+  const { category, featured, slug } = req.query;
   const isAdmin = req.headers.authorization;
+
+  // Slug shortcut — return single post wrapped in array to match filter() contract
+  if (slug) {
+    const row = db.prepare(`SELECT * FROM ${TABLE} WHERE slug = ?`).get(slug);
+    if (!row) return res.json([]);
+    return res.json([{ ...row, published: row.published === 1, featured: row.featured === 1 }]);
+  }
 
   let sql = `SELECT * FROM ${TABLE}`;
   const conditions = [];

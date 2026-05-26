@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-disable no-undef */
 /**
  * DIS — Daudi International School
  * Standalone Express server for Asura Hosting / cPanel Node.js

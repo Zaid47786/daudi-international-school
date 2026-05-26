@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-disable no-undef */
 import { Router } from "express";
 import path from "path";
 import fs from "fs";

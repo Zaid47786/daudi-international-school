@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-disable no-undef */
 /**
  * SQLite database singleton using better-sqlite3 (synchronous, low RAM)
  */

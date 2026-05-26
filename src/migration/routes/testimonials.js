@@ -1,3 +1,4 @@
+/* eslint-env node */
 import { Router } from "express";
 import { listRows, createRow, updateRow, deleteRow } from "../utils/crud.js";
 import { requireAdmin } from "../middleware/auth.js";

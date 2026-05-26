@@ -1,3 +1,4 @@
+/* eslint-env node */
 /**
  * Generic CRUD helpers for better-sqlite3
  * Keeps route files thin.
