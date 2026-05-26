@@ -1,0 +1,33 @@
+{
+  "name": "daudi-international-school",
+  "version": "1.0.0",
+  "description": "Daudi International School – standalone production server",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build": "cd frontend && npm install && npm run build && cp -r dist ../dist",
+    "build:win": "cd frontend && npm install && npm run build && xcopy dist ..\\dist /E /I /Y",
+    "db:init": "node database/init.js",
+    "db:seed": "node database/seed.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.3",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.3",
+    "slugify": "^1.6.6",
+    "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
