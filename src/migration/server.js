@@ -12,6 +12,8 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import crypto from "crypto";
+import { exec } from "child_process";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -84,6 +86,56 @@ app.use("/api/upload", uploadRoutes);
 
 // ── Health check ───────────────────────────────────────────────────────────────
 app.get("/api/health", (_, res) => res.json({ status: "ok", ts: Date.now() }));
+
+// ── GitHub Auto-Deploy Webhook ─────────────────────────────────────────────────
+// Receives push events from GitHub and rebuilds + restarts the app.
+// Set WEBHOOK_SECRET in DirectAdmin env vars to secure this endpoint.
+app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+  const secret = process.env.WEBHOOK_SECRET || "";
+  const signature = req.headers["x-hub-signature-256"] || "";
+
+  // Verify GitHub signature if secret is set
+  if (secret) {
+    const hmac = crypto.createHmac("sha256", secret);
+    hmac.update(req.body);
+    const digest = `sha256=${hmac.digest("hex")}`;
+    if (!crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature))) {
+      console.warn("[webhook] Invalid signature — rejected");
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+  }
+
+  let event;
+  try {
+    event = JSON.parse(req.body.toString());
+  } catch {
+    return res.status(400).json({ error: "Bad request" });
+  }
+
+  const branch = process.env.BRANCH || "main";
+  const pushedBranch = (event.ref || "").replace("refs/heads/", "");
+
+  if (pushedBranch !== branch) {
+    console.log(`[webhook] Push to '${pushedBranch}' — skipping (watching '${branch}')`);
+    return res.json({ status: "skipped" });
+  }
+
+  console.log(`[webhook] Push on '${pushedBranch}' — deploying...`);
+  res.json({ status: "deploying" });
+
+  // Pull latest code and rebuild frontend (runs after response is sent)
+  const appDir = process.env.APP_DIR || __dirname;
+  const deployCmd = `cd ${appDir} && git pull origin ${branch} && npm install --production && cd src && npm install && npm run build`;
+  exec(deployCmd, (err, stdout, stderr) => {
+    if (err) {
+      console.error("[webhook] Deploy error:", err.message);
+    } else {
+      console.log("[webhook] Deploy complete ✓");
+      if (stdout) console.log(stdout);
+      if (stderr) console.error(stderr);
+    }
+  });
+});
 
 // ── SPA fallback ──────────────────────────────────────────────────────────────
 // All non-API routes return index.html so React Router works
