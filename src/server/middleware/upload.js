@@ -1,7 +1,4 @@
 /* eslint-disable no-undef */
-/**
- * Multer upload middleware for images
- */
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -30,15 +27,12 @@ const fileFilter = (_req, file, cb) => {
   else cb(new Error("Only image files are allowed"), false);
 };
 
-const MAX_MB = parseInt(process.env.MAX_FILE_SIZE_MB || "10", 10);
-
 export const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: MAX_MB * 1024 * 1024 },
+  limits: { fileSize: parseInt(process.env.MAX_FILE_SIZE_MB || "10", 10) * 1024 * 1024 },
 });
 
-/** Returns the public URL for a saved file */
 export function fileUrl(filename) {
   return `/uploads/images/${filename}`;
 }

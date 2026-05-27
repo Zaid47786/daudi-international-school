@@ -7,13 +7,10 @@ import { requireAdmin } from "../middleware/auth.js";
 const router = Router();
 const TABLE = "blog_posts";
 
-// Public: published posts only; admin can see all
-// Supports ?slug=xxx for single post lookup (used by apiClient.filter({ slug }))
 router.get("/", (req, res) => {
   const { category, featured, slug } = req.query;
   const isAdmin = req.headers.authorization;
 
-  // Slug shortcut — return single post wrapped in array to match filter() contract
   if (slug) {
     const row = db.prepare(`SELECT * FROM ${TABLE} WHERE slug = ?`).get(slug);
     if (!row) return res.json([]);
@@ -23,11 +20,9 @@ router.get("/", (req, res) => {
   let sql = `SELECT * FROM ${TABLE}`;
   const conditions = [];
   const params = [];
-
   if (!isAdmin) { conditions.push("published = 1"); }
   if (category)  { conditions.push("category = ?"); params.push(category); }
   if (featured)  { conditions.push("featured = 1"); }
-
   if (conditions.length) sql += " WHERE " + conditions.join(" AND ");
   sql += " ORDER BY created_date DESC LIMIT 100";
 
@@ -35,7 +30,6 @@ router.get("/", (req, res) => {
   res.json(rows);
 });
 
-// Public: single post by slug
 router.get("/slug/:slug", (req, res) => {
   const row = db.prepare(`SELECT * FROM ${TABLE} WHERE slug = ?`).get(req.params.slug);
   if (!row) return res.status(404).json({ error: "Post not found" });
@@ -49,7 +43,6 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", requireAdmin, (req, res) => {
-  // Auto-generate slug if missing
   if (!req.body.slug && req.body.title) {
     req.body.slug = req.body.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   }

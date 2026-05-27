@@ -4,13 +4,11 @@ import { listRows, getRow, createRow, updateRow, deleteRow } from "../utils/crud
 import { requireAdmin } from "../middleware/auth.js";
 
 const router = Router();
-const TABLE = "gallery_photos";
+const TABLE = "events";
 
-// Public: list with optional category filter
 router.get("/", (req, res) => {
-  const { category } = req.query;
-  const filters = category ? { category } : {};
-  res.json(listRows(TABLE, { filters, orderBy: "sort_order ASC, created_date DESC" }));
+  const { status } = req.query;
+  res.json(listRows(TABLE, { filters: status ? { status } : {}, orderBy: "date ASC" }));
 });
 
 router.get("/:id", (req, res) => {

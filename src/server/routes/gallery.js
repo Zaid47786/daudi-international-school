@@ -1,15 +1,20 @@
 /* eslint-env node */
 import { Router } from "express";
-import { listRows, createRow, updateRow, deleteRow } from "../utils/crud.js";
+import { listRows, getRow, createRow, updateRow, deleteRow } from "../utils/crud.js";
 import { requireAdmin } from "../middleware/auth.js";
 
 const router = Router();
-const TABLE = "testimonials";
+const TABLE = "gallery_photos";
 
 router.get("/", (req, res) => {
-  const { featured } = req.query;
-  const filters = featured ? { is_featured: 1 } : {};
-  res.json(listRows(TABLE, { filters, orderBy: "sort_order ASC" }));
+  const { category } = req.query;
+  res.json(listRows(TABLE, { filters: category ? { category } : {}, orderBy: "sort_order ASC, created_date DESC" }));
+});
+
+router.get("/:id", (req, res) => {
+  const row = getRow(TABLE, req.params.id);
+  if (!row) return res.status(404).json({ error: "Not found" });
+  res.json(row);
 });
 
 router.post("/",      requireAdmin, (req, res) => res.status(201).json(createRow(TABLE, req.body)));
