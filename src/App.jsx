@@ -4,7 +4,6 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
 // Page imports
 import Home from './pages/Home';
@@ -22,11 +21,12 @@ import CBSESchoolMuzaffarpur from './pages/seo/CBSESchoolMuzaffarpur';
 import EnglishMediumSchool from './pages/seo/EnglishMediumSchool';
 import AdmissionsOpen from './pages/seo/AdmissionsOpen';
 import SchoolNearMe from './pages/seo/SchoolNearMe';
+import AdminLogin from './pages/AdminLogin';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth } = useAuth();
 
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-cobalt-deep">
         <div className="flex flex-col items-center gap-5">
@@ -40,15 +40,6 @@ const AuthenticatedApp = () => {
         </div>
       </div>
     );
-  }
-
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
-    }
   }
 
   return (
@@ -68,6 +59,7 @@ const AuthenticatedApp = () => {
       <Route path="/english-medium-school-in-muzaffarpur" element={<EnglishMediumSchool />} />
       <Route path="/admissions-open" element={<AdmissionsOpen />} />
       <Route path="/school-near-me" element={<SchoolNearMe />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
