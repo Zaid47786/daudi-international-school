@@ -15,8 +15,12 @@ import fs from "fs";
 import crypto from "crypto";
 import { exec } from "child_process";
 import dotenv from "dotenv";
+import { setupDatabase } from "./database/setup.js";
 
 dotenv.config();
+
+// ── Auto-setup DB on first run (no terminal needed) ───────────────────────────
+setupDatabase();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
