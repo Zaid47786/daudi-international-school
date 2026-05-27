@@ -1,94 +1,120 @@
+/* eslint-env node */
 /* global process, Buffer */
 /**
- * Auto-Deploy Webhook Server
- * Listens for GitHub push events → pulls latest code → rebuilds frontend → live!
- *
- * Deploy this on Asura alongside your main server.js
- * Run on a different port (default: 4000)
+ * webhook-server.js
+ * 
+ * Lightweight HTTP server that listens for GitHub push webhooks
+ * and auto-deploys the latest code on your Asura hosting.
+ * 
+ * SETUP:
+ *   1. Place this file in your server root (e.g. /home/username/webhook-server.js)
+ *   2. Set environment variables (see below)
+ *   3. Start with PM2: pm2 start webhook-server.js --name dis-webhook
+ * 
+ * ENVIRONMENT VARIABLES:
+ *   WEBHOOK_SECRET   — GitHub webhook secret (set in GitHub repo → Settings → Webhooks)
+ *   WEBHOOK_PORT     — Port to listen on (default: 9000)
+ *   APP_DIR          — Absolute path to your app root (where server.js lives)
+ *   BRANCH           — Branch to deploy (default: main)
  */
 
+import http from "http";
 import crypto from "crypto";
 import { exec } from "child_process";
 import { promisify } from "util";
-import http from "http";
 
 const execAsync = promisify(exec);
 
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "your_webhook_secret_here";
-const PORT = process.env.WEBHOOK_PORT || 4000;
+const SECRET      = process.env.WEBHOOK_SECRET || "";
+const PORT        = parseInt(process.env.WEBHOOK_PORT || "9000", 10);
+const APP_DIR     = process.env.APP_DIR || "/home/username/dis-app";
+const BRANCH      = process.env.BRANCH || "main";
+const FRONTEND_DIR = `${APP_DIR}/frontend`; // Base44 exported React app
 
-// ── Path to your app root on Asura (where package.json and server.js live)
-const APP_DIR = process.env.APP_DIR || "/home/yourusername/dis-app";
-
-// ── Verify GitHub signature to ensure request is genuine
+// ── Verify GitHub signature ────────────────────────────────────────────────
 function verifySignature(payload, signature) {
-  const hmac = crypto.createHmac("sha256", WEBHOOK_SECRET);
+  if (!SECRET) return true; // skip verification if no secret set (not recommended)
+  const hmac = crypto.createHmac("sha256", SECRET);
   hmac.update(payload);
-  const digest = "sha256=" + hmac.digest("hex");
-  try {
-    return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
-  } catch {
-    return false;
-  }
+  const digest = `sha256=${hmac.digest("hex")}`;
+  return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
 }
 
-// ── Run deploy commands
-async function deploy() {
-  console.log(`[${new Date().toISOString()}] 🚀 Deploy triggered!`);
+// ── Deploy script ─────────────────────────────────────────────────────────
+async function deploy(branch) {
+  console.log(`[deploy] Starting deploy for branch: ${branch}`);
 
   const commands = [
-    `cd ${APP_DIR} && git pull origin main`,
-    `cd ${APP_DIR} && npm install --omit=dev`,
-    `cd ${APP_DIR} && npm run build`,
+    // 1. Pull latest code
+    `cd ${APP_DIR} && git pull origin ${BRANCH}`,
+    // 2. Install backend dependencies (if package.json changed)
+    `cd ${APP_DIR} && npm install --production`,
+    // 3. Build the React frontend
+    `cd ${FRONTEND_DIR} && npm install && npm run build`,
+    // 4. Restart the app server via PM2
+    `pm2 restart dis-server`,
   ];
 
   for (const cmd of commands) {
-    console.log(`▶ Running: ${cmd}`);
+    console.log(`[deploy] Running: ${cmd}`);
     const { stdout, stderr } = await execAsync(cmd);
     if (stdout) console.log(stdout);
     if (stderr) console.error(stderr);
   }
 
-  console.log(`[${new Date().toISOString()}] ✅ Deploy complete! Site is live.`);
+  console.log("[deploy] Deploy complete ✓");
 }
 
-// ── HTTP server
-const server = http.createServer(async (req, res) => {
-  if (req.method !== "POST" || req.url !== "/deploy") {
+// ── HTTP server ───────────────────────────────────────────────────────────
+const server = http.createServer((req, res) => {
+  if (req.method !== "POST" || req.url !== "/webhook") {
     res.writeHead(404);
     return res.end("Not found");
   }
 
-  // Collect body
   const chunks = [];
-  for await (const chunk of req) chunks.push(chunk);
-  const body = Buffer.concat(chunks);
+  req.on("data", (chunk) => chunks.push(chunk));
+  req.on("end", async () => {
+    const payload = Buffer.concat(chunks);
+    const signature = req.headers["x-hub-signature-256"] || "";
 
-  // Verify GitHub signature
-  const signature = req.headers["x-hub-signature-256"];
-  if (!signature || !verifySignature(body, signature)) {
-    console.warn("⚠️  Unauthorized webhook attempt");
-    res.writeHead(401);
-    return res.end("Unauthorized");
-  }
+    // Verify GitHub signature
+    if (SECRET && !verifySignature(payload, signature)) {
+      console.warn("[webhook] Invalid signature — rejected");
+      res.writeHead(401);
+      return res.end("Unauthorized");
+    }
 
-  // Only deploy on push to main branch
-  const payload = JSON.parse(body.toString());
-  if (payload.ref !== "refs/heads/main") {
+    let event;
+    try {
+      event = JSON.parse(payload.toString());
+    } catch {
+      res.writeHead(400);
+      return res.end("Bad request");
+    }
+
+    // Only deploy on push to target branch
+    const pushedBranch = (event.ref || "").replace("refs/heads/", "");
+    if (pushedBranch !== BRANCH) {
+      console.log(`[webhook] Push to '${pushedBranch}' — skipping (watching '${BRANCH}')`);
+      res.writeHead(200);
+      return res.end("Skipped");
+    }
+
+    console.log(`[webhook] Push received on '${pushedBranch}' — deploying...`);
     res.writeHead(200);
-    return res.end("Ignored (not main branch)");
-  }
+    res.end("Deploying...");
 
-  res.writeHead(200);
-  res.end("Deploy started");
-
-  // Run deploy in background
-  deploy().catch((err) => {
-    console.error("❌ Deploy failed:", err.message);
+    // Run deploy async (don't block the response)
+    deploy(pushedBranch).catch((err) => {
+      console.error("[deploy] Error:", err.message);
+    });
   });
 });
 
 server.listen(PORT, () => {
-  console.log(`🔗 Webhook server listening on port ${PORT}`);
-  console.log(`   Endpoint: POST http://localhost:${PORT}/deploy`);
+  console.log(`[webhook] Listening on port ${PORT}`);
+  console.log(`[webhook] APP_DIR: ${APP_DIR}`);
+  console.log(`[webhook] Branch: ${BRANCH}`);
+  console.log(`[webhook] Secret: ${SECRET ? "set ✓" : "NOT SET (insecure!)"}`);
 });
