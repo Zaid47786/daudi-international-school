@@ -18,24 +18,28 @@ const tabs = [
   { id: "blog", label: "Blog", icon: BookOpen },
 ];
 
-const ADMIN_PASSWORD = "Me2DIS";
-
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("settings");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(() => !!localStorage.getItem("dis_token"));
+  const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
   const navigate = useNavigate();
 
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    if (passwordInput === ADMIN_PASSWORD) {
+    setPasswordError("");
+    setLoggingIn(true);
+    try {
+      await base44.auth.login(emailInput, passwordInput);
       setAuthenticated(true);
-      setPasswordError(false);
-    } else {
-      setPasswordError(true);
+    } catch (err) {
+      setPasswordError(err.message || "Invalid credentials. Please try again.");
       setPasswordInput("");
+    } finally {
+      setLoggingIn(false);
     }
   };
 
@@ -53,22 +57,30 @@ export default function Admin() {
             <p className="text-gray-400 text-sm mt-1">Enter password to continue</p>
           </div>
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => { setPasswordInput(e.target.value); setPasswordError(false); }}
-                placeholder="Password"
-                className={`w-full border ${passwordError ? "border-red-400" : "border-gray-200"} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30`}
-                autoFocus
-              />
-              {passwordError && <p className="text-red-500 text-xs mt-1.5">Incorrect password. Please try again.</p>}
-            </div>
+            <input
+              type="email"
+              value={emailInput}
+              onChange={(e) => { setEmailInput(e.target.value); setPasswordError(""); }}
+              placeholder="Email address"
+              required
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
+              autoFocus
+            />
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => { setPasswordInput(e.target.value); setPasswordError(""); }}
+              placeholder="Password"
+              required
+              className={`w-full border ${passwordError ? "border-red-400" : "border-gray-200"} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30`}
+            />
+            {passwordError && <p className="text-red-500 text-xs bg-red-50 rounded-lg px-3 py-2">{passwordError}</p>}
             <button
               type="submit"
-              className="w-full py-3 bg-royal-blue text-white font-bold rounded-xl hover:bg-navy transition text-sm"
+              disabled={loggingIn}
+              className="w-full py-3 bg-royal-blue text-white font-bold rounded-xl hover:bg-navy transition text-sm disabled:opacity-60"
             >
-              Enter Admin
+              {loggingIn ? "Signing in..." : "Sign In"}
             </button>
           </form>
         </div>
@@ -77,7 +89,8 @@ export default function Admin() {
   }
 
   const handleLogout = () => {
-    base44.auth.logout("/");
+    base44.auth.logout("/admin");
+    setAuthenticated(false);
   };
 
   const ActiveComponent = {
