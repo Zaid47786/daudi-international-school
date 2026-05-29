@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Trash2, Loader2, X, Check, Image } from "lucide-react";
+import { Plus, Trash2, Loader2, X, Check, Image, Upload } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { GripVertical } from "lucide-react";
 
@@ -14,8 +14,20 @@ export default function AdminGallery() {
   const [form, setForm] = useState(EMPTY_PHOTO);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("All");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => { loadPhotos(); }, []);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    const data = await base44.integrations.Core.UploadFile({ file });
+    if (data.file_url) setForm((prev) => ({ ...prev, src: data.file_url }));
+    setUploading(false);
+    e.target.value = "";
+  };
 
   const loadPhotos = async () => {
     setLoading(true);
@@ -79,10 +91,19 @@ export default function AdminGallery() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="text-xs text-gray-500 mb-1 block">Image URL *</label>
-              <input value={form.src} onChange={(e) => setForm({ ...form, src: e.target.value })}
-                placeholder="https://..."
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30" />
+              <label className="text-xs text-gray-500 mb-1 block">Image *</label>
+              <div className="flex gap-2">
+                <input value={form.src} onChange={(e) => setForm({ ...form, src: e.target.value })}
+                  placeholder="Paste URL or upload file →"
+                  className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30" />
+                <button type="button" onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 text-amber-700 font-semibold rounded-xl text-sm hover:bg-amber-100 transition disabled:opacity-60 whitespace-nowrap">
+                  {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                  {uploading ? "Uploading…" : "Upload"}
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+              </div>
             </div>
             {form.src && (
               <div className="sm:col-span-2">
