@@ -111,15 +111,28 @@ app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
   console.log(`[webhook] Push on '${pushedBranch}' — deploying...`);
   res.json({ status: "deploying" });
 
-  const appDir = process.env.APP_DIR || __dirname;
-  const deployCmd = `cd ${appDir} && git pull origin ${branch} && npm install --production && cd frontend && npm install && npm run build`;
-  exec(deployCmd, (err, stdout, stderr) => {
+  // APP_DIR = root of the repo (where package.json for React lives)
+  // SERVER_DIR = the server/ subfolder (where this server.js lives)
+  const appDir = process.env.APP_DIR || path.join(__dirname, "..");
+  const serverDir = __dirname;
+
+  const deployCmd = [
+    `cd "${appDir}"`,
+    `git pull origin ${branch}`,
+    // Install & build the React frontend (root of repo)
+    `npm install`,
+    `npm run build`,
+    // Install server deps
+    `cd "${serverDir}" && npm install --production`,
+    // Restart the PM2 process gracefully
+    `pm2 reload dis-server --update-env`,
+  ].join(" && ");
+
+  exec(deployCmd, { env: { ...process.env, CI: "true" } }, (err, stdout, stderr) => {
     if (err) console.error("[webhook] Deploy error:", err.message);
-    else {
-      console.log("[webhook] Deploy complete ✓");
-      if (stdout) console.log(stdout);
-      if (stderr) console.error(stderr);
-    }
+    else console.log("[webhook] Deploy complete ✓");
+    if (stdout) console.log(stdout);
+    if (stderr && !err) console.log(stderr); // stderr often has npm progress, not errors
   });
 });
 
