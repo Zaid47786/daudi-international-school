@@ -65,7 +65,7 @@ app.use(morgan("combined", { stream: logStream }));
 // ── Static files ───────────────────────────────────────────────────────────────
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), { maxAge: "30d", etag: true }));
 
-const distPath = path.join(__dirname, "dist");
+const distPath = path.join(__dirname, "../dist");
 app.use(express.static(distPath, { maxAge: "1d", etag: true, index: false }));
 
 // ── API Routes ─────────────────────────────────────────────────────────────────

@@ -1,7 +1,6 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/daudisc1/dis
-    - cd $DEPLOYPATH
     - npm install --production=false
     - npm run build
+    - cd server && npm install --production
