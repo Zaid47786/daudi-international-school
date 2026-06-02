@@ -1,7 +1,6 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/daudisc1/public_html
-    - cd $DEPLOYPATH
-    - npm install --production=false
+    - npm install
     - npm run build
+    - /bin/cp -R dist/* /home/daudisc1/public_html/
