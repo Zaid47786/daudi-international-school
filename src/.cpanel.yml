@@ -1,0 +1,7 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/your-user/dis
+    - cd $DEPLOYPATH
+    - npm install --production=false
+    - npm run build
