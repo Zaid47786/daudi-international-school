@@ -1,8 +1,9 @@
+/* eslint-disable no-undef */
 /**
- * PM2 process config — used on Asura / DirectAdmin
+ * PM2 process config — used on cPanel / shared hosting
  * Start with: pm2 start ecosystem.config.js
  */
-export default {
+module.exports = {
   apps: [
     {
       name: "dis-server",
