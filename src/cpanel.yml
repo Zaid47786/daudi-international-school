@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - npm install
+    - npm run build
+    - /bin/cp -R dist/* /home/daudisc1/public_html/
