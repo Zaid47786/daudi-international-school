@@ -177,7 +177,7 @@ export default function Footer() {
             <Link to="/cbse-school-in-muzaffarpur" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>CBSE School</Link>
             <Link to="/school-near-me" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>School Near Me</Link>
             <p className="text-xs font-semibold tracking-wider" style={{ color: "#00ff41", textShadow: "0 0 8px rgba(0, 255, 65, 0.4)" }}>
-              {'> Made by Hacker!'}
+          
             </p>
           </div>
         </div>
