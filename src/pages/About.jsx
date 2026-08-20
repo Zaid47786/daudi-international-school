@@ -127,7 +127,7 @@ export default function About() {
               <div className="relative inline-block w-full max-w-[260px] sm:max-w-[300px]">
                 <div className="rounded-2xl overflow-hidden shadow-xl" style={{ aspectRatio: "3/4" }}>
                   <img
-                    src="https://kommodo.ai/i/8BPbkfwDaE5Ak5nnvB35"
+                    src="https://kommodo.ai/i/8BPbkfwDaE5Ak5nnvB35?w=600&q=80"
                     alt="Altamash Daudi, Founder and Director of Daudi International School Muzaffarpur"
                     loading="lazy"
                     className="w-full h-full object-cover"
