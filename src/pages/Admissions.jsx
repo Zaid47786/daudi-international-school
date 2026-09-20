@@ -55,11 +55,20 @@ export default function Admissions() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    await base44.entities.AdmissionInquiry.create({ ...form, status: "new" });
-    setSubmitting(false);
-    setSubmitted(true);
-    toast({ title: "Inquiry submitted.", description: "We'll be in touch within 2–3 working days." });
-    setForm({ parent_name: "", child_name: "", grade: "", phone: "", email: "", message: "" });
+    try {
+      await base44.entities.AdmissionInquiry.create({ ...form, status: "new" });
+      setSubmitted(true);
+      toast({ title: "Inquiry submitted.", description: "We'll be in touch within 2–3 working days." });
+      setForm({ parent_name: "", child_name: "", grade: "", phone: "", email: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Could not submit inquiry.",
+        description: error.message || "Please try again or call the school directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputClass = "w-full bg-cream border border-gray-200 rounded px-4 py-3 text-[14px] text-ink placeholder-ink-muted/60 focus:outline-none focus:border-cobalt focus:bg-white transition-colors duration-200";

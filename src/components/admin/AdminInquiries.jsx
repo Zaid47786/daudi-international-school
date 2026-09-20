@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Loader2, Mail, Phone, User, GraduationCap, MessageSquare, Trash2, ChevronDown } from "lucide-react";
+import { Loader2, Mail, Phone, User, MessageSquare, Trash2, ChevronDown, RefreshCw } from "lucide-react";
 
 const STATUS_COLORS = {
   new: "bg-blue-100 text-blue-700",
@@ -12,6 +12,7 @@ const STATUS_COLORS = {
 export default function AdminInquiries() {
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
   const [expanded, setExpanded] = useState(null);
 
@@ -19,19 +20,33 @@ export default function AdminInquiries() {
 
   const loadInquiries = async () => {
     setLoading(true);
-    const records = await base44.entities.AdmissionInquiry.list("-created_date");
-    setInquiries(records);
-    setLoading(false);
+    setError("");
+    try {
+      const records = await base44.entities.AdmissionInquiry.list("-created_date");
+      setInquiries(records);
+    } catch (err) {
+      setError(err.message || "Could not load admission inquiries.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleStatusChange = async (id, status) => {
-    await base44.entities.AdmissionInquiry.update(id, { status });
-    setInquiries((prev) => prev.map((i) => i.id === id ? { ...i, status } : i));
+    try {
+      await base44.entities.AdmissionInquiry.update(id, { status });
+      setInquiries((prev) => prev.map((i) => i.id === id ? { ...i, status } : i));
+    } catch (err) {
+      setError(err.message || "Could not update this inquiry.");
+    }
   };
 
   const handleDelete = async (id) => {
-    await base44.entities.AdmissionInquiry.delete(id);
-    setInquiries((prev) => prev.filter((i) => i.id !== id));
+    try {
+      await base44.entities.AdmissionInquiry.delete(id);
+      setInquiries((prev) => prev.filter((i) => i.id !== id));
+    } catch (err) {
+      setError(err.message || "Could not delete this inquiry.");
+    }
   };
 
   const filtered = filter === "all" ? inquiries : inquiries.filter((i) => i.status === filter);
@@ -42,6 +57,18 @@ export default function AdminInquiries() {
 
   return (
     <div className="space-y-5 max-w-4xl">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-xs text-gray-500">Every admission form submission is saved here automatically.</p>
+        <button onClick={loadInquiries} className="flex items-center gap-1.5 text-xs font-semibold text-royal-blue hover:text-navy">
+          <RefreshCw size={13} /> Refresh
+        </button>
+      </div>
+      {error && (
+        <div className="flex items-center justify-between gap-4 rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-xs text-red-700">
+          <span>{error}</span>
+          <button onClick={loadInquiries} className="font-bold underline">Try again</button>
+        </div>
+      )}
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
@@ -78,6 +105,7 @@ export default function AdminInquiries() {
                       <span className="flex items-center gap-1"><User size={11} /> {inq.parent_name}</span>
                       <span className="flex items-center gap-1"><Phone size={11} /> {inq.phone}</span>
                       {inq.email && <span className="flex items-center gap-1"><Mail size={11} /> {inq.email}</span>}
+                      {inq.created_date && <span>{new Date(inq.created_date).toLocaleString()}</span>}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
@@ -97,12 +125,13 @@ export default function AdminInquiries() {
                     </button>
                   </div>
                 </div>
-                {expanded === inq.id && inq.message && (
+                {expanded === inq.id && (inq.message || inq.notes) && (
                   <div className="mt-3 pt-3 border-t border-gray-50">
-                    <div className="flex items-start gap-2 text-xs text-gray-500">
+                    {inq.message && <div className="flex items-start gap-2 text-xs text-gray-500">
                       <MessageSquare size={12} className="mt-0.5 flex-shrink-0" />
-                      <p>{inq.message}</p>
-                    </div>
+                      <p><span className="font-semibold text-gray-700">Message:</span> {inq.message}</p>
+                    </div>}
+                    {inq.notes && <p className="mt-2 text-xs text-gray-500"><span className="font-semibold text-gray-700">Admin notes:</span> {inq.notes}</p>}
                   </div>
                 )}
               </div>

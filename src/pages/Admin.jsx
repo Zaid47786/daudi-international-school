@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Settings, Calendar, Image, BarChart3, Home, LogOut, Menu, X, Inbox, BookOpen } from "lucide-react";
 import AdminSettings from "../components/admin/AdminSettings";
@@ -21,12 +21,20 @@ const tabs = [
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("settings");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState(() => !!localStorage.getItem("dis_token"));
+  const [authenticated, setAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    base44.auth.me()
+      .then(() => setAuthenticated(true))
+      .catch(() => setAuthenticated(false))
+      .finally(() => setCheckingAuth(false));
+  }, []);
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +50,14 @@ export default function Admin() {
       setLoggingIn(false);
     }
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-cobalt-deep flex items-center justify-center font-inter">
+        <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!authenticated) {
     return (
@@ -90,7 +106,6 @@ export default function Admin() {
 
   const handleLogout = () => {
     base44.auth.logout("/admin");
-    setAuthenticated(false);
   };
 
   const ActiveComponent = {

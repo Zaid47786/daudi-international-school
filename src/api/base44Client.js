@@ -51,17 +51,20 @@ function makeEntity(name) {
   const apiPath = ENTITY_PATH[name];
   if (!apiPath) throw new Error(`Unknown entity: "${name}". Check ENTITY_PATH in base44Client.js`);
 
-  return {
-    list: async (_sort, _limit) => apiFetch(apiPath),
+  function queryPath(filters = {}, sort, limit) {
+    const qs = new URLSearchParams();
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) qs.set(k, String(v));
+    });
+    if (sort) qs.set("sort", String(sort));
+    if (limit) qs.set("limit", String(limit));
+    return qs.toString() ? `${apiPath}?${qs}` : apiPath;
+  }
 
-    filter: async (filters = {}, _sort, _limit) => {
-      const qs = new URLSearchParams();
-      Object.entries(filters).forEach(([k, v]) => {
-        if (v !== undefined && v !== null) qs.set(k, String(v));
-      });
-      const q = qs.toString() ? `?${qs}` : "";
-      return apiFetch(`${apiPath}${q}`);
-    },
+  return {
+    list: async (sort, limit) => apiFetch(queryPath({}, sort, limit)),
+
+    filter: async (filters = {}, sort, limit) => apiFetch(queryPath(filters, sort, limit)),
 
     get: async (id) => apiFetch(`${apiPath}/${id}`),
 
