@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Settings, Calendar, Image, BarChart3, Home, LogOut, Menu, X, Inbox, BookOpen } from "lucide-react";
+import { Settings, Calendar, Image, BarChart3, Home, LogOut, Menu, X, Inbox, BookOpen, GraduationCap } from "lucide-react";
 import AdminSettings from "../components/admin/AdminSettings";
 import AdminEvents from "../components/admin/AdminEvents";
 import AdminGallery from "../components/admin/AdminGallery";
@@ -143,6 +143,12 @@ export default function Admin() {
 
         {/* Bottom actions */}
         <div className="p-4 border-t border-white/10 space-y-2">
+          <button
+            onClick={() => navigate("/portal")}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-all"
+          >
+            <GraduationCap size={18} /> School Portal
+          </button>
           <button
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-all"

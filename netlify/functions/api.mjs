@@ -16,6 +16,27 @@ const COLLECTIONS = {
   inquiries: "AdmissionInquiry",
 };
 
+const PORTAL_COLLECTIONS = {
+  users: "PortalUser",
+  students: "PortalStudent",
+  teachers: "PortalTeacher",
+  parents: "PortalParent",
+  classes: "PortalClass",
+  subjects: "PortalSubject",
+  timetable: "PortalTimetable",
+  attendance: "PortalAttendance",
+  exams: "PortalExam",
+  results: "PortalResult",
+  fees: "PortalFee",
+  notices: "PortalNotice",
+  calendar: "PortalCalendar",
+  notifications: "PortalNotification",
+  audit: "PortalAuditLog",
+};
+
+const PORTAL_ROLES = new Set(["admin", "teacher", "student", "parent"]);
+const PORTAL_MANAGED_RESOURCES = new Set(Object.keys(PORTAL_COLLECTIONS));
+
 const PUBLIC_COLLECTIONS = new Set([
   "stats",
   "events",
@@ -157,7 +178,114 @@ function presentRecord(collection, record) {
     output.key = output.key_name;
     output.group = output.group_name;
   }
+  if (collection === "PortalUser") {
+    delete output.password_hash;
+    delete output.password_salt;
+  }
   return output;
+}
+
+function rawPortalUser(record) {
+  return record && record.role && PORTAL_ROLES.has(record.role) ? record : null;
+}
+
+function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
+  return {
+    password_salt: salt,
+    password_hash: crypto.scryptSync(String(password), salt, 64).toString("hex"),
+  };
+}
+
+function verifyPassword(password, record) {
+  if (!record?.password_hash || !record?.password_salt) return false;
+  const candidate = crypto.scryptSync(String(password), record.password_salt, 64).toString("hex");
+  const expected = Buffer.from(record.password_hash, "hex");
+  const actual = Buffer.from(candidate, "hex");
+  return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
+}
+
+async function listPortalRows(resource, query = {}) {
+  return listRecords(PORTAL_COLLECTIONS[resource], query, true);
+}
+
+async function findPortalUserByEmail(email) {
+  const rows = await listRecords("PortalUser", {}, true);
+  return rows.find((row) => String(row.email || "").toLowerCase() === String(email || "").trim().toLowerCase()) || null;
+}
+
+async function findPortalUserById(id) {
+  return rawPortalUser(await getRecord("PortalUser", id));
+}
+
+async function portalRowsForUser(user) {
+  const students = await listPortalRows("students");
+  const teachers = await listPortalRows("teachers");
+  const parents = await listPortalRows("parents");
+  const teacher = user.role === "teacher" ? teachers.find((row) => row.user_id === user.id || row.id === user.profile_id) : null;
+  const teacherClassIds = teacher?.class_ids || [];
+  const studentIds = user.role === "student"
+    ? students.filter((row) => row.user_id === user.id || row.id === user.profile_id).map((row) => row.id)
+    : user.role === "parent"
+      ? students.filter((row) => (user.child_ids || []).includes(row.id) || row.parent_ids?.includes(user.id)).map((row) => row.id)
+      : [];
+  const parent = user.role === "parent" ? parents.find((row) => row.user_id === user.id || row.id === user.profile_id) : null;
+  const selectedStudents = user.role === "teacher"
+    ? students.filter((row) => teacherClassIds.includes(row.class_id))
+    : user.role === "parent" && parent
+    ? students.filter((row) => (parent.child_ids || []).includes(row.id) || (row.parent_ids || []).includes(user.id))
+    : students.filter((row) => studentIds.includes(row.id));
+
+  const allAttendance = await listPortalRows("attendance");
+  const allExams = await listPortalRows("exams");
+  const allResults = await listPortalRows("results");
+  const allFees = await listPortalRows("fees");
+  const allTimetable = await listPortalRows("timetable");
+  const allNotices = await listPortalRows("notices");
+  const allCalendar = await listPortalRows("calendar");
+
+  const classIds = selectedStudents.map((row) => row.class_id).filter(Boolean);
+  const sectionIds = selectedStudents.map((row) => row.section_id).filter(Boolean);
+  const audienceMatches = (notice) => {
+    if (notice.status && notice.status !== "published") return false;
+    if (notice.audience === "school" || notice.audience === "all") return true;
+    if (notice.audience_role && notice.audience_role !== user.role) return false;
+    if (notice.class_id && !classIds.includes(notice.class_id) && !teacherClassIds.includes(notice.class_id)) return false;
+    if (notice.section_id && !sectionIds.includes(notice.section_id)) return false;
+    return true;
+  };
+
+  const visibleIds = new Set(selectedStudents.map((row) => row.id));
+  const scoped = {
+    students: selectedStudents,
+    teacher,
+    parent,
+    attendance: allAttendance.filter((row) => visibleIds.has(row.student_id) || (teacher && (teacher.class_ids || []).includes(row.class_id))),
+    exams: allExams.filter((row) => !row.class_id || classIds.includes(row.class_id) || teacherClassIds.includes(row.class_id)),
+    results: allResults.filter((row) => visibleIds.has(row.student_id) || (teacher && teacherClassIds.includes(row.class_id))),
+    fees: allFees.filter((row) => visibleIds.has(row.student_id)),
+    timetable: allTimetable.filter((row) => classIds.includes(row.class_id) || teacherClassIds.includes(row.class_id) || row.teacher_id === user.id),
+    notices: allNotices.filter(audienceMatches),
+    calendar: allCalendar,
+    parents,
+  };
+
+  return scoped;
+}
+
+function averageAttendance(rows) {
+  if (!rows.length) return 0;
+  const present = rows.filter((row) => row.status === "present" || row.status === "late").length;
+  return Math.round((present / rows.length) * 100);
+}
+
+function gradeForPercentage(percentage) {
+  const score = Number(percentage || 0);
+  if (score >= 90) return "A+";
+  if (score >= 80) return "A";
+  if (score >= 70) return "B";
+  if (score >= 60) return "C";
+  if (score >= 50) return "D";
+  return "F";
 }
 
 function sortRecords(records, entity, query) {
@@ -257,6 +385,146 @@ async function deleteRecord(collection, id) {
   return { id, deleted: true };
 }
 
+function portalSafeUser(user) {
+  if (!user) return null;
+  const output = presentRecord("PortalUser", user);
+  return {
+    ...output,
+    name: output.full_name || output.name || output.email,
+  };
+}
+
+async function writeAudit(user, action, resource, recordId, before, after) {
+  const now = new Date().toISOString();
+  await createRecord("PortalAuditLog", {
+    user_id: user?.id || "system",
+    user_name: user?.full_name || user?.name || "System",
+    action,
+    resource,
+    record_id: recordId || "",
+    previous_value: before ? JSON.stringify(before) : "",
+    new_value: after ? JSON.stringify(after) : "",
+    created_date: now,
+  });
+}
+
+async function createPortalManaged(resource, input, user) {
+  const collection = PORTAL_COLLECTIONS[resource];
+  const payload = { ...(input || {}) };
+  if (resource === "users") {
+    const password = payload.password || "ChangeMe123!";
+    Object.assign(payload, hashPassword(password));
+    delete payload.password;
+    payload.role = PORTAL_ROLES.has(payload.role) ? payload.role : "student";
+    payload.active = payload.active !== false;
+  }
+  const row = await createRecord(collection, payload);
+  await writeAudit(user, "create", resource, row.id, null, row);
+  return row;
+}
+
+async function updatePortalManaged(resource, id, input, user) {
+  const collection = PORTAL_COLLECTIONS[resource];
+  const before = await getRecord(collection, id);
+  if (!before) return null;
+  const payload = { ...(input || {}) };
+  if (resource === "users") {
+    if (payload.password) Object.assign(payload, hashPassword(payload.password));
+    delete payload.password;
+    if (payload.role && !PORTAL_ROLES.has(payload.role)) delete payload.role;
+  }
+  const row = await updateRecord(collection, id, payload);
+  await writeAudit(user, "update", resource, id, presentRecord(collection, before), row);
+  return row;
+}
+
+async function deletePortalManaged(resource, id, user) {
+  const collection = PORTAL_COLLECTIONS[resource];
+  const before = await getRecord(collection, id);
+  if (!before) return null;
+  const row = await deleteRecord(collection, id);
+  await writeAudit(user, "delete", resource, id, presentRecord(collection, before), null);
+  return row;
+}
+
+async function portalBootstrap(user) {
+  if (user.role === "admin") {
+    const [students, teachers, parents, classes, subjects, exams, attendance, results, fees, notices, calendar, users, audit] = await Promise.all([
+      listPortalRows("students"), listPortalRows("teachers"), listPortalRows("parents"), listPortalRows("classes"),
+      listPortalRows("subjects"), listPortalRows("exams"), listPortalRows("attendance"), listPortalRows("results"),
+      listPortalRows("fees"), listPortalRows("notices"), listPortalRows("calendar"), listPortalRows("users"), listPortalRows("audit"),
+    ]);
+    const totalFees = fees.reduce((sum, row) => sum + Number(row.amount || row.total_amount || 0), 0);
+    const paidFees = fees.filter((row) => row.status === "paid").reduce((sum, row) => sum + Number(row.amount || 0), 0);
+    return ok({
+      user: portalSafeUser(user),
+      role: "admin",
+      dashboard: {
+        counts: { students: students.length, teachers: teachers.length, parents: parents.length, classes: classes.length },
+        attendance: averageAttendance(attendance),
+        exams: exams.filter((row) => new Date(row.date) >= new Date()).slice(0, 5),
+        fees: { total: totalFees, collected: paidFees, pending: Math.max(totalFees - paidFees, 0) },
+        notices: notices.slice(0, 5),
+        calendar: calendar.slice(0, 8),
+      },
+      data: { students, teachers, parents, classes, subjects, exams, attendance, results, fees, notices, calendar, users, audit },
+    });
+  }
+
+  const scoped = await portalRowsForUser(user);
+  const ownAttendance = scoped.attendance.filter((row) => scoped.students.some((student) => student.id === row.student_id));
+  const upcomingExams = scoped.exams.filter((row) => row.status !== "cancelled").sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(0, 8);
+  const publishedResults = scoped.results.filter((row) => row.published !== false);
+  const pendingFees = scoped.fees.filter((row) => row.status !== "paid").reduce((sum, row) => sum + Number(row.amount || row.pending_amount || 0), 0);
+  return ok({
+    user: portalSafeUser(user),
+    role: user.role,
+    profile: scoped.students[0] || scoped.teacher || scoped.parent || null,
+    children: scoped.students,
+    dashboard: {
+      attendance: averageAttendance(ownAttendance),
+      upcomingExams,
+      latestResult: publishedResults[0] || null,
+      feeStatus: { pending: pendingFees, paid: scoped.fees.filter((row) => row.status === "paid").reduce((sum, row) => sum + Number(row.amount || 0), 0) },
+      notices: scoped.notices.slice(0, 6),
+      timetable: scoped.timetable,
+      calendar: scoped.calendar,
+    },
+    data: scoped,
+  });
+}
+
+async function handlePortal(path, event, body, user) {
+  if (path === "portal/bootstrap" && event.httpMethod === "GET") return portalBootstrap(user);
+  const parts = path.split("/");
+  if (parts[0] !== "portal") return response(404, { error: "Not found" });
+
+  if (parts[1] === "manage" && PORTAL_MANAGED_RESOURCES.has(parts[2])) {
+    const resource = parts[2];
+    const id = parts[3];
+    const teacherCanWrite = user.role === "teacher" && ["attendance", "results"].includes(resource);
+    if (user.role !== "admin" && !teacherCanWrite) return response(403, { error: "Forbidden: insufficient permissions" });
+    if (event.httpMethod === "GET") return ok(id ? presentRecord(PORTAL_COLLECTIONS[resource], await getRecord(PORTAL_COLLECTIONS[resource], id)) : await listPortalRows(resource));
+    if (teacherCanWrite && body.class_id && !(user.class_ids || []).includes(body.class_id)) {
+      return response(403, { error: "You are not assigned to this class" });
+    }
+    if (event.httpMethod === "POST" && !id) return ok(await createPortalManaged(resource, body, user), 201);
+    if (event.httpMethod === "PUT" && id) {
+      if (teacherCanWrite) {
+        const existing = await getRecord(PORTAL_COLLECTIONS[resource], id);
+        if (existing?.class_id && !(user.class_ids || []).includes(existing.class_id)) return response(403, { error: "You are not assigned to this class" });
+      }
+      const row = await updatePortalManaged(resource, id, body, user);
+      return row ? ok(row) : response(404, { error: "Not found" });
+    }
+    if (event.httpMethod === "DELETE" && id) {
+      const row = await deletePortalManaged(resource, id, user);
+      return row ? ok(row) : response(404, { error: "Not found" });
+    }
+  }
+  return response(404, { error: "Not found" });
+}
+
 function requestPath(event) {
   const rawPath = event.path || new URL(event.rawUrl || "https://netlify.local/").pathname;
   const apiIndex = rawPath.indexOf("/api/");
@@ -277,7 +545,7 @@ async function handleAuth(path, event, body) {
     const password = String(body.password || "");
     const configuredPassword = String(process.env.ADMIN_PASSWORD || "");
     if (!configuredPassword || !process.env.JWT_SECRET) {
-      return response(503, { error: "Admin authentication is not configured on Netlify." });
+      return response(503, { error: "Admin authentication is not configured." });
     }
     const passwordMatches = Buffer.byteLength(password) === Buffer.byteLength(configuredPassword)
       && crypto.timingSafeEqual(Buffer.from(password), Buffer.from(configuredPassword));
@@ -287,9 +555,31 @@ async function handleAuth(path, event, body) {
     return ok({ token, user: publicUser() });
   }
 
+  if (path === "auth/portal-login" && event.httpMethod === "POST") {
+    if (!process.env.JWT_SECRET) return response(503, { error: "Portal authentication is not configured." });
+    const email = String(body.email || "").trim().toLowerCase();
+    const password = String(body.password || "");
+    if (!email || !password) return response(400, { error: "Email and password are required" });
+    const portalUser = await findPortalUserByEmail(email);
+    if (!portalUser || portalUser.active === false || !verifyPassword(password, portalUser)) {
+      return response(401, { error: "Invalid email or password" });
+    }
+    const now = Math.floor(Date.now() / 1000);
+    const token = signToken({ ...portalSafeUser(portalUser), iat: now, exp: now + TOKEN_TTL_SECONDS });
+    return ok({ token, user: portalSafeUser(portalUser) });
+  }
+
   if (path === "auth/me" && event.httpMethod === "GET") {
     const admin = currentAdmin(event);
     return admin ? ok(publicUser()) : response(401, { error: "Unauthorized" });
+  }
+
+  if (path === "auth/portal-me" && event.httpMethod === "GET") {
+    const payload = verifyToken(tokenFromEvent(event));
+    if (!payload || !PORTAL_ROLES.has(payload.role)) return response(401, { error: "Unauthorized" });
+    if (payload.role === "admin") return ok(publicUser());
+    const portalUser = await findPortalUserById(payload.id);
+    return portalUser ? ok(portalSafeUser(portalUser)) : response(401, { error: "User not found" });
   }
 
   if (path === "auth/logout" && event.httpMethod === "POST") return ok({ message: "Logged out" });
@@ -303,6 +593,11 @@ export async function handler(event) {
   const body = decodeBody(event);
   if (body === null) return response(400, { error: "Request body must be valid JSON" });
   if (path.startsWith("auth/")) return handleAuth(path, event, body);
+  if (path.startsWith("portal/")) {
+    const payload = verifyToken(tokenFromEvent(event));
+    if (!payload || !PORTAL_ROLES.has(payload.role)) return response(401, { error: "Unauthorized" });
+    return handlePortal(path, event, body, payload);
+  }
 
   const [resource, id] = path.split("/");
   const collection = COLLECTIONS[resource];

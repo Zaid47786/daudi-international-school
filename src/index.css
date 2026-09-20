@@ -114,4 +114,58 @@
     text-transform: uppercase;
     color: var(--ink-muted);
   }
+
+  .portal-eyebrow {
+    color: var(--cobalt);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .portal-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.45rem;
+    text-transform: uppercase;
+  }
+
+  .portal-input {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: #fff;
+    color: #1e293b;
+    font-size: 0.875rem;
+    min-height: 2.7rem;
+    padding: 0.7rem 0.85rem;
+    outline: none;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  .portal-input:focus {
+    border-color: var(--cobalt);
+    box-shadow: 0 0 0 3px rgba(26, 53, 128, 0.1);
+  }
+
+  .portal-button {
+    align-items: center;
+    background: var(--cobalt-deep);
+    border-radius: 0.75rem;
+    color: #fff;
+    display: inline-flex;
+    font-size: 0.8rem;
+    font-weight: 700;
+    gap: 0.45rem;
+    justify-content: center;
+    min-height: 2.7rem;
+    padding: 0.7rem 1rem;
+    transition: background-color 160ms ease, transform 160ms ease;
+  }
+
+  .portal-button:hover { background: var(--cobalt); }
+  .portal-button:active { transform: scale(0.97); }
 }

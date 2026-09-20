@@ -22,6 +22,7 @@ import EnglishMediumSchool from './pages/seo/EnglishMediumSchool';
 import AdmissionsOpen from './pages/seo/AdmissionsOpen';
 import SchoolNearMe from './pages/seo/SchoolNearMe';
 import AdminLogin from './pages/AdminLogin';
+import Portal from './pages/Portal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth } = useAuth();
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
       <Route path="/admissions-open" element={<AdmissionsOpen />} />
       <Route path="/school-near-me" element={<SchoolNearMe />} />
       <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/portal/*" element={<Portal />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

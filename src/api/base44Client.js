@@ -112,6 +112,32 @@ const auth = {
     return data.user;
   },
 
+  async portalLogin(email, password) {
+    const data = await apiFetch("/auth/portal-login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+    setToken(data.token);
+    return data.user;
+  },
+
+  async portalMe() {
+    return apiFetch("/auth/portal-me");
+  },
+
+  async portalBootstrap() {
+    return apiFetch("/portal/bootstrap");
+  },
+
+  async portalManage(resource, options = {}) {
+    const { id, method = "GET", body } = options;
+    const path = `/portal/manage/${resource}${id ? `/${id}` : ""}`;
+    return apiFetch(path, {
+      method,
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    });
+  },
+
   logout(redirectUrl) {
     clearToken();
     window.location.href = redirectUrl || "/";
