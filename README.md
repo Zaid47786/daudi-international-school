@@ -33,11 +33,11 @@ The live website is deployed on Vercel. The repository is configured with:
 
 - Build command: `npm run build`
 - Static output directory: `dist`
-- Serverless API entry point: `api/[...path].mjs`
+- Serverless API entry point: `api/index.js`
 - React Router fallback: `vercel.json`
 - API routes under `/api/*`
 
-No `VITE_API_URL` variable is needed in the Vercel project. The frontend intentionally calls the same-origin `/api` path, and Vercel routes those requests to the catch-all function.
+No `VITE_API_URL` variable is needed in the Vercel project. The frontend intentionally calls the same-origin `/api` path, and Vercel routes those requests to the API function before the React SPA fallback.
 
 ### Required Vercel environment variables
 
@@ -82,6 +82,29 @@ The Admissions form sends these fields to the API:
 Each submission is stored persistently in the connected Vercel Blob store. In the admin panel, open **Inquiries** to see all submissions, newest first. The panel shows contact details, submission time, message, and status. Statuses can be changed to **New**, **Contacted**, **Enrolled**, or **Rejected**, and records can be deleted.
 
 The same Vercel API also serves the existing content paths for settings, stats, events, gallery, testimonials, and blog posts, so the public pages and admin content screens continue using the same frontend client.
+
+## School management portal
+
+The new portal is available at `/portal` and uses the same Vercel Blob-backed API as the website. It provides four role-aware experiences without creating disconnected databases:
+
+| Role | Main capabilities |
+| --- | --- |
+| Student | Dashboard, routine, attendance, exams, published results, notices, calendar, fees, and digital ID |
+| Teacher | Dashboard, routine, authorised student list, attendance marking, exams, gradebook, notices, and calendar |
+| Parent | Dashboard, child switcher, child profile, routine, attendance, exams, published results, fees, notices, calendar, and digital ID |
+| Admin | School operations dashboard, portal accounts, students, teachers, parents, classes, subjects, timetable, attendance, exams, results, fees, notices, calendar, and audit log |
+
+### Create portal accounts
+
+1. Sign in at `/portal` as the administrator.
+2. Open **Portal accounts**.
+3. Create a user with `full_name`, `email`, `role`, and a temporary `password`.
+4. Create the matching student, teacher, or parent profile and set its `user_id` or relationship IDs. Parent `child_ids` and teacher `class_ids` accept comma-separated record IDs.
+5. Share the account email and temporary password privately. Users sign in at `/portal`; passwords can be rotated by editing the account.
+
+Portal data is intentionally shared. Attendance created by a teacher is visible to the linked student and parent; published results are visible to the student and parent; and admin-created exams, notices, calendar entries, fees, classes, subjects, and timetables flow into the relevant portals. Teachers can only write attendance and marks for their assigned classes. All admin changes are stored in the audit log.
+
+Results remain hidden from students and parents while `published` is false. The parent child switcher narrows routine, attendance, results, fees, and exams to the selected child.
 
 ## Verify before deploying
 
