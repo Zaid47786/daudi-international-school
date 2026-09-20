@@ -1,7 +1,9 @@
 import { handler } from "../netlify/functions/api.mjs";
 
-export default async function vercelApiHandler(request, response) {
+export default async function apiHandler(request, response) {
   const requestUrl = new URL(request.url || "/api", `https://${request.headers.host || "localhost"}`);
+  const route = requestUrl.searchParams.get("path");
+  const apiPath = route ? `/api/${route.replace(/^\/+/, "")}` : requestUrl.pathname;
   let body;
 
   if (request.body !== undefined && request.body !== null) {
@@ -12,7 +14,7 @@ export default async function vercelApiHandler(request, response) {
 
   const result = await handler({
     httpMethod: request.method,
-    path: requestUrl.pathname,
+    path: apiPath,
     rawQuery: requestUrl.searchParams.toString(),
     headers: request.headers,
     body,

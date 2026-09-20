@@ -1,11 +1,11 @@
 {
   "functions": {
-    "api/index.mjs": {
+    "api/index.js": {
       "runtime": "nodejs22.x"
     }
   },
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/index.mjs?path=:path*" },
+    { "source": "/api/:path*", "destination": "/api/index?path=:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
