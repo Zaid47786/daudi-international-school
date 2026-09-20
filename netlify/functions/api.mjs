@@ -209,8 +209,10 @@ async function listPortalRows(resource, query = {}) {
 }
 
 async function findPortalUserByEmail(email) {
-  const rows = await listRecords("PortalUser", {}, true);
-  return rows.find((row) => String(row.email || "").toLowerCase() === String(email || "").trim().toLowerCase()) || null;
+  const store = getStoreInstance();
+  const { blobs = [] } = await store.list({ prefix: "PortalUser/" });
+  const rows = await Promise.all(blobs.map(({ key }) => store.get(key, { type: "json" })));
+  return rows.find((row) => String(row?.email || "").toLowerCase() === String(email || "").trim().toLowerCase()) || null;
 }
 
 async function findPortalUserById(id) {
