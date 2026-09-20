@@ -39,7 +39,7 @@ export default function Home() {
             alt=""
             className="w-full h-full object-cover"
             style={{ objectPosition: "center 20%", opacity: 0.18 }}
-            fetchpriority="high"
+            fetchPriority="high"
             decoding="async"
             width="1200"
             height="800"
@@ -127,7 +127,7 @@ export default function Home() {
               <img
                 src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
                 alt="Daudi International School Muzaffarpur official logo"
-                fetchpriority="high"
+                fetchPriority="high"
                 width="192" height="192"
                 className="relative w-48 h-auto drop-shadow-2xl"
               />

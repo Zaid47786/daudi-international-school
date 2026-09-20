@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle, BookOpen, GraduationCap, Users } from "lucide-react";
+import { ArrowRight, CheckCircle, GraduationCap } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import SEOHead from "../../components/SEOHead";

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Save, Loader2, Globe, Phone, Mail, MapPin, Image, MessageSquare, CheckCircle2 } from "lucide-react";
+import { Save, Loader2, CheckCircle2 } from "lucide-react";
 
 const DEFAULT_SETTINGS = [
   { key: "school_name", label: "School Name", value: "Daudi International School", group: "general" },

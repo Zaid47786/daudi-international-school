@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle, Star, ArrowRight, MapPin, Phone, BookOpen, Users, Award, Heart } from "lucide-react";
+import { Star, ArrowRight, MapPin, Phone, BookOpen, Users, Award, Heart } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import SEOHead from "../../components/SEOHead";
