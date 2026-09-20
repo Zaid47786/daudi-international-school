@@ -5,7 +5,6 @@ import { useAuth } from "@/lib/AuthContext";
 export default function AdminLogin() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,7 +14,7 @@ export default function AdminLogin() {
     setError("");
     setLoading(true);
     try {
-      await login(email, password);
+      await login(password);
       const params = new URLSearchParams(window.location.search);
       navigate(params.get("next") || "/admin");
     } catch (err) {
@@ -41,22 +40,13 @@ export default function AdminLogin() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email address"
-              required
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
-            />
-          </div>
-          <div>
-            <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               required
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
+              autoFocus
             />
           </div>
 

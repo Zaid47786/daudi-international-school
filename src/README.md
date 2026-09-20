@@ -95,4 +95,4 @@ pm2 start ecosystem.config.js
 | Never mix them | `server/package.json` is for Node/Express. Root `package.json` is for React/Vite. |
 | Only one server.js | `server/server.js` is the ONLY server file. There is no other. |
 | Frontend talks to backend | Via `src/api/base44Client.js` → `VITE_API_URL` env var (defaults to `/api`) |
-| Admin login | Go to `/admin` on the live site. Credentials set in `.env` → `ADMIN_EMAIL` / `ADMIN_PASSWORD` |
+| Admin login | Go to `/admin` on the live site. Set the admin password in `.env` → `ADMIN_PASSWORD` |

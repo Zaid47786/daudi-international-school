@@ -24,8 +24,8 @@ export const AuthProvider = ({ children }) => {
     fetchCurrentUser();
   }, [fetchCurrentUser]);
 
-  const login = async (email, password) => {
-    const u = await base44.auth.login(email, password);
+  const login = async (password) => {
+    const u = await base44.auth.login(password);
     setUser(u);
     return u;
   };

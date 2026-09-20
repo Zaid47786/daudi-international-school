@@ -235,24 +235,20 @@ function publicUser() {
   return {
     id: "netlify-admin",
     full_name: process.env.ADMIN_NAME || "DIS Administrator",
-    email: process.env.ADMIN_EMAIL,
     role: "admin",
   };
 }
 
 async function handleAuth(path, event, body) {
   if (path === "auth/login" && event.httpMethod === "POST") {
-    const email = String(body.email || "").trim().toLowerCase();
     const password = String(body.password || "");
-    const configuredEmail = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
     const configuredPassword = String(process.env.ADMIN_PASSWORD || "");
-    if (!configuredEmail || !configuredPassword || !process.env.JWT_SECRET) {
+    if (!configuredPassword || !process.env.JWT_SECRET) {
       return response(503, { error: "Admin authentication is not configured on Netlify." });
     }
-    const emailMatches = email === configuredEmail;
     const passwordMatches = Buffer.byteLength(password) === Buffer.byteLength(configuredPassword)
       && crypto.timingSafeEqual(Buffer.from(password), Buffer.from(configuredPassword));
-    if (!emailMatches || !passwordMatches) return response(401, { error: "Invalid credentials" });
+    if (!passwordMatches) return response(401, { error: "Invalid password" });
     const now = Math.floor(Date.now() / 1000);
     const token = signToken({ ...publicUser(), iat: now, exp: now + TOKEN_TTL_SECONDS });
     return ok({ token, user: publicUser() });

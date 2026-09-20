@@ -41,7 +41,6 @@ Before the first Netlify deploy, add these environment variables in **Netlify â†
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `ADMIN_EMAIL` | Yes | Email used to access `/admin` |
 | `ADMIN_PASSWORD` | Yes | Password used to access `/admin` |
 | `JWT_SECRET` | Yes | Long random secret used to sign admin sessions |
 | `ADMIN_NAME` | No | Name shown for the administrator; defaults to `DIS Administrator` |
@@ -52,7 +51,7 @@ No `VITE_API_URL` variable is needed on Netlify. The frontend intentionally call
 
 ## Admin access and applicant records
 
-Open `/admin` after deployment and sign in with the configured `ADMIN_EMAIL` and `ADMIN_PASSWORD`. The admin page now verifies the signed API session instead of treating the presence of a browser `localStorage` value as authentication.
+Open `/admin` after deployment and sign in with the configured `ADMIN_PASSWORD`. The admin page now asks for only the password and verifies a signed API session instead of treating the presence of a browser `localStorage` value as authentication. Set the `ADMIN_PASSWORD` environment variable in the hosting dashboard to the password you want to use; it is intentionally not committed to this repository.
 
 The Admissions form sends these fields to the API:
 

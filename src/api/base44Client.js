@@ -103,10 +103,10 @@ const auth = {
     }
   },
 
-  async login(email, password) {
+  async login(password) {
     const data = await apiFetch("/auth/login", {
       method: "POST",
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ password }),
     });
     setToken(data.token);
     return data.user;

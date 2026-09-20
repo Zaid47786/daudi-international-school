@@ -23,7 +23,6 @@ export default function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
@@ -41,7 +40,7 @@ export default function Admin() {
     setPasswordError("");
     setLoggingIn(true);
     try {
-      await base44.auth.login(emailInput, passwordInput);
+      await base44.auth.login(passwordInput);
       setAuthenticated(true);
     } catch (err) {
       setPasswordError(err.message || "Invalid credentials. Please try again.");
@@ -74,21 +73,13 @@ export default function Admin() {
           </div>
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <input
-              type="email"
-              value={emailInput}
-              onChange={(e) => { setEmailInput(e.target.value); setPasswordError(""); }}
-              placeholder="Email address"
-              required
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30"
-              autoFocus
-            />
-            <input
               type="password"
               value={passwordInput}
               onChange={(e) => { setPasswordInput(e.target.value); setPasswordError(""); }}
               placeholder="Password"
               required
               className={`w-full border ${passwordError ? "border-red-400" : "border-gray-200"} rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-royal-blue/30`}
+              autoFocus
             />
             {passwordError && <p className="text-red-500 text-xs bg-red-50 rounded-lg px-3 py-2">{passwordError}</p>}
             <button

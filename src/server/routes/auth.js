@@ -8,11 +8,11 @@ const router = Router();
 
 // POST /api/auth/login
 router.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: "Email and password required" });
-  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email.trim().toLowerCase());
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ error: "Password required" });
+  const user = db.prepare("SELECT * FROM users WHERE role = 'admin' ORDER BY created_date ASC LIMIT 1").get();
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
-  if (!bcrypt.compareSync(password, user.password)) return res.status(401).json({ error: "Invalid credentials" });
+  if (!bcrypt.compareSync(password, user.password)) return res.status(401).json({ error: "Invalid password" });
   const token = signToken(user);
   const { password: _pw, ...safeUser } = user;
   res.json({ token, user: safeUser });
