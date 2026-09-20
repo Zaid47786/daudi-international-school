@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
-import { getStore } from "@netlify/blobs";
+import { getStore as getNetlifyStore } from "@netlify/blobs";
+import { del as deleteVercelBlob, get as getVercelBlob, list as listVercelBlobs, put as putVercelBlob } from "@vercel/blob";
 
 const STORE_NAME = "dis-school-data";
 const STORE_REGION = "ap-southeast-1";
@@ -42,9 +43,41 @@ function ok(payload, statusCode = 200) {
 }
 
 function getStoreInstance() {
+  if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    return {
+      async setJSON(key, data) {
+        await putVercelBlob(key, JSON.stringify(data), {
+          access: "private",
+          addRandomSuffix: false,
+          overwrite: true,
+          contentType: "application/json",
+        });
+      },
+      async get(key, options = {}) {
+        const result = await getVercelBlob(key, { access: "private", useCache: false });
+        if (!result) return null;
+        if (options.type === "json") return JSON.parse(await new Response(result.stream).text());
+        return result;
+      },
+      async list({ prefix }) {
+        const blobs = [];
+        let cursor;
+        do {
+          const page = await listVercelBlobs({ prefix, cursor, limit: 1000, mode: "expanded" });
+          blobs.push(...page.blobs.map((blob) => ({ key: blob.pathname })));
+          cursor = page.hasMore ? page.cursor : undefined;
+        } while (cursor);
+        return { blobs };
+      },
+      async delete(key) {
+        await deleteVercelBlob(key);
+      },
+    };
+  }
+
   // Site-wide storage survives deploys and is automatically authorised inside
   // Netlify Functions. The region is fixed so every invocation sees one store.
-  return getStore({ name: STORE_NAME, region: STORE_REGION });
+  return getNetlifyStore({ name: STORE_NAME, region: STORE_REGION });
 }
 
 function decodeBody(event) {
