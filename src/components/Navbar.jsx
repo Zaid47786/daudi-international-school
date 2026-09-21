@@ -49,7 +49,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-[60px] md:h-[68px]">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0 transition-transform duration-300 hover:-translate-y-0.5">
             <img
               src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
               alt="Daudi International School Muzaffarpur"
@@ -72,7 +72,7 @@ export default function Navbar() {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`relative px-3.5 py-2 text-[13px] font-medium transition-colors duration-150 rounded ${
+                  className={`relative px-3.5 py-2 text-[13px] font-medium transition-all duration-200 rounded hover:-translate-y-0.5 ${
                     active ? "text-white" : "text-white/60 hover:text-white"
                   }`}
                 >
@@ -91,7 +91,7 @@ export default function Navbar() {
           <div className="hidden lg:block">
             <Link
               to="/admissions"
-              className="px-5 py-2 text-[13px] font-semibold rounded transition-all duration-150 hover:opacity-90 active:scale-95"
+              className="px-5 py-2 text-[13px] font-semibold rounded transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90 active:scale-95"
               style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}
             >
               Apply now

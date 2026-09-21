@@ -11,7 +11,7 @@ export default function PageHero({ title, subtitle, bgImage }) {
             alt=""
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover"
+            className="hero-bg-image w-full h-full object-cover"
             style={{ objectPosition: "center 35%" }}
           />
         </div>
@@ -22,7 +22,7 @@ export default function PageHero({ title, subtitle, bgImage }) {
 
       <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex items-end" style={{ minHeight: "clamp(180px, 28vw, 320px)" }}>
         <div
-          className="pb-10 sm:pb-14"
+          className="hero-h1 pb-10 sm:pb-14"
           style={{ animation: "fadeUp 0.5s ease-out both" }}
         >
           <div className="flex items-center gap-3 mb-4">

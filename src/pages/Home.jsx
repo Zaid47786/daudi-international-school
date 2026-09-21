@@ -37,7 +37,7 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1709290749293-c6152a187b14?w=800&q=70&fm=webp"
             alt=""
-            className="w-full h-full object-cover"
+            className="hero-bg-image w-full h-full object-cover"
             style={{ objectPosition: "center 20%", opacity: 0.18 }}
             fetchPriority="high"
             decoding="async"
@@ -129,7 +129,7 @@ export default function Home() {
                 alt="Daudi International School Muzaffarpur official logo"
                 fetchPriority="high"
                 width="192" height="192"
-                className="relative w-48 h-auto drop-shadow-2xl"
+                className="hero-logo-mark relative w-48 h-auto drop-shadow-2xl"
               />
             </div>
           </div>
@@ -147,14 +147,14 @@ export default function Home() {
           STATS — horizontal scroll feel, not a rigid grid
          ═══════════════════════════════════════════════════ */}
       {stats.length > 0 && (
-        <section style={{ backgroundColor: "var(--ink)", overflow: "hidden" }}>
+        <section className="accent-sweep" style={{ backgroundColor: "var(--ink)", overflow: "hidden" }}>
           <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
             <div className="flex overflow-x-auto scrollbar-hide" style={{ scrollSnapType: "x mandatory" }}>
               {stats.slice(0, 4).map((s, i) => {
                 const Icon = ICON_MAP[s.icon] || Star;
                 return (
                   <div key={s.id}
-                    className="flex-1 min-w-[160px] flex flex-col justify-center px-7 py-8 relative"
+                    className="interactive-lift flex-1 min-w-[160px] flex flex-col justify-center px-7 py-8 relative"
                     style={{ borderRight: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none", scrollSnapAlign: "start" }}>
                     <div className="flex items-center gap-2 mb-2">
                       <Icon size={14} strokeWidth={1.75} style={{ color: "var(--amber)", opacity: 0.85 }} />
@@ -251,7 +251,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 text-sm font-semibold self-start group"
                 style={{ color: "var(--cobalt)" }}>
                 Read our full story
-                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5"><ArrowRight size={14} /></span>
+                <span className="interactive-arrow inline-block"><ArrowRight size={14} /></span>
               </Link>
             </div>
           </div>
@@ -313,7 +313,7 @@ export default function Home() {
               className="inline-flex items-center gap-2 text-sm font-semibold group"
               style={{ color: "var(--cobalt)" }}>
               Explore the full curriculum
-              <span className="inline-block transition-transform duration-200 group-hover:translate-x-1.5"><ArrowRight size={14} /></span>
+              <span className="interactive-arrow inline-block"><ArrowRight size={14} /></span>
               </Link>
               </div>
 
