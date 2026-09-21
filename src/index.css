@@ -168,4 +168,30 @@
 
   .portal-button:hover { background: var(--cobalt); }
   .portal-button:active { transform: scale(0.97); }
+
+  .site-grid {
+    background-image: linear-gradient(rgba(23, 59, 102, 0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(23, 59, 102, 0.055) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
+  }
+
+  .site-kicker,
+  .footer-kicker {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .site-kicker { color: #d68f2d; }
+  .footer-kicker { color: rgba(242, 196, 110, 0.78); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .site-grid { animation: driftGrid 18s linear infinite; }
+}
+
+@keyframes driftGrid {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 42px 42px, 42px 42px; }
 }

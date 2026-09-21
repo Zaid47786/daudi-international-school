@@ -1,47 +1,17 @@
 import { motion } from "framer-motion";
-import { Award, Shield, Users, Zap, BookOpen, Heart } from "lucide-react";
+import { Award, BookOpen, Heart, Shield, Users, Zap } from "lucide-react";
 
 const signals = [
-  { icon: <Award size={20} />, title: "DIS Development Award", desc: "Awarded for outstanding community impact and contributions to education in Bihar." },
-  { icon: <BookOpen size={20} />, title: "Smart Classrooms", desc: "Interactive projectors, digital boards, and modern learning tools across classes." },
-  { icon: <Shield size={20} />, title: "Safe Campus", desc: "Secure, clean, and well-maintained premises with a welcoming environment for every child." },
-  { icon: <Users size={20} />, title: "Dedicated Faculty", desc: "Experienced, trained teachers who know every student by name — real mentorship." },
-  { icon: <Heart size={20} />, title: "Non-Profit Mission", desc: "Every rupee goes back to education. No shareholders, no dividends — just better futures." },
-  { icon: <Zap size={20} />, title: "Proven Results", desc: "Strong board exam performance year after year, with students going on to top colleges." },
+  { icon: Award, title: "Community impact", desc: "A school shaped by the needs and hopes of Muzaffarpur families.", tint: "gold" },
+  { icon: BookOpen, title: "Modern classrooms", desc: "Interactive tools and strong fundamentals, brought together.", tint: "blue" },
+  { icon: Shield, title: "Safe campus", desc: "A clean, welcoming environment where children can be themselves.", tint: "sage" },
+  { icon: Users, title: "Real mentorship", desc: "Teachers who know each child, not just each roll number.", tint: "blue" },
+  { icon: Heart, title: "Non-profit mission", desc: "Every rupee goes back into the education we provide.", tint: "gold" },
+  { icon: Zap, title: "Proven progress", desc: "A culture of effort, confidence, and results that last.", tint: "sage" },
 ];
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-40px" },
-  transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay },
-});
+const reveal = (delay = 0) => ({ initial: { opacity: 0, y: 18 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-50px" }, transition: { duration: .6, delay, ease: [0.22, 1, 0.36, 1] } });
 
 export default function TrustSignals() {
-  return (
-    <section className="py-20 sm:py-28" style={{ backgroundColor: "var(--cobalt-deep)" }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-        <motion.div {...fadeUp(0)} className="mb-12">
-          <p className="label-stamp mb-3" style={{ color: "rgba(232,168,32,0.75)" }}>Why trust us</p>
-          <h2 className="font-fraunces font-bold text-white tracking-tight leading-tight" style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)" }}>
-            A school built on two decades<br />of earned trust
-          </h2>
-        </motion.div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {signals.map((s, i) => (
-            <motion.div key={i} {...fadeUp(i * 0.07)}
-              className="rounded-xl p-6 transition-all duration-300 hover:-translate-y-0.5"
-              style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-                style={{ backgroundColor: "rgba(232,168,32,0.12)", color: "var(--amber)" }}>
-                {s.icon}
-              </div>
-              <h3 className="font-semibold text-sm text-white mb-2">{s.title}</h3>
-              <p className="text-[13px] leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{s.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <section className="bg-white py-24 sm:py-32"><div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12"><motion.div {...reveal()} className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-end"><div><p className="site-kicker">Why families choose DIS</p><h2 className="mt-4 max-w-lg text-4xl font-semibold leading-[.98] tracking-[-.05em] text-[#173b66] sm:text-6xl">The details make <span className="font-fraunces italic text-[#d68f2d]">the difference.</span></h2></div><p className="max-w-md text-sm leading-7 text-[#718095] lg:justify-self-end">Two decades of listening, learning, and building a school that feels ambitious without ever losing its warmth.</p></motion.div><div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{signals.map((signal, index) => { const Icon = signal.icon; const tint = signal.tint === "gold" ? "bg-[#fff4da] text-[#d68f2d]" : signal.tint === "sage" ? "bg-[#e9f3ee] text-[#2c7864]" : "bg-[#eaf0f4] text-[#1f5a83]"; return <motion.div key={signal.title} {...reveal(index * .06)} className="group rounded-[26px] border border-[#173b66]/10 bg-[#f6f1e8]/35 p-6 transition duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_40px_rgba(23,59,102,.08)]"><div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${tint}`}><Icon size={20} /></div><div className="mt-9 flex items-start justify-between gap-3"><h3 className="text-lg font-semibold text-[#173b66]">{signal.title}</h3><span className="font-fraunces text-2xl text-[#173b66]/15">{String(index + 1).padStart(2, "0")}</span></div><p className="mt-3 text-sm leading-6 text-[#718095]">{signal.desc}</p></motion.div>; })}</div></div></section>;
 }
