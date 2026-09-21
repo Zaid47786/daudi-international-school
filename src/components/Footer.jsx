@@ -1,16 +1,187 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Facebook, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import { MapPin, Phone, Mail, Facebook, Youtube } from "lucide-react";
 import { useSettings } from "../lib/useSchoolData";
 
 export default function Footer() {
   const { settings } = useSettings();
-  return <footer className="bg-[#173b66] text-white" style={{ fontFamily: "var(--font-inter)" }}>
-    <div className="bg-[#e4a13d] px-5 py-8 sm:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 sm:flex-row sm:items-center"><div><p className="text-[10px] font-bold tracking-[.2em] text-[#173b66]/60 uppercase">Admissions open · 2026–27</p><h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#173b66]">Make room for a bigger future.</h2></div><Link to="/admissions" className="group inline-flex items-center gap-2 self-start rounded-full bg-[#173b66] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1f5a83] sm:self-auto">Apply for admission <ArrowUpRight size={15} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></Link></div></div>
-    <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-12"><div className="grid gap-12 lg:grid-cols-[1.3fr_.7fr_.9fr]">
-      <div><Link to="/" className="inline-flex items-center gap-3"><span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10"><img src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png" alt="Daudi International School" className="h-9 w-auto" /></span><span><span className="block text-sm font-bold">Daudi International</span><span className="mt-1 block text-[9px] font-bold tracking-[.18em] text-[#f2c46e] uppercase">School · Muzaffarpur</span></span></Link><p className="mt-6 max-w-sm text-sm leading-7 text-white/55">A non-profit, English-medium school under the Daudi Welfare Trust. Quality education for every child in Muzaffarpur.</p><div className="mt-6 flex gap-2"><a href={settings.facebook_url} target="_blank" rel="noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/55 transition hover:border-[#f2c46e] hover:text-[#f2c46e]"><Facebook size={15} /></a><a href={settings.youtube_url} target="_blank" rel="noreferrer" aria-label="YouTube" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/55 transition hover:border-[#f2c46e] hover:text-[#f2c46e]"><Youtube size={15} /></a></div></div>
-      <div><p className="footer-kicker">Explore</p><div className="mt-5 grid gap-3 text-sm text-white/55"><Link to="/about" className="transition hover:text-white">About the school</Link><Link to="/academics" className="transition hover:text-white">Academics</Link><Link to="/admissions" className="transition hover:text-white">Admissions</Link><Link to="/events" className="transition hover:text-white">Life at DIS</Link><Link to="/gallery" className="transition hover:text-white">Gallery</Link><Link to="/portal" className="transition hover:text-white">School portal</Link></div></div>
-      <div><p className="footer-kicker">Find us</p><address className="mt-5 not-italic text-sm leading-7 text-white/55"><p className="flex gap-2"><MapPin size={15} className="mt-1 shrink-0 text-[#f2c46e]" />Shafi Manzil, Daudi Market,<br />Motijheel, Muzaffarpur,<br />Bihar — 842001</p><a href="tel:+916212243314" className="mt-4 flex items-center gap-2 transition hover:text-white"><Phone size={15} className="text-[#f2c46e]" />+91 621 224 3314</a><a href="mailto:daudischool.muz@gmail.com" className="mt-3 flex items-center gap-2 break-all transition hover:text-white"><Mail size={15} className="shrink-0 text-[#f2c46e]" />daudischool.muz@gmail.com</a></address></div>
-    </div></div>
-    <div className="border-t border-white/10"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 px-5 py-5 text-[10px] text-white/35 sm:flex-row sm:px-8 lg:px-12"><p>© 2026 Daudi International School · Motijheel, Muzaffarpur</p><div className="flex flex-wrap gap-4"><Link to="/best-school-in-muzaffarpur" className="transition hover:text-white">Best school in Muzaffarpur</Link><Link to="/cbse-school-in-muzaffarpur" className="transition hover:text-white">CBSE school</Link><Link to="/school-near-me" className="transition hover:text-white">School near me</Link></div></div></div>
-  </footer>;
+
+  return (
+    <footer style={{ backgroundColor: "var(--cobalt-deep)", fontFamily: "var(--font-inter)" }}>
+      {/* Top amber rule */}
+      <div style={{ height: "3px", backgroundColor: "var(--amber)" }} />
+
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-14 sm:py-16">
+        <div className="grid grid-cols-12 gap-8 lg:gap-12">
+
+          {/* Brand — wider col */}
+          <div className="col-span-12 sm:col-span-5 lg:col-span-4">
+            <Link to="/" className="flex items-center gap-3 mb-5">
+              <img
+                src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+                alt="Daudi International School Muzaffarpur"
+                loading="lazy"
+                width="44" height="44"
+                className="h-11 w-auto"
+              />
+              <div className="leading-none">
+                <div className="text-white font-semibold text-sm leading-snug">Daudi International School</div>
+                <div style={{ color: "var(--amber)", fontSize: "10px", letterSpacing: "0.12em", fontWeight: 600 }}>
+                  MUZAFFARPUR
+                </div>
+              </div>
+            </Link>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
+              A non-profit, English-medium school under the Daudi Welfare Trust.
+              Quality education for every child in Muzaffarpur — regardless of background.
+            </p>
+            <div className="flex gap-2.5">
+              {[
+                { href: settings.facebook_url, icon: <Facebook size={15} />, label: "Facebook" },
+                { href: settings.youtube_url, icon: <Youtube size={15} />, label: "YouTube" },
+              ].map(({ href, icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="flex items-center justify-center w-9 h-9 rounded transition-all duration-150 hover:scale-105"
+                  style={{ border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.5)" }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = "var(--amber)";
+                    e.currentTarget.style.color = "var(--amber)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+                    e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+                  }}
+                >
+                  {icon}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Spacer on large */}
+          <div className="hidden lg:block lg:col-span-1" />
+
+          {/* Links */}
+          <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+            <h4
+              className="mb-4"
+              style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}
+            >
+              Navigate
+            </h4>
+            <ul className="space-y-2.5">
+              {[
+                { label: "About Us", path: "/about" },
+                { label: "Academics", path: "/academics" },
+                { label: "Admissions", path: "/admissions" },
+                { label: "Events", path: "/events" },
+                { label: "Gallery", path: "/gallery" },
+                { label: "Contact", path: "/contact" },
+              ].map((link) => (
+                <li key={link.path}>
+                  <Link
+                    to={link.path}
+                    className="text-sm transition-colors duration-150"
+                    style={{ color: "rgba(255,255,255,0.48)" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                    onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.48)"}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact — NAP consistent */}
+          <div className="col-span-6 sm:col-span-4 lg:col-span-3">
+            <h4
+              className="mb-4"
+              style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}
+            >
+              Contact
+            </h4>
+            <address className="not-italic space-y-3.5">
+              <div className="flex items-start gap-2.5">
+                <MapPin size={13} className="mt-0.5 shrink-0" style={{ color: "var(--amber)" }} />
+                <span className="text-sm leading-snug" style={{ color: "rgba(255,255,255,0.48)" }}>
+                  Shafi Manzil, Daudi Market,<br />Motijheel, Muzaffarpur,<br />Bihar — 842001
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Phone size={13} className="shrink-0" style={{ color: "var(--amber)" }} />
+                <a
+                  href="tel:+916212243314"
+                  className="text-sm transition-colors duration-150"
+                  style={{ color: "rgba(255,255,255,0.48)" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.48)"}
+                >
+                  +91 621 224 3314
+                </a>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Mail size={13} className="shrink-0" style={{ color: "var(--amber)" }} />
+                <a
+                  href="mailto:daudischool.muz@gmail.com"
+                  className="text-sm transition-colors duration-150 break-all"
+                  style={{ color: "rgba(255,255,255,0.48)" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.48)"}
+                >
+                  daudischool.muz@gmail.com
+                </a>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="mt-0.5 shrink-0 text-xs" style={{ color: "var(--amber)" }}>🕐</span>
+                <span className="text-sm leading-snug" style={{ color: "rgba(255,255,255,0.38)" }}>
+                  Mon – Sat: 8:00 AM – 3:00 PM
+                </span>
+              </div>
+            </address>
+          </div>
+
+          {/* Admission nudge */}
+          <div className="col-span-12 lg:col-span-2">
+            <div
+              className="rounded-lg p-5"
+              style={{ backgroundColor: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              <p className="text-white font-semibold text-sm mb-1 leading-snug">Admissions open</p>
+              <p className="text-xs mb-4 leading-relaxed" style={{ color: "rgba(255,255,255,0.44)" }}>
+                2026–27 academic year. English-medium, non-profit.
+              </p>
+              <Link
+                to="/admissions"
+                className="block text-center text-xs font-semibold py-2.5 rounded transition-opacity hover:opacity-85"
+                style={{ backgroundColor: "var(--amber)", color: "var(--cobalt-deep)" }}
+              >
+                Apply now →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-3 flex flex-col sm:flex-row justify-between gap-1.5">
+          <p className="text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
+            © 2026 Daudi International School, Motijheel, Muzaffarpur, Bihar 842001
+          </p>
+          <div className="flex items-center flex-wrap gap-3 sm:gap-5">
+            <Link to="/best-school-in-muzaffarpur" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>Best School in Muzaffarpur</Link>
+            <Link to="/cbse-school-in-muzaffarpur" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>CBSE School</Link>
+            <Link to="/school-near-me" className="text-xs hover:text-white/60 transition-colors" style={{ color: "rgba(255,255,255,0.2)" }}>School Near Me</Link>
+            <p className="text-xs font-semibold tracking-wider" style={{ color: "#00ff41", textShadow: "0 0 8px rgba(0, 255, 65, 0.4)" }}>
+          
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }
