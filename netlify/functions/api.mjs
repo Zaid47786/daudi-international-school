@@ -84,7 +84,7 @@ function getStoreInstance() {
         await putVercelBlob(key, JSON.stringify(data), {
           access: "private",
           addRandomSuffix: false,
-          overwrite: true,
+          allowOverwrite: true,
           contentType: "application/json",
         });
       },
@@ -666,7 +666,7 @@ async function handleMedia(path, event, body) {
     if (!requestedType.startsWith("image/") || !contentType.startsWith("image/")) return response(400, { error: "Only image files can be uploaded." });
     if (!buffer.length || buffer.length > 8 * 1024 * 1024) return response(400, { error: "Images must be smaller than 8 MB." });
     const pathname = `media/${crypto.randomUUID()}-${safeMediaName(body.filename || "image")}`;
-    await putVercelBlob(pathname, buffer, { access: "private", addRandomSuffix: false, overwrite: false, contentType: requestedType, cacheControlMaxAge: 31536000 });
+    await putVercelBlob(pathname, buffer, { access: "private", addRandomSuffix: false, allowOverwrite: false, contentType: requestedType, cacheControlMaxAge: 31536000 });
     return ok({ file_url: `/api/media?pathname=${encodeURIComponent(pathname)}`, pathname, content_type: requestedType }, 201);
   }
   if (path === "media" && event.httpMethod === "GET") {
