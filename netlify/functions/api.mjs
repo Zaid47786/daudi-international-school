@@ -17,6 +17,7 @@ const COLLECTIONS = {
 };
 
 const PORTAL_COLLECTIONS = {
+  sessions: "PortalAcademicSession",
   users: "PortalUser",
   students: "PortalStudent",
   teachers: "PortalTeacher",
@@ -24,18 +25,45 @@ const PORTAL_COLLECTIONS = {
   classes: "PortalClass",
   subjects: "PortalSubject",
   timetable: "PortalTimetable",
+  homework: "PortalHomework",
   attendance: "PortalAttendance",
   exams: "PortalExam",
   results: "PortalResult",
   fees: "PortalFee",
   notices: "PortalNotice",
   calendar: "PortalCalendar",
+  leave: "PortalLeaveRequest",
   notifications: "PortalNotification",
   audit: "PortalAuditLog",
 };
 
 const PORTAL_ROLES = new Set(["admin", "teacher", "student", "parent"]);
 const PORTAL_MANAGED_RESOURCES = new Set(Object.keys(PORTAL_COLLECTIONS));
+
+const PORTAL_REQUIRED_FIELDS = {
+  sessions: ["name", "start_date", "end_date"],
+  users: ["full_name", "email", "role"],
+  students: ["full_name", "admission_number", "class_id"],
+  teachers: ["full_name", "employee_id"],
+  parents: ["full_name", "phone"],
+  classes: ["name", "section", "academic_session"],
+  subjects: ["name", "code"],
+  timetable: ["day", "period", "class_id", "subject_id", "teacher_id"],
+  homework: ["title", "class_id", "subject_id", "assigned_date", "due_date", "description"],
+  attendance: ["student_id", "date", "status"],
+  exams: ["name", "date", "class_id", "max_marks"],
+  results: ["student_id", "exam_id", "max_marks", "obtained_marks"],
+  fees: ["student_id", "title", "amount", "due_date"],
+  notices: ["title", "description", "audience", "status"],
+  calendar: ["title", "type", "date"],
+  leave: ["student_id", "from_date", "to_date", "reason"],
+};
+
+const PORTAL_UNIQUE_FIELDS = {
+  users: ["email"],
+  students: ["admission_number"],
+  teachers: ["employee_id"],
+};
 
 const PUBLIC_COLLECTIONS = new Set([
   "stats",
@@ -189,7 +217,7 @@ function requireAdmin(event) {
 }
 
 function normaliseBooleanFields(record) {
-  const booleanFields = ["published", "featured", "is_real", "is_featured"];
+  const booleanFields = ["published", "featured", "is_real", "is_featured", "active", "important", "pinned", "current"];
   const output = { ...record };
   for (const field of booleanFields) {
     if (field in output) output[field] = Boolean(output[field]);
@@ -275,8 +303,13 @@ async function portalRowsForUser(user) {
   const allResults = await listPortalRows("results");
   const allFees = await listPortalRows("fees");
   const allTimetable = await listPortalRows("timetable");
+  const allHomework = await listPortalRows("homework");
   const allNotices = await listPortalRows("notices");
   const allCalendar = await listPortalRows("calendar");
+  const allLeave = await listPortalRows("leave");
+  const allClasses = await listPortalRows("classes");
+  const allSubjects = await listPortalRows("subjects");
+  const allSessions = await listPortalRows("sessions");
 
   const classIds = selectedStudents.map((row) => row.class_id).filter(Boolean);
   const sectionIds = selectedStudents.map((row) => row.section_id).filter(Boolean);
@@ -300,28 +333,111 @@ async function portalRowsForUser(user) {
     results: allResults.filter((row) => visibleIds.has(row.student_id) || (teacher && teacherClassIds.includes(row.class_id))),
     fees: allFees.filter((row) => visibleIds.has(row.student_id)),
     timetable: allTimetable.filter((row) => classIds.includes(row.class_id) || teacherClassIds.includes(row.class_id) || row.teacher_id === user.id),
+    homework: allHomework.filter((row) => classIds.includes(row.class_id) || teacherClassIds.includes(row.class_id) || row.teacher_id === teacher?.id || row.teacher_id === user.id),
     notices: allNotices.filter(audienceMatches),
     calendar: allCalendar,
+    leave: allLeave.filter((row) => visibleIds.has(row.student_id) || (teacher && teacherClassIds.includes(row.class_id))),
     parents: scopedParents,
+    teachers: teacher ? [teacher] : [],
+    classes: allClasses.filter((row) => classIds.includes(row.id) || teacherClassIds.includes(row.id)),
+    subjects: allSubjects.filter((row) => !row.class_ids?.length || (row.class_ids || []).some((id) => classIds.includes(id) || teacherClassIds.includes(id))),
+    sessions: allSessions,
   };
 
-  return scoped;
+  return enrichPortalData(scoped);
 }
 
 function averageAttendance(rows) {
-  if (!rows.length) return 0;
-  const present = rows.filter((row) => row.status === "present" || row.status === "late").length;
-  return Math.round((present / rows.length) * 100);
+  const workingRows = rows.filter((row) => row.status !== "leave");
+  if (!workingRows.length) return 0;
+  const present = workingRows.filter((row) => row.status === "present" || row.status === "late").length;
+  return Math.round((present / workingRows.length) * 100);
 }
 
 function gradeForPercentage(percentage) {
   const score = Number(percentage || 0);
-  if (score >= 90) return "A+";
-  if (score >= 80) return "A";
-  if (score >= 70) return "B";
-  if (score >= 60) return "C";
-  if (score >= 50) return "D";
-  return "F";
+  if (score >= 91) return "A1";
+  if (score >= 81) return "A2";
+  if (score >= 71) return "B1";
+  if (score >= 61) return "B2";
+  if (score >= 51) return "C1";
+  if (score >= 41) return "C2";
+  if (score >= 33) return "D";
+  return "E";
+}
+
+class PortalInputError extends Error {}
+
+function compactText(value) {
+  return String(value ?? "").trim();
+}
+
+async function validatePortalPayload(resource, input, currentId = "") {
+  const payload = { ...(input || {}) };
+  for (const [key, value] of Object.entries(payload)) {
+    if (typeof value === "string") payload[key] = value.trim();
+  }
+  if (payload.email) payload.email = compactText(payload.email).toLowerCase();
+  if (payload.portal_email) payload.portal_email = compactText(payload.portal_email).toLowerCase();
+
+  const missing = (PORTAL_REQUIRED_FIELDS[resource] || []).filter((field) => {
+    const value = payload[field];
+    return value === undefined || value === null || String(value).trim() === "";
+  });
+  if (missing.length) throw new PortalInputError(`Please complete: ${missing.map((field) => field.replaceAll("_", " ")).join(", ")}.`);
+
+  if ((payload.email || payload.portal_email) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email || payload.portal_email)) {
+    throw new PortalInputError("Please enter a valid email address.");
+  }
+  if (resource === "users" && !currentId && String(payload.password || "").length < 8) {
+    throw new PortalInputError("Create a temporary password with at least 8 characters.");
+  }
+  if (payload.phone && !/^[6-9]\d{9}$/.test(String(payload.phone).replace(/\D/g, ""))) {
+    throw new PortalInputError("Please enter a valid 10-digit Indian mobile number.");
+  }
+  if (resource === "results") {
+    const maximum = Number(payload.max_marks || 0);
+    const obtained = Number(payload.obtained_marks || 0);
+    if (maximum <= 0 || obtained < 0 || obtained > maximum) throw new PortalInputError("Obtained marks must be between 0 and the maximum marks.");
+    payload.percentage = Math.round((obtained / maximum) * 10000) / 100;
+    payload.grade = gradeForPercentage(payload.percentage);
+  }
+  if (resource === "fees" && Number(payload.amount || 0) <= 0) throw new PortalInputError("Fee amount must be greater than zero.");
+  if (resource === "attendance" && !["present", "absent", "late", "leave"].includes(payload.status)) throw new PortalInputError("Choose a valid attendance status.");
+  if (resource === "sessions" && payload.start_date && payload.end_date && payload.start_date >= payload.end_date) throw new PortalInputError("The academic session end date must be after its start date.");
+  if (resource === "homework" && payload.assigned_date && payload.due_date && payload.assigned_date > payload.due_date) throw new PortalInputError("Homework due date cannot be before its assigned date.");
+  if (resource === "leave" && payload.from_date && payload.to_date && payload.from_date > payload.to_date) throw new PortalInputError("Leave end date cannot be before its start date.");
+
+  for (const field of PORTAL_UNIQUE_FIELDS[resource] || []) {
+    const value = compactText(payload[field]).toLowerCase();
+    if (!value) continue;
+    const rows = await listPortalRows(resource);
+    if (rows.some((row) => row.id !== currentId && compactText(row[field]).toLowerCase() === value)) {
+      throw new PortalInputError(`${field.replaceAll("_", " ")} already exists.`);
+    }
+  }
+  return payload;
+}
+
+function enrichPortalData(data) {
+  const classMap = new Map((data.classes || []).map((row) => [row.id, `${row.name || "Class"}${row.section ? ` ${row.section}` : ""}`]));
+  const subjectMap = new Map((data.subjects || []).map((row) => [row.id, row.name || row.code || "Subject"]));
+  const teacherMap = new Map((data.teachers || []).map((row) => [row.id, row.full_name || row.name || "Teacher"]));
+  const studentMap = new Map((data.students || []).map((row) => [row.id, row.full_name || row.name || "Student"]));
+  const examMap = new Map((data.exams || []).map((row) => [row.id, row.name || row.exam_name || "Examination"]));
+  const sessionMap = new Map((data.sessions || []).map((row) => [row.id, row.name || "Academic session"]));
+  const enriched = { ...data };
+  enriched.students = (data.students || []).map((row) => ({ ...row, class_name: row.class_name || classMap.get(row.class_id) || "" }));
+  enriched.classes = (data.classes || []).map((row) => ({ ...row, class_teacher_name: teacherMap.get(row.class_teacher_id) || "", session_name: sessionMap.get(row.academic_session) || row.academic_session || "" }));
+  enriched.subjects = (data.subjects || []).map((row) => ({ ...row, class_names: (row.class_ids || []).map((id) => classMap.get(id)).filter(Boolean), teacher_names: (row.teacher_ids || []).map((id) => teacherMap.get(id)).filter(Boolean) }));
+  enriched.timetable = (data.timetable || []).map((row) => ({ ...row, class_name: classMap.get(row.class_id) || "", subject_name: subjectMap.get(row.subject_id) || row.subject || "", teacher_name: teacherMap.get(row.teacher_id) || "" }));
+  enriched.homework = (data.homework || []).map((row) => ({ ...row, class_name: classMap.get(row.class_id) || "", subject_name: subjectMap.get(row.subject_id) || row.subject || "", teacher_name: teacherMap.get(row.teacher_id) || "" }));
+  enriched.attendance = (data.attendance || []).map((row) => ({ ...row, student_name: studentMap.get(row.student_id) || "", class_name: classMap.get(row.class_id) || "" }));
+  enriched.exams = (data.exams || []).map((row) => ({ ...row, class_name: classMap.get(row.class_id) || "", subject_name: subjectMap.get(row.subject_id) || row.subject || "" }));
+  enriched.results = (data.results || []).map((row) => ({ ...row, student_name: studentMap.get(row.student_id) || "", exam_name: examMap.get(row.exam_id) || "", subject_name: subjectMap.get(row.subject_id) || row.subject || "" }));
+  enriched.fees = (data.fees || []).map((row) => ({ ...row, student_name: studentMap.get(row.student_id) || "" }));
+  enriched.leave = (data.leave || []).map((row) => ({ ...row, student_name: studentMap.get(row.student_id) || "", class_name: classMap.get(row.class_id) || "" }));
+  return enriched;
 }
 
 function sortRecords(records, entity, query) {
@@ -446,13 +562,25 @@ async function writeAudit(user, action, resource, recordId, before, after) {
 
 async function createPortalManaged(resource, input, user) {
   const collection = PORTAL_COLLECTIONS[resource];
-  const payload = { ...(input || {}) };
+  const payload = await validatePortalPayload(resource, input);
   if (resource === "users") {
     const password = payload.password || "ChangeMe123!";
     Object.assign(payload, hashPassword(password));
     delete payload.password;
     payload.role = PORTAL_ROLES.has(payload.role) ? payload.role : "student";
     payload.active = payload.active !== false;
+  }
+
+  if (resource === "attendance") {
+    const existing = (await listPortalRows("attendance")).find((row) => row.student_id === payload.student_id && row.date === payload.date);
+    if (existing) return updatePortalManaged(resource, existing.id, payload, user);
+  }
+  if (resource === "results") {
+    const existing = (await listPortalRows("results")).find((row) => row.student_id === payload.student_id && row.exam_id === payload.exam_id && String(row.subject_id || row.subject || "") === String(payload.subject_id || payload.subject || ""));
+    if (existing) return updatePortalManaged(resource, existing.id, payload, user);
+  }
+  if (resource === "sessions" && payload.current) {
+    await Promise.all((await listPortalRows("sessions")).filter((row) => row.current).map((row) => updateRecord(PORTAL_COLLECTIONS.sessions, row.id, { current: false })));
   }
   const row = await createRecord(collection, payload);
   await writeAudit(user, "create", resource, row.id, null, row);
@@ -463,11 +591,17 @@ async function updatePortalManaged(resource, id, input, user) {
   const collection = PORTAL_COLLECTIONS[resource];
   const before = await getRecord(collection, id);
   if (!before) return null;
-  const payload = { ...(input || {}) };
+  const payload = await validatePortalPayload(resource, { ...before, ...(input || {}) }, id);
+  delete payload.id;
+  delete payload.created_date;
+  delete payload.updated_date;
   if (resource === "users") {
     if (payload.password) Object.assign(payload, hashPassword(payload.password));
     delete payload.password;
     if (payload.role && !PORTAL_ROLES.has(payload.role)) delete payload.role;
+  }
+  if (resource === "sessions" && payload.current) {
+    await Promise.all((await listPortalRows("sessions")).filter((row) => row.id !== id && row.current).map((row) => updateRecord(PORTAL_COLLECTIONS.sessions, row.id, { current: false })));
   }
   const row = await updateRecord(collection, id, payload);
   await writeAudit(user, "update", resource, id, presentRecord(collection, before), row);
@@ -485,11 +619,14 @@ async function deletePortalManaged(resource, id, user) {
 
 async function portalBootstrap(user) {
   if (user.role === "admin") {
-    const [students, teachers, parents, classes, subjects, exams, attendance, results, fees, notices, calendar, users, audit] = await Promise.all([
+    const [sessions, students, teachers, parents, classes, subjects, timetable, homework, exams, attendance, results, fees, notices, calendar, leave, users, audit] = await Promise.all([
+      listPortalRows("sessions"),
       listPortalRows("students"), listPortalRows("teachers"), listPortalRows("parents"), listPortalRows("classes"),
-      listPortalRows("subjects"), listPortalRows("exams"), listPortalRows("attendance"), listPortalRows("results"),
-      listPortalRows("fees"), listPortalRows("notices"), listPortalRows("calendar"), listPortalRows("users"), listPortalRows("audit"),
+      listPortalRows("subjects"), listPortalRows("timetable"), listPortalRows("homework"), listPortalRows("exams"), listPortalRows("attendance"), listPortalRows("results"),
+      listPortalRows("fees"), listPortalRows("notices"), listPortalRows("calendar"), listPortalRows("leave"), listPortalRows("users"), listPortalRows("audit"),
     ]);
+    const data = enrichPortalData({ sessions, students, teachers, parents, classes, subjects, timetable, homework, exams, attendance, results, fees, notices, calendar, leave, users, audit });
+    const currentSession = sessions.find((row) => row.current) || sessions.find((row) => new Date(row.start_date) <= new Date() && new Date(row.end_date) >= new Date()) || sessions[0] || null;
     const totalFees = fees.reduce((sum, row) => sum + Number(row.amount || row.total_amount || 0), 0);
     const paidFees = fees.filter((row) => row.status === "paid").reduce((sum, row) => sum + Number(row.amount || 0), 0);
     return ok({
@@ -502,8 +639,9 @@ async function portalBootstrap(user) {
         fees: { total: totalFees, collected: paidFees, pending: Math.max(totalFees - paidFees, 0) },
         notices: notices.slice(0, 5),
         calendar: calendar.slice(0, 8),
+        currentSession,
       },
-      data: { students, teachers, parents, classes, subjects, exams, attendance, results, fees, notices, calendar, users, audit },
+      data,
     });
   }
 
@@ -524,7 +662,10 @@ async function portalBootstrap(user) {
       feeStatus: { pending: pendingFees, paid: scoped.fees.filter((row) => row.status === "paid").reduce((sum, row) => sum + Number(row.amount || 0), 0) },
       notices: scoped.notices.slice(0, 6),
       timetable: scoped.timetable,
+      homework: scoped.homework,
       calendar: scoped.calendar,
+      leave: scoped.leave,
+      currentSession: scoped.sessions.find((row) => row.current) || scoped.sessions[0] || null,
     },
     data: scoped,
   });
@@ -540,8 +681,11 @@ async function teacherManagedRows(resource, user) {
   if (resource === "results") return scoped.results;
   if (resource === "exams") return scoped.exams;
   if (resource === "timetable") return scoped.timetable;
+  if (resource === "homework") return scoped.homework;
   if (resource === "notices") return scoped.notices;
   if (resource === "calendar") return scoped.calendar;
+  if (resource === "leave") return scoped.leave;
+  if (resource === "sessions") return scoped.sessions;
   const teacher = await teacherForUser(user);
   const classIds = new Set(teacher?.class_ids || []);
   if (resource === "classes") return (await listPortalRows("classes")).filter((row) => classIds.has(row.id));
@@ -557,8 +701,9 @@ async function handlePortal(path, event, body, user) {
   if (parts[1] === "manage" && PORTAL_MANAGED_RESOURCES.has(parts[2])) {
     const resource = parts[2];
     const id = parts[3];
-    const teacherCanWrite = user.role === "teacher" && ["attendance", "results"].includes(resource);
-    if (user.role !== "admin" && !teacherCanWrite && event.httpMethod !== "GET") return response(403, { error: "Forbidden: insufficient permissions" });
+    const teacherCanWrite = user.role === "teacher" && ["attendance", "results", "homework", "leave"].includes(resource);
+    const familyCanRequestLeave = ["student", "parent"].includes(user.role) && resource === "leave" && event.httpMethod === "POST" && !id;
+    if (user.role !== "admin" && !teacherCanWrite && !familyCanRequestLeave && event.httpMethod !== "GET") return response(403, { error: "Forbidden: insufficient permissions" });
     if (event.httpMethod === "GET") {
       if (user.role === "admin") return ok(id ? presentRecord(PORTAL_COLLECTIONS[resource], await getRecord(PORTAL_COLLECTIONS[resource], id)) : await listPortalRows(resource));
       const rows = await teacherManagedRows(resource, user);
@@ -569,13 +714,30 @@ async function handlePortal(path, event, body, user) {
       }
       return ok(rows);
     }
-    if (teacherCanWrite) {
+    if (teacherCanWrite && resource !== "homework") {
       const teacher = await teacherForUser(user);
       const classIds = new Set(teacher?.class_ids || []);
       let classId = body.class_id;
       if (!classId && body.student_id) classId = (await getRecord("PortalStudent", body.student_id))?.class_id;
       if (!classId || !classIds.has(classId)) return response(403, { error: "You are not assigned to this class" });
       body.class_id = classId;
+    }
+    if (teacherCanWrite && resource === "homework") {
+      const teacher = await teacherForUser(user);
+      if (!(teacher?.class_ids || []).includes(body.class_id)) return response(403, { error: "You are not assigned to this class" });
+      body.teacher_id = teacher.id;
+      body.status = body.status || "assigned";
+    }
+    if (familyCanRequestLeave) {
+      const scoped = await portalRowsForUser(user);
+      const student = scoped.students.find((row) => row.id === body.student_id);
+      if (!student) return response(403, { error: "This student is not linked to your account" });
+      body.class_id = student.class_id;
+      body.requested_by = user.id;
+      body.status = "pending";
+    }
+    if (user.role === "teacher" && resource === "leave" && event.httpMethod === "POST" && !id) {
+      return response(403, { error: "Teachers can review leave requests but cannot create them for families" });
     }
     if (event.httpMethod === "POST" && !id) return ok(await createPortalManaged(resource, body, user), 201);
     if (event.httpMethod === "PUT" && id) {
@@ -588,6 +750,12 @@ async function handlePortal(path, event, body, user) {
       return row ? ok(row) : response(404, { error: "Not found" });
     }
     if (event.httpMethod === "DELETE" && id) {
+      if (teacherCanWrite) {
+        if (resource === "leave") return response(403, { error: "Leave applications must be approved or rejected, not deleted" });
+        const existing = await getRecord(PORTAL_COLLECTIONS[resource], id);
+        const teacher = await teacherForUser(user);
+        if (!existing || !(teacher?.class_ids || []).includes(existing.class_id)) return response(403, { error: "You are not assigned to this class" });
+      }
       const row = await deletePortalManaged(resource, id, user);
       return row ? ok(row) : response(404, { error: "Not found" });
     }
@@ -692,7 +860,12 @@ export async function handler(event) {
   if (path.startsWith("portal/")) {
     const payload = verifyToken(tokenFromEvent(event));
     if (!payload || !PORTAL_ROLES.has(payload.role)) return response(401, { error: "Unauthorized" });
-    return handlePortal(path, event, body, payload);
+    try {
+      return await handlePortal(path, event, body, payload);
+    } catch (error) {
+      if (error instanceof PortalInputError) return response(400, { error: error.message });
+      throw error;
+    }
   }
 
   const [resource, id] = path.split("/");
