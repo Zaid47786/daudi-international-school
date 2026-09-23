@@ -16,35 +16,39 @@ export default function AdminStats() {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => { loadStats(); }, []);
 
   const loadStats = async () => {
     setLoading(true);
-    let records = await base44.entities.Stat.list("sort_order");
-    if (records.length === 0) {
-      for (const d of DEFAULT_STATS) {
-        const created = await base44.entities.Stat.create(d);
-        records.push(created);
-      }
-    } else {
-      // Deduplicate by label — keep the one with lowest sort_order (first seen)
-      const seen = new Set();
-      const dupes = [];
-      records.forEach((r) => {
-        if (seen.has(r.label)) {
-          dupes.push(r.id);
-        } else {
-          seen.add(r.label);
+    setError("");
+    try {
+      let records = await base44.entities.Stat.list("sort_order");
+      if (records.length === 0) {
+        for (const d of DEFAULT_STATS) {
+          const created = await base44.entities.Stat.create(d);
+          records.push(created);
         }
-      });
-      if (dupes.length > 0) {
-        await Promise.all(dupes.map((id) => base44.entities.Stat.delete(id)));
-        records = records.filter((r) => !dupes.includes(r.id));
+      } else {
+        // Deduplicate by label — keep the one with lowest sort_order (first seen)
+        const seen = new Set();
+        const dupes = [];
+        records.forEach((r) => {
+          if (seen.has(r.label)) dupes.push(r.id);
+          else seen.add(r.label);
+        });
+        if (dupes.length > 0) {
+          await Promise.all(dupes.map((id) => base44.entities.Stat.delete(id)));
+          records = records.filter((r) => !dupes.includes(r.id));
+        }
       }
+      setStats(records);
+    } catch (loadError) {
+      setError(loadError.message || "Could not load homepage statistics.");
+    } finally {
+      setLoading(false);
     }
-    setStats(records);
-    setLoading(false);
   };
 
   const handleChange = (id, field, val) => {
@@ -53,18 +57,32 @@ export default function AdminStats() {
 
   const handleSave = async (stat) => {
     setSaving(stat.id);
-    await base44.entities.Stat.update(stat.id, { label: stat.label, value: stat.value, icon: stat.icon });
-    setSaving(null);
+    setError("");
+    try {
+      await base44.entities.Stat.update(stat.id, { label: stat.label, value: stat.value, icon: stat.icon });
+    } catch (saveError) {
+      setError(saveError.message || "Could not save this statistic.");
+    } finally {
+      setSaving(null);
+    }
   };
 
   const handleDelete = async (id) => {
-    await base44.entities.Stat.delete(id);
-    setStats((prev) => prev.filter((s) => s.id !== id));
+    try {
+      await base44.entities.Stat.delete(id);
+      setStats((prev) => prev.filter((s) => s.id !== id));
+    } catch (deleteError) {
+      setError(deleteError.message || "Could not delete this statistic.");
+    }
   };
 
   const handleAdd = async () => {
-    const created = await base44.entities.Stat.create({ label: "New Stat", value: "0", icon: "Star", sort_order: stats.length });
-    setStats((prev) => [...prev, created]);
+    try {
+      const created = await base44.entities.Stat.create({ label: "New Stat", value: "0", icon: "Star", sort_order: stats.length });
+      setStats((prev) => [...prev, created]);
+    } catch (addError) {
+      setError(addError.message || "Could not add a statistic.");
+    }
   };
 
   const handleDragEnd = async (result) => {
@@ -74,7 +92,12 @@ export default function AdminStats() {
     reordered.splice(result.destination.index, 0, moved);
     const updated = reordered.map((s, i) => ({ ...s, sort_order: i }));
     setStats(updated);
-    await Promise.all(updated.map((s) => base44.entities.Stat.update(s.id, { sort_order: s.sort_order })));
+    try {
+      await Promise.all(updated.map((s) => base44.entities.Stat.update(s.id, { sort_order: s.sort_order })));
+    } catch (reorderError) {
+      setError(reorderError.message || "Could not save the statistic order.");
+      await loadStats();
+    }
   };
 
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-royal-blue" size={32} /></div>;
@@ -82,6 +105,7 @@ export default function AdminStats() {
   return (
     <div className="max-w-2xl space-y-4">
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {error && <div className="flex items-center justify-between gap-3 border-b border-red-100 bg-red-50 px-6 py-3 text-xs text-red-700"><span>{error}</span><button onClick={loadStats} className="font-bold underline">Retry</button></div>}
         <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
           <h2 className="font-bold text-navy text-sm tracking-wide uppercase">Homepage Stats</h2>
           <button onClick={handleAdd} className="flex items-center gap-2 text-xs font-bold text-royal-blue hover:text-navy transition">

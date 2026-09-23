@@ -63,6 +63,20 @@ function ok(payload, statusCode = 200) {
   return response(statusCode, payload);
 }
 
+function binaryResponse(statusCode, body, contentType, extraHeaders = {}) {
+  return {
+    statusCode,
+    isBase64Encoded: true,
+    headers: {
+      "Content-Type": contentType || "application/octet-stream",
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "X-Content-Type-Options": "nosniff",
+      ...extraHeaders,
+    },
+    body: Buffer.from(body).toString("base64"),
+  };
+}
+
 function getStoreInstance() {
   if (process.env.VERCEL || process.env.VERCEL_ENV) {
     return {
@@ -115,6 +129,18 @@ function decodeBody(event) {
 
 function base64url(value) {
   return Buffer.from(value).toString("base64url");
+}
+
+function safeMediaName(filename = "upload") {
+  const cleaned = String(filename).trim().toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+  return cleaned || "upload";
+}
+
+function decodeUploadData(input) {
+  const raw = String(input || "");
+  const match = raw.match(/^data:([^;,]+)?;base64,(.+)$/s);
+  if (match) return { contentType: match[1] || "application/octet-stream", buffer: Buffer.from(match[2], "base64") };
+  return { contentType: "application/octet-stream", buffer: Buffer.from(raw, "base64") };
 }
 
 function signToken(payload) {
@@ -219,6 +245,12 @@ async function findPortalUserById(id) {
   return rawPortalUser(await getRecord("PortalUser", id));
 }
 
+async function teacherForUser(user) {
+  if (user.role !== "teacher") return null;
+  const teachers = await listPortalRows("teachers");
+  return teachers.find((row) => row.user_id === user.id || row.id === user.profile_id) || null;
+}
+
 async function portalRowsForUser(user) {
   const students = await listPortalRows("students");
   const teachers = await listPortalRows("teachers");
@@ -231,10 +263,11 @@ async function portalRowsForUser(user) {
       ? students.filter((row) => (user.child_ids || []).includes(row.id) || row.parent_ids?.includes(user.id)).map((row) => row.id)
       : [];
   const parent = user.role === "parent" ? parents.find((row) => row.user_id === user.id || row.id === user.profile_id) : null;
+  const linkedChildIds = new Set([...(parent?.child_ids || []), ...(user.child_ids || [])]);
   const selectedStudents = user.role === "teacher"
     ? students.filter((row) => teacherClassIds.includes(row.class_id))
     : user.role === "parent" && parent
-    ? students.filter((row) => (parent.child_ids || []).includes(row.id) || (row.parent_ids || []).includes(user.id))
+    ? students.filter((row) => linkedChildIds.has(row.id) || (row.parent_ids || []).includes(user.id))
     : students.filter((row) => studentIds.includes(row.id));
 
   const allAttendance = await listPortalRows("attendance");
@@ -257,6 +290,7 @@ async function portalRowsForUser(user) {
   };
 
   const visibleIds = new Set(selectedStudents.map((row) => row.id));
+  const scopedParents = parents.filter((row) => row.user_id === user.id || row.id === user.profile_id || (row.child_ids || []).some((id) => visibleIds.has(id)));
   const scoped = {
     students: selectedStudents,
     teacher,
@@ -268,7 +302,7 @@ async function portalRowsForUser(user) {
     timetable: allTimetable.filter((row) => classIds.includes(row.class_id) || teacherClassIds.includes(row.class_id) || row.teacher_id === user.id),
     notices: allNotices.filter(audienceMatches),
     calendar: allCalendar,
-    parents,
+    parents: scopedParents,
   };
 
   return scoped;
@@ -496,6 +530,25 @@ async function portalBootstrap(user) {
   });
 }
 
+async function teacherManagedRows(resource, user) {
+  const scoped = await portalRowsForUser(user);
+  if (resource === "users") return null;
+  if (resource === "teachers") return scoped.teacher ? [scoped.teacher] : [];
+  if (resource === "students") return scoped.students;
+  if (resource === "parents") return scoped.parents;
+  if (resource === "attendance") return scoped.attendance;
+  if (resource === "results") return scoped.results;
+  if (resource === "exams") return scoped.exams;
+  if (resource === "timetable") return scoped.timetable;
+  if (resource === "notices") return scoped.notices;
+  if (resource === "calendar") return scoped.calendar;
+  const teacher = await teacherForUser(user);
+  const classIds = new Set(teacher?.class_ids || []);
+  if (resource === "classes") return (await listPortalRows("classes")).filter((row) => classIds.has(row.id));
+  if (resource === "subjects") return (await listPortalRows("subjects")).filter((row) => (row.class_ids || []).some((id) => classIds.has(id)) || (row.teacher_ids || []).some((id) => id === teacher?.id || id === user.id));
+  return [];
+}
+
 async function handlePortal(path, event, body, user) {
   if (path === "portal/bootstrap" && event.httpMethod === "GET") return portalBootstrap(user);
   const parts = path.split("/");
@@ -506,15 +559,30 @@ async function handlePortal(path, event, body, user) {
     const id = parts[3];
     const teacherCanWrite = user.role === "teacher" && ["attendance", "results"].includes(resource);
     if (user.role !== "admin" && !teacherCanWrite) return response(403, { error: "Forbidden: insufficient permissions" });
-    if (event.httpMethod === "GET") return ok(id ? presentRecord(PORTAL_COLLECTIONS[resource], await getRecord(PORTAL_COLLECTIONS[resource], id)) : await listPortalRows(resource));
-    if (teacherCanWrite && body.class_id && !(user.class_ids || []).includes(body.class_id)) {
-      return response(403, { error: "You are not assigned to this class" });
+    if (event.httpMethod === "GET") {
+      if (user.role === "admin") return ok(id ? presentRecord(PORTAL_COLLECTIONS[resource], await getRecord(PORTAL_COLLECTIONS[resource], id)) : await listPortalRows(resource));
+      const rows = await teacherManagedRows(resource, user);
+      if (!rows) return response(403, { error: "Forbidden: teachers cannot access portal accounts" });
+      if (id) {
+        const row = rows.find((item) => item.id === id);
+        return row ? ok(row) : response(404, { error: "Not found" });
+      }
+      return ok(rows);
+    }
+    if (teacherCanWrite) {
+      const teacher = await teacherForUser(user);
+      const classIds = new Set(teacher?.class_ids || []);
+      let classId = body.class_id;
+      if (!classId && body.student_id) classId = (await getRecord("PortalStudent", body.student_id))?.class_id;
+      if (!classId || !classIds.has(classId)) return response(403, { error: "You are not assigned to this class" });
+      body.class_id = classId;
     }
     if (event.httpMethod === "POST" && !id) return ok(await createPortalManaged(resource, body, user), 201);
     if (event.httpMethod === "PUT" && id) {
       if (teacherCanWrite) {
         const existing = await getRecord(PORTAL_COLLECTIONS[resource], id);
-        if (existing?.class_id && !(user.class_ids || []).includes(existing.class_id)) return response(403, { error: "You are not assigned to this class" });
+        const teacher = await teacherForUser(user);
+        if (existing?.class_id && !(teacher?.class_ids || []).includes(existing.class_id)) return response(403, { error: "You are not assigned to this class" });
       }
       const row = await updatePortalManaged(resource, id, body, user);
       return row ? ok(row) : response(404, { error: "Not found" });
@@ -588,12 +656,38 @@ async function handleAuth(path, event, body) {
   return response(404, { error: "Not found" });
 }
 
+async function handleMedia(path, event, body) {
+  if (!(process.env.VERCEL || process.env.VERCEL_ENV)) return response(503, { error: "Media storage is not configured on this host." });
+  if (path === "upload" && event.httpMethod === "POST") {
+    const adminError = requireAdmin(event);
+    if (adminError) return adminError;
+    const { contentType, buffer } = decodeUploadData(body.data_url);
+    const requestedType = String(body.content_type || contentType || "").toLowerCase();
+    if (!requestedType.startsWith("image/") || !contentType.startsWith("image/")) return response(400, { error: "Only image files can be uploaded." });
+    if (!buffer.length || buffer.length > 8 * 1024 * 1024) return response(400, { error: "Images must be smaller than 8 MB." });
+    const pathname = `media/${crypto.randomUUID()}-${safeMediaName(body.filename || "image")}`;
+    await putVercelBlob(pathname, buffer, { access: "private", addRandomSuffix: false, overwrite: false, contentType: requestedType, cacheControlMaxAge: 31536000 });
+    return ok({ file_url: `/api/media?pathname=${encodeURIComponent(pathname)}`, pathname, content_type: requestedType }, 201);
+  }
+  if (path === "media" && event.httpMethod === "GET") {
+    const query = new URLSearchParams(event.rawQuery || "");
+    const pathname = query.get("pathname") || "";
+    if (!pathname.startsWith("media/") || pathname.includes("..")) return response(400, { error: "Invalid media path" });
+    const result = await getVercelBlob(pathname, { access: "private", useCache: true });
+    if (!result || result.statusCode !== 200) return response(404, { error: "Media not found" });
+    const bytes = Buffer.from(await new Response(result.stream).arrayBuffer());
+    return binaryResponse(200, bytes, result.blob.contentType, { ETag: result.blob.etag });
+  }
+  return response(404, { error: "Not found" });
+}
+
 export async function handler(event) {
   if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers: JSON_HEADERS, body: "" };
 
   const path = requestPath(event);
   const body = decodeBody(event);
   if (body === null) return response(400, { error: "Request body must be valid JSON" });
+  if (path === "upload" || path === "media") return handleMedia(path, event, body);
   if (path.startsWith("auth/")) return handleAuth(path, event, body);
   if (path.startsWith("portal/")) {
     const payload = verifyToken(tokenFromEvent(event));

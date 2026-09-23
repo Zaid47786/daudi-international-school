@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEOHead from "../components/SEOHead";
@@ -131,7 +133,7 @@ export default function BlogPostPage() {
             lineHeight: 1.85,
             fontSize: "15px",
           }}>
-            <ReactMarkdown>{post.content || post.excerpt || ""}</ReactMarkdown>
+            <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>{post.content || post.excerpt || ""}</ReactMarkdown>
           </div>
 
           {/* Tags */}

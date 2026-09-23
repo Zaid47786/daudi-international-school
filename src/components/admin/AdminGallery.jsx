@@ -15,6 +15,7 @@ export default function AdminGallery() {
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("All");
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
   const fileInputRef = useRef(null);
 
   useEffect(() => { loadPhotos(); }, []);
@@ -23,32 +24,55 @@ export default function AdminGallery() {
     const file = e.target.files[0];
     if (!file) return;
     setUploading(true);
-    const data = await base44.integrations.Core.UploadFile({ file });
-    if (data.file_url) setForm((prev) => ({ ...prev, src: data.file_url }));
-    setUploading(false);
-    e.target.value = "";
+    setError("");
+    try {
+      const data = await base44.integrations.Core.UploadFile({ file });
+      if (data.file_url) setForm((prev) => ({ ...prev, src: data.file_url }));
+      else throw new Error("Upload completed without a media URL.");
+    } catch (uploadError) {
+      setError(uploadError.message || "Image upload failed.");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
   };
 
   const loadPhotos = async () => {
     setLoading(true);
-    const records = await base44.entities.GalleryPhoto.list("sort_order");
-    setPhotos(records);
-    setLoading(false);
+    setError("");
+    try {
+      const records = await base44.entities.GalleryPhoto.list("sort_order");
+      setPhotos(records);
+    } catch (loadError) {
+      setError(loadError.message || "Could not load gallery photos.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAdd = async () => {
     if (!form.src || !form.title) return;
     setSaving(true);
-    const created = await base44.entities.GalleryPhoto.create({ ...form, sort_order: photos.length });
-    setPhotos((prev) => [...prev, created]);
-    setForm(EMPTY_PHOTO);
-    setAdding(false);
-    setSaving(false);
+    setError("");
+    try {
+      const created = await base44.entities.GalleryPhoto.create({ ...form, sort_order: photos.length });
+      setPhotos((prev) => [...prev, created]);
+      setForm(EMPTY_PHOTO);
+      setAdding(false);
+    } catch (saveError) {
+      setError(saveError.message || "Could not add the photo.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id) => {
-    await base44.entities.GalleryPhoto.delete(id);
-    setPhotos((prev) => prev.filter((p) => p.id !== id));
+    try {
+      await base44.entities.GalleryPhoto.delete(id);
+      setPhotos((prev) => prev.filter((p) => p.id !== id));
+    } catch (deleteError) {
+      setError(deleteError.message || "Could not remove the photo.");
+    }
   };
 
   const handleDragEnd = async (result) => {
@@ -58,7 +82,12 @@ export default function AdminGallery() {
     reordered.splice(result.destination.index, 0, moved);
     const updated = reordered.map((p, i) => ({ ...p, sort_order: i }));
     setPhotos(updated);
-    await Promise.all(updated.map((p) => base44.entities.GalleryPhoto.update(p.id, { sort_order: p.sort_order })));
+    try {
+      await Promise.all(updated.map((p) => base44.entities.GalleryPhoto.update(p.id, { sort_order: p.sort_order })));
+    } catch (reorderError) {
+      setError(reorderError.message || "Could not save the new photo order.");
+      await loadPhotos();
+    }
   };
 
   const filtered = filter === "All" ? photos : photos.filter((p) => p.category === filter);
@@ -68,6 +97,7 @@ export default function AdminGallery() {
   return (
     <div className="space-y-5 max-w-5xl">
       {/* Controls */}
+      {error && <div className="flex items-center justify-between gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs text-red-700"><span>{error}</span><button onClick={loadPhotos} className="font-bold underline">Retry</button></div>}
       <div className="flex flex-wrap gap-3 items-center justify-between">
         <div className="flex gap-2 flex-wrap">
           {["All", ...CATEGORIES].map((f) => (

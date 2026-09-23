@@ -66,6 +66,8 @@ In the Vercel dashboard:
 
 The API stores each record as a private JSON Blob. The browser never receives the Blob credentials.
 
+Images selected from the admin **Gallery** or **Blog** editors are validated in the browser, uploaded through the authenticated `/api/upload` endpoint, stored in the private Blob store, and served through `/api/media` for public pages. The upload limit is 8 MB per image; only image MIME types are accepted.
+
 ## Admin access and applicant records
 
 Open `/admin` after deployment and sign in with only the configured `ADMIN_PASSWORD`. The admin page verifies a signed API session instead of treating the presence of a browser `localStorage` value as authentication.

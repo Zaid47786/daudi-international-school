@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, Trash2, Eye, EyeOff, Star, Pencil, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, Trash2, Eye, EyeOff, Star, Pencil, X, Upload, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
 import ReactQuill from "react-quill";
@@ -19,13 +19,14 @@ export default function AdminBlog() {
   const [editingPost, setEditingPost] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverInputRef = useRef(null);
   const { toast } = useToast();
 
   const load = () => {
-    base44.entities.BlogPost.list("-created_date").then(data => {
-      setPosts(data);
-      setLoading(false);
-    });
+    base44.entities.BlogPost.list("-created_date").then((data) => setPosts(data)).catch((error) => {
+      toast({ title: error.message || "Could not load blog posts", variant: "destructive" });
+    }).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);
@@ -36,29 +37,58 @@ export default function AdminBlog() {
   const openEdit = (post) => { setEditingPost(post); setForm({ ...post }); setShowForm(true); };
   const closeForm = () => { setShowForm(false); setEditingPost(null); setForm(EMPTY); };
 
+  const uploadCover = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setUploadingCover(true);
+    try {
+      const data = await base44.integrations.Core.UploadFile({ file });
+      setForm((previous) => ({ ...previous, cover_image: data.file_url }));
+      toast({ title: "Cover image uploaded" });
+    } catch (error) {
+      toast({ title: error.message || "Cover image upload failed", variant: "destructive" });
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
   const save = async (e) => {
     e.preventDefault();
     setSaving(true);
-    if (editingPost) {
-      await base44.entities.BlogPost.update(editingPost.id, { ...form });
-      toast({ title: "Post updated!" });
-    } else {
-      await base44.entities.BlogPost.create({ ...form, slug: form.slug || slugify(form.title) });
-      toast({ title: "Post created!" });
+    try {
+      if (editingPost) {
+        await base44.entities.BlogPost.update(editingPost.id, { ...form });
+        toast({ title: "Post updated!" });
+      } else {
+        await base44.entities.BlogPost.create({ ...form, slug: form.slug || slugify(form.title) });
+        toast({ title: "Post created!" });
+      }
+      closeForm();
+      await load();
+    } catch (error) {
+      toast({ title: error.message || "Could not save the post", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
-    closeForm();
-    load();
-    setSaving(false);
   };
 
   const toggle = async (post, field) => {
-    await base44.entities.BlogPost.update(post.id, { [field]: !post[field] });
-    load();
+    try {
+      await base44.entities.BlogPost.update(post.id, { [field]: !post[field] });
+      await load();
+    } catch (error) {
+      toast({ title: error.message || "Could not update the post", variant: "destructive" });
+    }
   };
 
   const remove = async (id) => {
-    await base44.entities.BlogPost.delete(id);
-    load();
+    try {
+      await base44.entities.BlogPost.delete(id);
+      await load();
+    } catch (error) {
+      toast({ title: error.message || "Could not delete the post", variant: "destructive" });
+    }
   };
 
   return (
@@ -100,6 +130,16 @@ export default function AdminBlog() {
                 />
               </div>
             ))}
+            <div className="sm:col-span-2 flex flex-wrap items-center gap-3">
+              <button type="button" onClick={() => coverInputRef.current?.click()} disabled={uploadingCover}
+                className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold disabled:opacity-60"
+                style={{ borderColor: "var(--cream-dark)", color: "var(--cobalt)" }}>
+                {uploadingCover ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                {uploadingCover ? "Uploading…" : "Upload cover image"}
+              </button>
+              <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={uploadCover} />
+              {form.cover_image && <img src={form.cover_image} alt="Cover preview" className="h-12 w-20 rounded object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} />}
+            </div>
             <div>
               <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--ink-muted)" }}>Category</label>
               <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))}

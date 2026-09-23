@@ -23,5 +23,5 @@ export default async function apiHandler(request, response) {
 
   response.status(result.statusCode);
   Object.entries(result.headers || {}).forEach(([key, value]) => response.setHeader(key, value));
-  response.send(result.body || "");
+  response.send(result.isBase64Encoded ? Buffer.from(result.body || "", "base64") : (result.body || ""));
 }

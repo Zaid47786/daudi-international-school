@@ -13,14 +13,21 @@ export default function AdminEvents() {
   const [form, setForm] = useState(EMPTY_EVENT);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [error, setError] = useState("");
 
   useEffect(() => { loadEvents(); }, []);
 
   const loadEvents = async () => {
     setLoading(true);
-    const records = await base44.entities.Event.list("-date");
-    setEvents(records);
-    setLoading(false);
+    setError("");
+    try {
+      const records = await base44.entities.Event.list("-date");
+      setEvents(records);
+    } catch (loadError) {
+      setError(loadError.message || "Could not load events.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const openAdd = () => { setEditing("new"); setForm(EMPTY_EVENT); };
@@ -29,20 +36,30 @@ export default function AdminEvents() {
 
   const handleSave = async () => {
     setSaving(true);
-    if (editing === "new") {
-      const created = await base44.entities.Event.create(form);
-      setEvents((prev) => [created, ...prev]);
-    } else {
-      await base44.entities.Event.update(editing, form);
-      setEvents((prev) => prev.map((e) => e.id === editing ? { ...e, ...form } : e));
+    setError("");
+    try {
+      if (editing === "new") {
+        const created = await base44.entities.Event.create(form);
+        setEvents((prev) => [created, ...prev]);
+      } else {
+        await base44.entities.Event.update(editing, form);
+        setEvents((prev) => prev.map((e) => e.id === editing ? { ...e, ...form } : e));
+      }
+      closeEdit();
+    } catch (saveError) {
+      setError(saveError.message || "Could not save the event.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    closeEdit();
   };
 
   const handleDelete = async (id) => {
-    await base44.entities.Event.delete(id);
-    setEvents((prev) => prev.filter((e) => e.id !== id));
+    try {
+      await base44.entities.Event.delete(id);
+      setEvents((prev) => prev.filter((e) => e.id !== id));
+    } catch (deleteError) {
+      setError(deleteError.message || "Could not delete the event.");
+    }
   };
 
   const filtered = filter === "all" ? events : events.filter((e) => e.status === filter);
@@ -52,6 +69,7 @@ export default function AdminEvents() {
   return (
     <div className="space-y-5 max-w-4xl">
       {/* Controls */}
+      {error && <div className="flex items-center justify-between gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs text-red-700"><span>{error}</span><button onClick={loadEvents} className="font-bold underline">Retry</button></div>}
       <div className="flex flex-wrap gap-3 items-center justify-between">
         <div className="flex gap-2">
           {["all", "upcoming", "past"].map((f) => (

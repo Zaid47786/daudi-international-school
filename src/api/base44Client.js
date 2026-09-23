@@ -160,19 +160,19 @@ const auth = {
 const integrations = {
   Core: {
     async UploadFile({ file }) {
-      const token = getToken();
-      const form = new FormData();
-      form.append("file", file);
-      const res = await fetch(`${BASE_URL}/upload`, {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: form,
+      if (!file) throw new Error("Choose an image before uploading.");
+      if (!String(file.type || "").startsWith("image/")) throw new Error("Only image files can be uploaded.");
+      if (file.size > 8 * 1024 * 1024) throw new Error("Images must be smaller than 8 MB.");
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Could not read the selected image."));
+        reader.readAsDataURL(file);
       });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || "Upload failed");
-      }
-      return res.json();
+      return apiFetch("/upload", {
+        method: "POST",
+        body: JSON.stringify({ filename: file.name, content_type: file.type, data_url: dataUrl }),
+      });
     },
 
     async InvokeLLM() {

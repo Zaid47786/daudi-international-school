@@ -27,6 +27,7 @@ export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadSettings();
@@ -34,19 +35,25 @@ export default function AdminSettings() {
 
   const loadSettings = async () => {
     setLoading(true);
-    const records = await base44.entities.SchoolSettings.list();
-    const map = {};
-    records.forEach((r) => { map[r.key] = r; });
+    setError("");
+    try {
+      const records = await base44.entities.SchoolSettings.list();
+      const map = {};
+      records.forEach((r) => { map[r.key] = r; });
 
-    // Seed defaults for missing keys
-    const toCreate = DEFAULT_SETTINGS.filter((d) => !map[d.key]);
-    for (const d of toCreate) {
-      const created = await base44.entities.SchoolSettings.create(d);
-      map[d.key] = created;
+      // Seed defaults for missing keys
+      const toCreate = DEFAULT_SETTINGS.filter((d) => !map[d.key]);
+      for (const d of toCreate) {
+        const created = await base44.entities.SchoolSettings.create(d);
+        map[d.key] = created;
+      }
+
+      setSettings(map);
+    } catch (loadError) {
+      setError(loadError.message || "Could not load school settings.");
+    } finally {
+      setLoading(false);
     }
-
-    setSettings(map);
-    setLoading(false);
   };
 
   const handleChange = (key, val) => {
@@ -58,16 +65,20 @@ export default function AdminSettings() {
 
   const handleSave = async (groupKeys) => {
     setSaving(true);
-    const keysToSave = groupKeys || Object.keys(settings);
-    for (const key of keysToSave) {
-      const s = settings[key];
-      if (s?.id) {
-        await base44.entities.SchoolSettings.update(s.id, { value: s.value });
+    setError("");
+    try {
+      const keysToSave = groupKeys || Object.keys(settings);
+      for (const key of keysToSave) {
+        const s = settings[key];
+        if (s?.id) await base44.entities.SchoolSettings.update(s.id, { value: s.value });
       }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (saveError) {
+      setError(saveError.message || "Could not save school settings.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
   };
 
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-royal-blue" size={32} /></div>;
@@ -80,6 +91,7 @@ export default function AdminSettings() {
 
   return (
     <div className="max-w-3xl space-y-6">
+      {error && <div className="flex items-center justify-between gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs text-red-700"><span>{error}</span><button onClick={loadSettings} className="font-bold underline">Retry</button></div>}
       {Object.entries(grouped).map(([group, keys]) => {
         const meta = GROUP_LABELS[group] || { label: group, icon: "⚙️", desc: "" };
         return (
