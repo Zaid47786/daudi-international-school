@@ -212,7 +212,7 @@ function AttendanceView({ role, payload, refresh }) {
   const saveAttendance = async () => {
     setSaving(true);
     try {
-      await Promise.all(students.filter((student) => statuses[student.id]).map((student) => base44.portalManage("attendance", { method: "POST", body: { student_id: student.id, class_id: student.class_id, date, status: statuses[student.id] } })));
+      await Promise.all(students.filter((student) => statuses[student.id]).map((student) => base44.auth.portalManage("attendance", { method: "POST", body: { student_id: student.id, class_id: student.class_id, date, status: statuses[student.id] } })));
       await refresh();
     } finally { setSaving(false); }
   };
@@ -250,7 +250,7 @@ function TeacherGradebookView({ payload, refresh }) {
     event.preventDefault();
     setSaving(true);
     try {
-      await base44.portalManage("results", { method: "POST", body: { ...normalisePayload(form), class_id: students.find((student) => student.id === form.student_id)?.class_id, percentage, grade: gradeFor(percentage) } });
+      await base44.auth.portalManage("results", { method: "POST", body: { ...normalisePayload(form), class_id: students.find((student) => student.id === form.student_id)?.class_id, percentage, grade: gradeFor(percentage) } });
       setForm({ student_id: "", exam_id: "", subject: "", max_marks: "100", obtained_marks: "", published: false });
       await refresh();
     } finally { setSaving(false); }
@@ -311,7 +311,7 @@ function AdminManageView({ resource, payload, refresh }) {
     setNotice("");
     try {
       const wasEditing = Boolean(editing);
-      await base44.portalManage(resource, {
+      await base44.auth.portalManage(resource, {
         method: wasEditing ? "PUT" : "POST",
         id: editing,
         body: normalisePayload(form),
@@ -345,7 +345,7 @@ function AdminManageView({ resource, payload, refresh }) {
     setError("");
     setNotice("");
     try {
-      await base44.portalManage(resource, { method: "DELETE", id });
+      await base44.auth.portalManage(resource, { method: "DELETE", id });
       await refresh();
       setNotice("Record deleted successfully.");
     } catch (deleteError) {
