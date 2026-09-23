@@ -424,7 +424,7 @@ export default function Portal() {
   const [error, setError] = useState("");
 
   const load = async () => {
-    setLoading(true);
+    if (!payload) setLoading(true);
     try { const current = await base44.auth.portalMe(); setUser(current); const next = await base44.auth.portalBootstrap(); setPayload(next); setError(""); }
     catch (loadError) { setUser(null); setError(loadError.message || "Please sign in to continue."); }
     finally { setLoading(false); }
