@@ -1,4 +1,3 @@
-/* eslint-env node */
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import db from "../database/db.js";

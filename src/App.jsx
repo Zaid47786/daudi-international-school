@@ -32,7 +32,7 @@ const AuthenticatedApp = () => {
       <div className="fixed inset-0 flex items-center justify-center bg-cobalt-deep">
         <div className="flex flex-col items-center gap-5">
           <img
-            src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+            src="/dis-logo.png"
             alt="DIS"
             className="h-12 w-auto opacity-70"
             style={{ animation: "pulse 2s ease-in-out infinite" }}

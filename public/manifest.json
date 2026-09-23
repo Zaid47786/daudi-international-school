@@ -10,12 +10,12 @@
   "lang": "en-IN",
   "icons": [
     {
-      "src": "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+      "src": "/dis-logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+      "src": "/dis-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }

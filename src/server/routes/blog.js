@@ -1,4 +1,3 @@
-/* eslint-env node */
 import { Router } from "express";
 import db from "../database/db.js";
 import { listRows, getRow, createRow, updateRow, deleteRow } from "../utils/crud.js";

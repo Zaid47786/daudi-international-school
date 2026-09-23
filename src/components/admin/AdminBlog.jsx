@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Plus, Trash2, Eye, EyeOff, Star, Pencil, X, Upload, Loader2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import { useToast } from "@/components/ui/use-toast";
-import ReactQuill from "react-quill";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 const CATEGORIES = ["Events", "Academics", "Achievements", "Admissions", "Science & Tech", "School Life", "Announcements"];
 
@@ -24,7 +25,7 @@ export default function AdminBlog() {
   const { toast } = useToast();
 
   const load = () => {
-    base44.entities.BlogPost.list("-created_date").then((data) => setPosts(data)).catch((error) => {
+    schoolApi.resources.BlogPost.list("-created_date").then((data) => setPosts(data)).catch((error) => {
       toast({ title: error.message || "Could not load blog posts", variant: "destructive" });
     }).finally(() => setLoading(false));
   };
@@ -43,7 +44,7 @@ export default function AdminBlog() {
     if (!file) return;
     setUploadingCover(true);
     try {
-      const data = await base44.integrations.Core.UploadFile({ file });
+      const data = await schoolApi.media.uploadImage(file);
       setForm((previous) => ({ ...previous, cover_image: data.file_url }));
       toast({ title: "Cover image uploaded" });
     } catch (error) {
@@ -58,10 +59,10 @@ export default function AdminBlog() {
     setSaving(true);
     try {
       if (editingPost) {
-        await base44.entities.BlogPost.update(editingPost.id, { ...form });
+        await schoolApi.resources.BlogPost.update(editingPost.id, { ...form });
         toast({ title: "Post updated!" });
       } else {
-        await base44.entities.BlogPost.create({ ...form, slug: form.slug || slugify(form.title) });
+        await schoolApi.resources.BlogPost.create({ ...form, slug: form.slug || slugify(form.title) });
         toast({ title: "Post created!" });
       }
       closeForm();
@@ -75,7 +76,7 @@ export default function AdminBlog() {
 
   const toggle = async (post, field) => {
     try {
-      await base44.entities.BlogPost.update(post.id, { [field]: !post[field] });
+      await schoolApi.resources.BlogPost.update(post.id, { [field]: !post[field] });
       await load();
     } catch (error) {
       toast({ title: error.message || "Could not update the post", variant: "destructive" });
@@ -84,7 +85,7 @@ export default function AdminBlog() {
 
   const remove = async (id) => {
     try {
-      await base44.entities.BlogPost.delete(id);
+      await schoolApi.resources.BlogPost.delete(id);
       await load();
     } catch (error) {
       toast({ title: error.message || "Could not delete the post", variant: "destructive" });

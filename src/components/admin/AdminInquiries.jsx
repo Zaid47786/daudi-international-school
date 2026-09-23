@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import { Loader2, Mail, Phone, User, MessageSquare, Trash2, ChevronDown, RefreshCw } from "lucide-react";
 
 const STATUS_COLORS = {
@@ -22,7 +22,7 @@ export default function AdminInquiries() {
     setLoading(true);
     setError("");
     try {
-      const records = await base44.entities.AdmissionInquiry.list("-created_date");
+      const records = await schoolApi.resources.AdmissionInquiry.list("-created_date");
       setInquiries(records);
     } catch (err) {
       setError(err.message || "Could not load admission inquiries.");
@@ -33,7 +33,7 @@ export default function AdminInquiries() {
 
   const handleStatusChange = async (id, status) => {
     try {
-      await base44.entities.AdmissionInquiry.update(id, { status });
+      await schoolApi.resources.AdmissionInquiry.update(id, { status });
       setInquiries((prev) => prev.map((i) => i.id === id ? { ...i, status } : i));
     } catch (err) {
       setError(err.message || "Could not update this inquiry.");
@@ -42,7 +42,7 @@ export default function AdminInquiries() {
 
   const handleDelete = async (id) => {
     try {
-      await base44.entities.AdmissionInquiry.delete(id);
+      await schoolApi.resources.AdmissionInquiry.delete(id);
       setInquiries((prev) => prev.filter((i) => i.id !== id));
     } catch (err) {
       setError(err.message || "Could not delete this inquiry.");

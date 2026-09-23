@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, ArrowRight } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
@@ -56,7 +56,7 @@ export default function Admissions() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await base44.entities.AdmissionInquiry.create({ ...form, status: "new" });
+      await schoolApi.resources.AdmissionInquiry.create({ ...form, status: "new" });
       setSubmitted(true);
       toast({ title: "Inquiry submitted.", description: "We'll be in touch within 2–3 working days." });
       setForm({ parent_name: "", child_name: "", grade: "", phone: "", email: "", message: "" });

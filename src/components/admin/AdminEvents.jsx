@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import { Plus, Trash2, Pencil, X, Loader2, Check } from "lucide-react";
 
 const EMPTY_EVENT = { title: "", date: "", time: "", location: "", description: "", category: "Academic", status: "upcoming", featured: false };
@@ -21,7 +21,7 @@ export default function AdminEvents() {
     setLoading(true);
     setError("");
     try {
-      const records = await base44.entities.Event.list("-date");
+      const records = await schoolApi.resources.Event.list("-date");
       setEvents(records);
     } catch (loadError) {
       setError(loadError.message || "Could not load events.");
@@ -39,10 +39,10 @@ export default function AdminEvents() {
     setError("");
     try {
       if (editing === "new") {
-        const created = await base44.entities.Event.create(form);
+        const created = await schoolApi.resources.Event.create(form);
         setEvents((prev) => [created, ...prev]);
       } else {
-        await base44.entities.Event.update(editing, form);
+        await schoolApi.resources.Event.update(editing, form);
         setEvents((prev) => prev.map((e) => e.id === editing ? { ...e, ...form } : e));
       }
       closeEdit();
@@ -55,7 +55,7 @@ export default function AdminEvents() {
 
   const handleDelete = async (id) => {
     try {
-      await base44.entities.Event.delete(id);
+      await schoolApi.resources.Event.delete(id);
       setEvents((prev) => prev.filter((e) => e.id !== id));
     } catch (deleteError) {
       setError(deleteError.message || "Could not delete the event.");

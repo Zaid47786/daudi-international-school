@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 
 // Default fallback values if DB is empty
 const DEFAULTS = {
@@ -20,7 +20,7 @@ export function useSettings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.SchoolSettings.list().then((records) => {
+    schoolApi.resources.SchoolSettings.list().then((records) => {
       const map = { ...DEFAULTS };
       records.forEach((r) => { if (r.key) map[r.key] = r.value; });
       setSettings(map);
@@ -36,7 +36,7 @@ export function useStats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.Stat.list("sort_order").then((records) => {
+    schoolApi.resources.Stat.list("sort_order").then((records) => {
       setStats(records);
       setLoading(false);
     }).catch(() => setLoading(false));
@@ -51,8 +51,8 @@ export function useEvents(status = null) {
 
   useEffect(() => {
     const fetch = status
-      ? base44.entities.Event.filter({ status })
-      : base44.entities.Event.list("-date");
+      ? schoolApi.resources.Event.filter({ status })
+      : schoolApi.resources.Event.list("-date");
     fetch.then((records) => {
       setEvents(records);
       setLoading(false);
@@ -67,7 +67,7 @@ export function useGalleryPhotos() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.GalleryPhoto.list("sort_order").then((records) => {
+    schoolApi.resources.GalleryPhoto.list("sort_order").then((records) => {
       setPhotos(records);
       setLoading(false);
     }).catch(() => setLoading(false));

@@ -1,98 +1,67 @@
-# Daudi International School — daudischool.in
+# Daudi International School application
 
-This repository contains **two separate parts** of the website. They are kept together for convenience but are deployed independently.
+The repository contains a **fully independent React frontend and school-owned API client**. The production website runs on Vercel, while the optional Express/SQLite server under `src/server` is retained for self-hosted deployments.
 
----
+## Project structure
 
-## 📁 Project Structure
+```text
+src/
+├── api/
+│   └── schoolApi.js        Independent same-origin API client
+├── components/             Shared website and admin components
+├── pages/                  Public, admin, and portal pages
+├── lib/                    Authentication and frontend utilities
+├── database/               Optional SQLite schema and initial content
+├── server/                 Optional Express/SQLite deployment
+├── App.jsx                 React route registration
+└── main.jsx                Frontend entry point
 
-```
-/ (repo root)
-├── 📂 src/                  ← REACT FRONTEND (this is what Base44 builds & previews)
-│   ├── pages/
-│   ├── components/
-│   ├── api/base44Client.js  ← API client that talks to the Express server
-│   ├── App.jsx
-│   └── ...
-│
-├── 📂 server/               ← EXPRESS BACKEND (deploy this to Asura hosting)
-│   ├── server.js            ← Entry point — run: node server.js
-│   ├── package.json         ← Server dependencies (separate from frontend)
-│   ├── ecosystem.config.js  ← PM2 config for DirectAdmin
-│   ├── .env.example         ← Copy to .env and fill in values
-│   ├── database/
-│   │   ├── schema.sql                 ← SQLite table definitions
-│   │   ├── db.js                      ← Database connection
-│   │   ├── init.js                    ← Run once: creates tables
-│   │   ├── seed.js                    ← Run once: creates admin + settings
-│   │   └── migrate-from-base44.sql    ← Run once: imports live data
-│   ├── routes/              ← API route handlers
-│   ├── middleware/          ← JWT auth + file upload
-│   └── utils/               ← Shared CRUD helpers
-│
-├── package.json             ← FRONTEND dependencies (Vite + React)
-├── vite.config.js           ← FRONTEND build config
-└── index.html               ← FRONTEND entry point
+api/index.js                Vercel serverless API adapter
+netlify/functions/api.mjs   Shared API implementation
+public/dis-logo.png         Locally hosted school logo
+vite.config.js              Standard Vite and React configuration
+vercel.json                 API and SPA routing
 ```
 
----
+## Frontend
 
-## 🖥️ Frontend (React)
-
-- **Location:** repo root (`src/`, `App.jsx`, `vite.config.js`, `package.json`)
-- **Purpose:** The React website — all pages, components, and UI
-- **Dev:** Edited and previewed on Base44
-- **Build:** `npm run build` → outputs to `server/dist/`
-- **API calls:** Go to `/api/...` which the Express server handles
-
-## ⚙️ Backend (Express + SQLite)
-
-- **Location:** `server/` folder
-- **Purpose:** REST API, database, authentication, file uploads, auto-deploy webhook
-- **Deploy:** Upload the `server/` folder to Asura (DirectAdmin Node.js app)
-- **Start:** `node server.js` or `pm2 start ecosystem.config.js`
-
----
-
-## 🚀 Deploying to Asura
+Install and run the app from the repository root:
 
 ```bash
-# 1. On Asura — go to your app directory
-cd /home/daudisch/domains/daudischool.in/app
-
-# 2. Upload/clone the server/ folder contents here
-#    The app directory should look like:
-#      server.js, package.json, ecosystem.config.js, .env
-#      database/, routes/, middleware/, utils/
-#      uploads/, logs/, dist/
-
-# 3. Install server dependencies
 npm install
-
-# 4. Set up environment
-cp .env.example .env
-nano .env   # set JWT_SECRET and ADMIN_PASSWORD
-
-# 5. Initialize & seed the database (run once)
-node database/init.js
-node database/seed.js
-sqlite3 dis.db < database/migrate-from-base44.sql
-
-# 6. Build the React frontend (from repo root, on your local machine or CI)
-npm run build
-# Then upload the generated dist/ folder into the app directory on Asura
-
-# 7. Start the server
-pm2 start ecosystem.config.js
+npm run dev
 ```
 
----
+The frontend calls the same-origin `/api` endpoint by default. To use a separately hosted backend, set `VITE_API_URL` directly in a local `.env` file.
 
-## 🔑 Key Rules
+```dotenv
+VITE_API_URL=https://api.example.com/api
+```
 
-| Rule | Detail |
-|------|--------|
-| Never mix them | `server/package.json` is for Node/Express. Root `package.json` is for React/Vite. |
-| Only one server.js | `server/server.js` is the ONLY server file. There is no other. |
-| Frontend talks to backend | Via `src/api/base44Client.js` → `VITE_API_URL` env var (defaults to `/api`) |
-| Admin login | Go to `/admin` on the live site. Set the admin password in `.env` → `ADMIN_PASSWORD` |
+The API client is implemented in `src/api/schoolApi.js`. It owns authentication, website resources, portal operations, and image uploads without an external application SDK or build plugin.
+
+## Production deployment
+
+The production configuration uses:
+
+- Vercel for the React application and serverless API
+- A private Vercel Blob store for persistent JSON records and uploaded media
+- `ADMIN_PASSWORD` for administrator access
+- `JWT_SECRET` for signed sessions
+
+See the repository root `README.md` for complete deployment and verification instructions.
+
+## Optional Express/SQLite deployment
+
+The server under `src/server` can be run independently:
+
+```bash
+cd src/server
+npm install
+npm run db:init
+npm run db:seed
+npm run db:import
+npm start
+```
+
+`npm run db:import` loads the bundled `database/initial-content.sql` snapshot. Configure `JWT_SECRET`, `ADMIN_PASSWORD`, and any deployment-specific variables directly in `src/server/.env` before starting the server. Never commit `.env` files.

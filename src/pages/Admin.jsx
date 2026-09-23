@@ -7,7 +7,7 @@ import AdminGallery from "../components/admin/AdminGallery";
 import AdminStats from "../components/admin/AdminStats";
 import AdminInquiries from "../components/admin/AdminInquiries";
 import AdminBlog from "../components/admin/AdminBlog";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 
 const tabs = [
   { id: "settings", label: "School Info", icon: Settings },
@@ -29,7 +29,7 @@ export default function Admin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    base44.auth.me()
+    schoolApi.auth.me()
       .then(() => setAuthenticated(true))
       .catch(() => setAuthenticated(false))
       .finally(() => setCheckingAuth(false));
@@ -40,7 +40,7 @@ export default function Admin() {
     setPasswordError("");
     setLoggingIn(true);
     try {
-      await base44.auth.login(passwordInput);
+      await schoolApi.auth.login(passwordInput);
       setAuthenticated(true);
     } catch (err) {
       setPasswordError(err.message || "Invalid credentials. Please try again.");
@@ -64,7 +64,7 @@ export default function Admin() {
         <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm">
           <div className="text-center mb-8">
             <img
-              src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+              src="/dis-logo.png"
               alt="DIS"
               className="h-16 w-auto mx-auto mb-4"
             />
@@ -96,7 +96,7 @@ export default function Admin() {
   }
 
   const handleLogout = () => {
-    base44.auth.logout("/admin");
+    schoolApi.auth.logout("/admin");
   };
 
   const ActiveComponent = {
@@ -115,7 +115,7 @@ export default function Admin() {
         {/* Logo */}
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <img src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png" alt="DIS" className="h-10 w-auto" />
+            <img src="/dis-logo.png" alt="DIS" className="h-10 w-auto" />
             <div>
               <div className="font-bold text-sm leading-tight">DIS Admin</div>
               <div className="text-gold text-xs">Muzaffarpur</div>

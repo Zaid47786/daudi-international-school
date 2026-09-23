@@ -5,7 +5,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import SEOHead from "../../components/SEOHead";
 import Breadcrumb from "../../components/Breadcrumb";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import { useToast } from "@/components/ui/use-toast";
 
 const fadeUp = (delay = 0) => ({
@@ -40,7 +40,7 @@ export default function AdmissionsOpen() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    await base44.entities.AdmissionInquiry.create({ ...form, status: "new" });
+    await schoolApi.resources.AdmissionInquiry.create({ ...form, status: "new" });
     toast({ title: "Inquiry received!", description: "We will contact you within 24 hours." });
     setForm({ parent_name: "", child_name: "", grade: "", phone: "", email: "" });
     setSubmitting(false);
@@ -139,8 +139,8 @@ export default function AdmissionsOpen() {
                         placeholder={f.placeholder || ""}
                         value={form[f.key]}
                         onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                        className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder:text-white/30 outline-none focus:ring-2"
-                        style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", focusRingColor: "var(--amber)" }}
+                        className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder:text-white/30 outline-none focus:ring-2 focus:ring-amber"
+                        style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
                       />
                     </div>
                   ))}

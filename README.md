@@ -2,6 +2,8 @@
 
 This repository contains the React/Vite website and its API integration for Daudi International School, Muzaffarpur.
 
+The application is fully independent of hosted app-builder SDKs and build plugins. The frontend uses the project-owned `src/api/schoolApi.js` client, the backend is implemented in this repository, the school logo is served from `public/dis-logo.png`, and production data and uploads are stored in the project's private Vercel Blob store.
+
 ## Run the frontend locally
 
 ```bash

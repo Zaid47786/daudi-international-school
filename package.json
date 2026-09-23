@@ -1,5 +1,5 @@
 {
-  "name": "base44-app",
+  "name": "daudi-international-school",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,8 +12,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@base44/sdk": "^0.8.35",
-    "@base44/vite-plugin": "^1.0.24",
     "@hello-pangea/dnd": "^17.0.0",
     "@hookform/resolvers": "^4.1.2",
     "@netlify/blobs": "^11.1.0",
@@ -69,9 +67,9 @@
     "react-hot-toast": "^2.6.0",
     "react-leaflet": "^4.2.1",
     "react-markdown": "^9.0.1",
-    "react-quill": "^2.0.0",
+    "react-quill-new": "3.7.0",
     "react-resizable-panels": "^2.1.7",
-    "react-router-dom": "^6.26.0",
+    "react-router-dom": "^7.18.4",
     "recharts": "^2.15.4",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
@@ -100,5 +98,8 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.2",
     "vite": "^6.1.0"
+  },
+  "overrides": {
+    "quill": "2.0.2"
   }
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 
 const FALLBACK = [
   { parent_name: "Shabana Parveen", child_class: "Class V", quote: "The teachers are very caring and they bring out the best in every student. The school provides a nurturing and supportive environment for holistic development.", rating: 5 },
@@ -20,7 +20,7 @@ export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState(FALLBACK);
 
   useEffect(() => {
-    base44.entities.Testimonial.filter({ is_featured: true }, "sort_order").then((data) => {
+    schoolApi.resources.Testimonial.filter({ is_featured: true }, "sort_order").then((data) => {
       if (data.length > 0) setTestimonials(data);
     }).catch(() => {});
   }, []);

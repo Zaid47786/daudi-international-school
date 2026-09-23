@@ -8,7 +8,7 @@ export default function SEOHead({
   title,
   description,
   canonical,
-  ogImage = "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+  ogImage = "https://daudischool.in/dis-logo.png",
   ogType = "website",
   schema = null,
   noindex = false,
@@ -72,7 +72,7 @@ export default function SEOHead({
       if (!schemaScript) {
         schemaScript = document.createElement("script");
         schemaScript.id = "page-schema";
-        schemaScript.type = "application/ld+json";
+        schemaScript.setAttribute("type", "application/ld+json");
         document.head.appendChild(schemaScript);
       }
       schemaScript.textContent = JSON.stringify(schema);

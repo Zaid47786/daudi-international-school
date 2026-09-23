@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEOHead from "../components/SEOHead";
 import Breadcrumb from "../components/Breadcrumb";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -34,7 +34,7 @@ const schema = {
   publisher: {
     "@type": "Organization",
     name: "Daudi International School",
-    logo: "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+    logo: "https://daudischool.in/dis-logo.png",
   },
 };
 
@@ -44,7 +44,7 @@ export default function Blog() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => {
-    base44.entities.BlogPost.filter({ published: true }, "-created_date").then((data) => {
+    schoolApi.resources.BlogPost.filter({ published: true }, "-created_date").then((data) => {
       setPosts(data);
       setLoading(false);
     }).catch(() => setLoading(false));

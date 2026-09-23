@@ -17,7 +17,7 @@ export default function Footer() {
           <div className="col-span-12 sm:col-span-5 lg:col-span-4">
             <Link to="/" className="flex items-center gap-3 mb-5">
               <img
-                src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+                src="/dis-logo.png"
                 alt="Daudi International School Muzaffarpur"
                 loading="lazy"
                 width="44" height="44"

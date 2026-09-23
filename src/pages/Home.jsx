@@ -108,7 +108,7 @@ export default function Home() {
                   "https://images.unsplash.com/photo-1595152772835-219674b2a163?w=60&h=60&fit=crop&fm=webp",
                   "https://images.unsplash.com/photo-1588072432836-e10032774350?w=60&h=60&fit=crop&fm=webp"].map((src, i) => (
                   <img key={i} src={src} alt="DIS parent" width="32" height="32" loading="lazy" decoding="async" className="w-8 h-8 rounded-full object-cover ring-2"
-                    style={{ ringColor: "var(--cobalt-deep)" }} />
+                    style={{ boxShadow: "0 0 0 2px var(--cobalt-deep)" }} />
                 ))}
               </div>
               <div>
@@ -125,7 +125,7 @@ export default function Home() {
             <div className="relative">
               <div className="absolute inset-0 rounded-full blur-3xl opacity-20" style={{ backgroundColor: "var(--amber)" }} />
               <img
-                src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+                src="/dis-logo.png"
                 alt="Daudi International School Muzaffarpur official logo"
                 fetchPriority="high"
                 width="192" height="192"

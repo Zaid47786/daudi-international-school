@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import { Plus, Trash2, Save, Loader2, GripVertical } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
@@ -24,10 +24,10 @@ export default function AdminStats() {
     setLoading(true);
     setError("");
     try {
-      let records = await base44.entities.Stat.list("sort_order");
+      let records = await schoolApi.resources.Stat.list("sort_order");
       if (records.length === 0) {
         for (const d of DEFAULT_STATS) {
-          const created = await base44.entities.Stat.create(d);
+          const created = await schoolApi.resources.Stat.create(d);
           records.push(created);
         }
       } else {
@@ -39,7 +39,7 @@ export default function AdminStats() {
           else seen.add(r.label);
         });
         if (dupes.length > 0) {
-          await Promise.all(dupes.map((id) => base44.entities.Stat.delete(id)));
+          await Promise.all(dupes.map((id) => schoolApi.resources.Stat.delete(id)));
           records = records.filter((r) => !dupes.includes(r.id));
         }
       }
@@ -59,7 +59,7 @@ export default function AdminStats() {
     setSaving(stat.id);
     setError("");
     try {
-      await base44.entities.Stat.update(stat.id, { label: stat.label, value: stat.value, icon: stat.icon });
+      await schoolApi.resources.Stat.update(stat.id, { label: stat.label, value: stat.value, icon: stat.icon });
     } catch (saveError) {
       setError(saveError.message || "Could not save this statistic.");
     } finally {
@@ -69,7 +69,7 @@ export default function AdminStats() {
 
   const handleDelete = async (id) => {
     try {
-      await base44.entities.Stat.delete(id);
+      await schoolApi.resources.Stat.delete(id);
       setStats((prev) => prev.filter((s) => s.id !== id));
     } catch (deleteError) {
       setError(deleteError.message || "Could not delete this statistic.");
@@ -78,7 +78,7 @@ export default function AdminStats() {
 
   const handleAdd = async () => {
     try {
-      const created = await base44.entities.Stat.create({ label: "New Stat", value: "0", icon: "Star", sort_order: stats.length });
+      const created = await schoolApi.resources.Stat.create({ label: "New Stat", value: "0", icon: "Star", sort_order: stats.length });
       setStats((prev) => [...prev, created]);
     } catch (addError) {
       setError(addError.message || "Could not add a statistic.");
@@ -93,7 +93,7 @@ export default function AdminStats() {
     const updated = reordered.map((s, i) => ({ ...s, sort_order: i }));
     setStats(updated);
     try {
-      await Promise.all(updated.map((s) => base44.entities.Stat.update(s.id, { sort_order: s.sort_order })));
+      await Promise.all(updated.map((s) => schoolApi.resources.Stat.update(s.id, { sort_order: s.sort_order })));
     } catch (reorderError) {
       setError(reorderError.message || "Could not save the statistic order.");
       await loadStats();

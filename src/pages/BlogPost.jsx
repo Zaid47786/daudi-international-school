@@ -9,7 +9,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SEOHead from "../components/SEOHead";
 import Breadcrumb from "../components/Breadcrumb";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -18,12 +18,12 @@ export default function BlogPostPage() {
   const [related, setRelated] = useState([]);
 
   useEffect(() => {
-    base44.entities.BlogPost.filter({ slug, published: true }).then(async (data) => {
+    schoolApi.resources.BlogPost.filter({ slug, published: true }).then(async (data) => {
       const found = data[0];
       setPost(found || null);
       setLoading(false);
       if (found) {
-        const rel = await base44.entities.BlogPost.filter({ category: found.category, published: true }, "-created_date", 4);
+        const rel = await schoolApi.resources.BlogPost.filter({ category: found.category, published: true }, "-created_date", 4);
         setRelated(rel.filter(r => r.id !== found.id).slice(0, 3));
       }
     }).catch(() => setLoading(false));
@@ -55,7 +55,7 @@ export default function BlogPostPage() {
     "@type": "Article",
     headline: post.title,
     description: post.meta_description || post.excerpt,
-    image: post.cover_image || "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png",
+    image: post.cover_image || "https://daudischool.in/dis-logo.png",
     url: `https://daudischool.in/blog/${post.slug}`,
     author: {
       "@type": "Organization",
@@ -67,7 +67,7 @@ export default function BlogPostPage() {
       name: "Daudi International School",
       logo: {
         "@type": "ImageObject",
-        url: "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+        url: "https://daudischool.in/dis-logo.png"
       },
     },
     datePublished: post.created_date,

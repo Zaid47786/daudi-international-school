@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { base44 } from '@/api/base44Client';
+import { schoolApi } from '@/api/schoolApi';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchCurrentUser = useCallback(async () => {
     try {
-      const u = await base44.auth.me();
+      const u = await schoolApi.auth.me();
       setUser(u);
     } catch {
       setUser(null);
@@ -25,18 +25,18 @@ export const AuthProvider = ({ children }) => {
   }, [fetchCurrentUser]);
 
   const login = async (password) => {
-    const u = await base44.auth.login(password);
+    const u = await schoolApi.auth.login(password);
     setUser(u);
     return u;
   };
 
   const logout = (redirectUrl) => {
-    base44.auth.logout(redirectUrl || "/");
+    schoolApi.auth.logout(redirectUrl || "/");
     setUser(null);
   };
 
   const navigateToLogin = (nextUrl) => {
-    base44.auth.redirectToLogin(nextUrl);
+    schoolApi.auth.redirectToLogin(nextUrl);
   };
 
   return (

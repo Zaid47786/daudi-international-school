@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import { Save, Loader2, CheckCircle2 } from "lucide-react";
 
 const DEFAULT_SETTINGS = [
@@ -37,14 +37,14 @@ export default function AdminSettings() {
     setLoading(true);
     setError("");
     try {
-      const records = await base44.entities.SchoolSettings.list();
+      const records = await schoolApi.resources.SchoolSettings.list();
       const map = {};
       records.forEach((r) => { map[r.key] = r; });
 
       // Seed defaults for missing keys
       const toCreate = DEFAULT_SETTINGS.filter((d) => !map[d.key]);
       for (const d of toCreate) {
-        const created = await base44.entities.SchoolSettings.create(d);
+        const created = await schoolApi.resources.SchoolSettings.create(d);
         map[d.key] = created;
       }
 
@@ -70,7 +70,7 @@ export default function AdminSettings() {
       const keysToSave = groupKeys || Object.keys(settings);
       for (const key of keysToSave) {
         const s = settings[key];
-        if (s?.id) await base44.entities.SchoolSettings.update(s.id, { value: s.value });
+        if (s?.id) await schoolApi.resources.SchoolSettings.update(s.id, { value: s.value });
       }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);

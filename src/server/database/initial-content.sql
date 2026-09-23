@@ -1,8 +1,8 @@
 -- ============================================================================
--- DIS Live Data — exported from Base44 on 2026-05-27
+-- DIS initial website content snapshot — prepared on 2026-05-27
 -- ============================================================================
 -- Run AFTER init + seed:
---   sqlite3 dis.db < database/migrate-from-base44.sql
+--   sqlite3 dis.db < database/initial-content.sql
 -- ============================================================================
 
 -- ── Blog Posts ──────────────────────────────────────────────────────────────
@@ -121,4 +121,4 @@ VALUES
 
 -- ── Note ─────────────────────────────────────────────────────────────────────
 -- School settings are already seeded by: node database/seed.js
--- No admission inquiries existed in Base44 (table was empty).
+-- No admission inquiries are included in this initial content snapshot.

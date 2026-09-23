@@ -33,9 +33,9 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 
-const logo = "https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png";
+const logo = "/dis-logo.png";
 
 const ROLE_META = {
   student: { label: "Student", icon: GraduationCap, accent: "#3556a8", bg: "#edf2ff" },
@@ -115,7 +115,7 @@ function PortalLogin({ onLogin }) {
     setError("");
     setLoading(true);
     try {
-      const user = role === "admin" ? await base44.auth.login(password) : await base44.auth.portalLogin(email, password);
+      const user = role === "admin" ? await schoolApi.auth.login(password) : await schoolApi.auth.portalLogin(email, password);
       onLogin(user);
     } catch (loginError) {
       setError(loginError.message || "Unable to sign in");
@@ -169,7 +169,7 @@ function EmptyState({ icon: Icon = Sparkles, title = "Nothing here yet", text = 
   return <div className="rounded-2xl border border-dashed border-slate-200 bg-white py-16 px-6 text-center"><Icon size={28} className="mx-auto text-slate-300" /><h3 className="text-base font-semibold text-slate-700 mt-4">{title}</h3><p className="text-sm text-slate-400 mt-2 max-w-md mx-auto">{text}</p></div>;
 }
 
-function SectionTitle({ eyebrow, title, text, action }) {
+function SectionTitle({ eyebrow, title, text, action = null }) {
   return <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6"><div><p className="portal-eyebrow">{eyebrow}</p><h2 className="text-2xl font-semibold text-slate-900 mt-2">{title}</h2>{text && <p className="text-sm text-slate-500 mt-2">{text}</p>}</div>{action}</div>;
 }
 
@@ -212,7 +212,7 @@ function AttendanceView({ role, payload, refresh }) {
   const saveAttendance = async () => {
     setSaving(true);
     try {
-      await Promise.all(students.filter((student) => statuses[student.id]).map((student) => base44.auth.portalManage("attendance", { method: "POST", body: { student_id: student.id, class_id: student.class_id, date, status: statuses[student.id] } })));
+      await Promise.all(students.filter((student) => statuses[student.id]).map((student) => schoolApi.auth.portalManage("attendance", { method: "POST", body: { student_id: student.id, class_id: student.class_id, date, status: statuses[student.id] } })));
       await refresh();
     } finally { setSaving(false); }
   };
@@ -250,7 +250,7 @@ function TeacherGradebookView({ payload, refresh }) {
     event.preventDefault();
     setSaving(true);
     try {
-      await base44.auth.portalManage("results", { method: "POST", body: { ...normalisePayload(form), class_id: students.find((student) => student.id === form.student_id)?.class_id, percentage, grade: gradeFor(percentage) } });
+      await schoolApi.auth.portalManage("results", { method: "POST", body: { ...normalisePayload(form), class_id: students.find((student) => student.id === form.student_id)?.class_id, percentage, grade: gradeFor(percentage) } });
       setForm({ student_id: "", exam_id: "", subject: "", max_marks: "100", obtained_marks: "", published: false });
       await refresh();
     } finally { setSaving(false); }
@@ -290,7 +290,7 @@ function StudentProfileView({ payload }) {
 
 function StudentsView({ payload, role }) {
   const rows = payload.data?.students || [];
-  return <div><SectionTitle eyebrow={role === "admin" ? "People and profiles" : "Your assigned learners"} title="Students" text={role === "admin" ? "Searchable student records shared across the school portal." : "Only students in your authorised classes are shown."} />{rows.length ? <div className="rounded-2xl bg-white border border-slate-100 overflow-hidden"><div className="p-4 border-b border-slate-100"><div className="relative max-w-sm"><Search size={16} className="absolute left-3 top-3 text-slate-400" /><input className="portal-input !pl-9" placeholder="Search students" onChange={(event) => { const term = event.target.value.toLowerCase(); event.currentTarget.closest(".rounded-2xl").querySelectorAll("tbody tr").forEach((row) => { row.style.display = row.innerText.toLowerCase().includes(term) ? "" : "none"; }); }} /></div></div><div className="overflow-x-auto"><table className="w-full text-left"><thead className="bg-slate-50 text-xs text-slate-500"><tr><th className="px-5 py-3">Student</th><th className="px-5 py-3">Class</th><th className="px-5 py-3">Roll no.</th><th className="px-5 py-3">Attendance</th></tr></thead><tbody className="divide-y divide-slate-100 text-sm">{rows.map((student) => <tr key={student.id}><td className="px-5 py-4"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-lg bg-[#edf2ff] text-cobalt flex items-center justify-center"><UserRound size={14} /></div><span className="font-semibold text-slate-700">{student.full_name || student.name}</span></div></td><td className="px-5 py-4 text-slate-500">{student.class_name || student.class_id || "—"} · {student.section || student.section_id || "—"}</td><td className="px-5 py-4 text-slate-500">{student.roll_number || "—"}</td><td className="px-5 py-4"><span className="text-teal-700 font-semibold">{student.attendance_percentage ? `${student.attendance_percentage}%` : "—"}</span></td></tr>)}</tbody></table></div></div> : <EmptyState icon={Users} title="No students found" />}</div>;
+  return <div><SectionTitle eyebrow={role === "admin" ? "People and profiles" : "Your assigned learners"} title="Students" text={role === "admin" ? "Searchable student records shared across the school portal." : "Only students in your authorised classes are shown."} />{rows.length ? <div className="rounded-2xl bg-white border border-slate-100 overflow-hidden"><div className="p-4 border-b border-slate-100"><div className="relative max-w-sm"><Search size={16} className="absolute left-3 top-3 text-slate-400" /><input className="portal-input !pl-9" placeholder="Search students" onChange={(event) => { const term = event.target.value.toLowerCase(); event.currentTarget.closest(".rounded-2xl")?.querySelectorAll("tbody tr").forEach((row) => { if (row instanceof HTMLTableRowElement) row.style.display = row.innerText.toLowerCase().includes(term) ? "" : "none"; }); }} /></div></div><div className="overflow-x-auto"><table className="w-full text-left"><thead className="bg-slate-50 text-xs text-slate-500"><tr><th className="px-5 py-3">Student</th><th className="px-5 py-3">Class</th><th className="px-5 py-3">Roll no.</th><th className="px-5 py-3">Attendance</th></tr></thead><tbody className="divide-y divide-slate-100 text-sm">{rows.map((student) => <tr key={student.id}><td className="px-5 py-4"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-lg bg-[#edf2ff] text-cobalt flex items-center justify-center"><UserRound size={14} /></div><span className="font-semibold text-slate-700">{student.full_name || student.name}</span></div></td><td className="px-5 py-4 text-slate-500">{student.class_name || student.class_id || "—"} · {student.section || student.section_id || "—"}</td><td className="px-5 py-4 text-slate-500">{student.roll_number || "—"}</td><td className="px-5 py-4"><span className="text-teal-700 font-semibold">{student.attendance_percentage ? `${student.attendance_percentage}%` : "—"}</span></td></tr>)}</tbody></table></div></div> : <EmptyState icon={Users} title="No students found" />}</div>;
 }
 
 function AdminManageView({ resource, payload, refresh }) {
@@ -311,7 +311,7 @@ function AdminManageView({ resource, payload, refresh }) {
     setNotice("");
     try {
       const wasEditing = Boolean(editing);
-      await base44.auth.portalManage(resource, {
+      await schoolApi.auth.portalManage(resource, {
         method: wasEditing ? "PUT" : "POST",
         id: editing,
         body: normalisePayload(form),
@@ -345,7 +345,7 @@ function AdminManageView({ resource, payload, refresh }) {
     setError("");
     setNotice("");
     try {
-      await base44.auth.portalManage(resource, { method: "DELETE", id });
+      await schoolApi.auth.portalManage(resource, { method: "DELETE", id });
       await refresh();
       setNotice("Record deleted successfully.");
     } catch (deleteError) {
@@ -425,13 +425,13 @@ export default function Portal() {
 
   const load = async () => {
     if (!payload) setLoading(true);
-    try { const current = await base44.auth.portalMe(); setUser(current); const next = await base44.auth.portalBootstrap(); setPayload(next); setError(""); }
+    try { const current = await schoolApi.auth.portalMe(); setUser(current); const next = await schoolApi.auth.portalBootstrap(); setPayload(next); setError(""); }
     catch (loadError) { setUser(null); setError(loadError.message || "Please sign in to continue."); }
     finally { setLoading(false); }
   };
   useEffect(() => { load(); }, []);
   const setSection = (section) => navigate(`/portal/${section}`);
-  const logout = () => { base44.auth.logout("/portal"); };
+  const logout = () => { schoolApi.auth.logout("/portal"); };
   if (loading) return <div className="min-h-screen bg-[#f7f9fc] flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-cobalt/20 border-t-cobalt animate-spin" /></div>;
   if (!user || !payload) return <PortalLogin onLogin={(nextUser) => { setUser(nextUser); load(); }} />;
   const role = user.role || "student";

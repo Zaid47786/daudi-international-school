@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { schoolApi } from "@/api/schoolApi";
 import { Plus, Trash2, Loader2, X, Check, Image, Upload } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { GripVertical } from "lucide-react";
@@ -26,7 +26,7 @@ export default function AdminGallery() {
     setUploading(true);
     setError("");
     try {
-      const data = await base44.integrations.Core.UploadFile({ file });
+      const data = await schoolApi.media.uploadImage(file);
       if (data.file_url) setForm((prev) => ({ ...prev, src: data.file_url }));
       else throw new Error("Upload completed without a media URL.");
     } catch (uploadError) {
@@ -41,7 +41,7 @@ export default function AdminGallery() {
     setLoading(true);
     setError("");
     try {
-      const records = await base44.entities.GalleryPhoto.list("sort_order");
+      const records = await schoolApi.resources.GalleryPhoto.list("sort_order");
       setPhotos(records);
     } catch (loadError) {
       setError(loadError.message || "Could not load gallery photos.");
@@ -55,7 +55,7 @@ export default function AdminGallery() {
     setSaving(true);
     setError("");
     try {
-      const created = await base44.entities.GalleryPhoto.create({ ...form, sort_order: photos.length });
+      const created = await schoolApi.resources.GalleryPhoto.create({ ...form, sort_order: photos.length });
       setPhotos((prev) => [...prev, created]);
       setForm(EMPTY_PHOTO);
       setAdding(false);
@@ -68,7 +68,7 @@ export default function AdminGallery() {
 
   const handleDelete = async (id) => {
     try {
-      await base44.entities.GalleryPhoto.delete(id);
+      await schoolApi.resources.GalleryPhoto.delete(id);
       setPhotos((prev) => prev.filter((p) => p.id !== id));
     } catch (deleteError) {
       setError(deleteError.message || "Could not remove the photo.");
@@ -83,7 +83,7 @@ export default function AdminGallery() {
     const updated = reordered.map((p, i) => ({ ...p, sort_order: i }));
     setPhotos(updated);
     try {
-      await Promise.all(updated.map((p) => base44.entities.GalleryPhoto.update(p.id, { sort_order: p.sort_order })));
+      await Promise.all(updated.map((p) => schoolApi.resources.GalleryPhoto.update(p.id, { sort_order: p.sort_order })));
     } catch (reorderError) {
       setError(reorderError.message || "Could not save the new photo order.");
       await loadPhotos();
@@ -137,7 +137,7 @@ export default function AdminGallery() {
             </div>
             {form.src && (
               <div className="sm:col-span-2">
-                <img src={form.src} alt="preview" className="h-32 rounded-xl object-cover border border-gray-100" onError={(e) => { e.target.style.display = "none"; }} />
+                <img src={form.src} alt="preview" className="h-32 rounded-xl object-cover border border-gray-100" onError={(e) => { e.currentTarget.style.display = "none"; }} />
               </div>
             )}
             <div>

@@ -29,7 +29,7 @@ export default function AdminLogin() {
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm">
         <div className="text-center mb-8">
           <img
-            src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+            src="/dis-logo.png"
             alt="DIS"
             className="h-16 w-auto mx-auto mb-4"
           />

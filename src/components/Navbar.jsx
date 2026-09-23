@@ -51,7 +51,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0 transition-transform duration-300 hover:-translate-y-0.5">
             <img
-              src="https://media.base44.com/images/public/user_68a720ca6a1156f1068d37b1/9fb988c1a_dis.png"
+              src="/dis-logo.png"
               alt="Daudi International School Muzaffarpur"
               width="36" height="36"
               className="h-8 md:h-9 w-auto"
