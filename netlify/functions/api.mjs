@@ -558,7 +558,7 @@ async function handlePortal(path, event, body, user) {
     const resource = parts[2];
     const id = parts[3];
     const teacherCanWrite = user.role === "teacher" && ["attendance", "results"].includes(resource);
-    if (user.role !== "admin" && !teacherCanWrite) return response(403, { error: "Forbidden: insufficient permissions" });
+    if (user.role !== "admin" && !teacherCanWrite && event.httpMethod !== "GET") return response(403, { error: "Forbidden: insufficient permissions" });
     if (event.httpMethod === "GET") {
       if (user.role === "admin") return ok(id ? presentRecord(PORTAL_COLLECTIONS[resource], await getRecord(PORTAL_COLLECTIONS[resource], id)) : await listPortalRows(resource));
       const rows = await teacherManagedRows(resource, user);
