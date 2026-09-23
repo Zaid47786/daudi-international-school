@@ -300,14 +300,103 @@ function AdminManageView({ resource, payload, refresh }) {
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const visible = rows.filter((row) => JSON.stringify(row).toLowerCase().includes(search.toLowerCase()));
-  const save = async (event) => { event.preventDefault(); setSaving(true); try { await base44.portalManage(resource, { method: editing ? "PUT" : "POST", id: editing, body: normalisePayload(form) }); setForm({}); setEditing(null); await refresh(); } finally { setSaving(false); } };
-  const edit = (row) => { const next = {}; fields.forEach((field) => { const value = row[field]; next[field] = Array.isArray(value) ? value.join(", ") : value ?? ""; }); setForm(next); setEditing(row.id); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const remove = async (id) => { if (!window.confirm("Delete this record? This action is audited.")) return; await base44.portalManage(resource, { method: "DELETE", id }); await refresh(); };
-  return <div><SectionTitle eyebrow="Administration" title={LABELS[resource] || titleCase(resource)} text="Manage shared records used by the student, teacher and parent experiences." action={editing && <button onClick={() => { setEditing(null); setForm({}); }} className="text-sm text-slate-500 flex items-center gap-1"><X size={15} /> Cancel edit</button>} />
-    <div className="rounded-2xl bg-white border border-slate-100 p-5 mb-5"><form onSubmit={save} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">{fields.map((field) => <label key={field} className="block"><span className="portal-label">{titleCase(field)}</span>{["description", "note"].includes(field) ? <textarea value={form[field] || ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} className="portal-input min-h-20" /> : field === "status" || field === "role" || field === "audience" || field === "type" ? <select value={form[field] || ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} className="portal-input"><option value="">Select {titleCase(field)}</option>{(field === "role" ? ["admin", "teacher", "student", "parent"] : field === "status" ? ["draft", "published", "scheduled", "paid", "pending", "present", "absent", "late", "scheduled"] : field === "audience" ? ["school", "students", "parents", "teachers", "class", "section"] : ["holiday", "exam", "ptm", "event", "academic"]).map((option) => <option key={option} value={option}>{titleCase(option)}</option>)}</select> : <input type={field.includes("date") || field === "date" ? "date" : field.includes("time") ? "time" : ["amount", "max_marks", "obtained_marks", "percentage", "period", "roll_number"].includes(field) ? "number" : field === "password" ? "password" : "text"} value={form[field] || ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} className="portal-input" placeholder={field.includes("_ids") ? "Comma-separated IDs" : ""} />}</label>)}<div className="sm:col-span-2 lg:col-span-3 flex justify-end"><button disabled={saving} className="portal-button">{saving ? "Saving…" : editing ? <><Save size={15} /> Update record</> : <><Plus size={15} /> Add record</>}</button></div></form></div>
-    <div className="rounded-2xl bg-white border border-slate-100 overflow-hidden"><div className="p-4 border-b border-slate-100"><div className="relative max-w-sm"><Search size={16} className="absolute left-3 top-3 text-slate-400" /><input value={search} onChange={(e) => setSearch(e.target.value)} className="portal-input !pl-9" placeholder="Search records" /></div></div>{visible.length ? <div className="divide-y divide-slate-100">{visible.map((row) => <div key={row.id} className="px-5 py-4 flex items-center justify-between gap-4"><div className="min-w-0"><p className="font-semibold text-sm text-slate-800 truncate">{row.full_name || row.name || row.title || row.subject || row.email || row.id}</p><p className="text-xs text-slate-400 mt-1 truncate">{row.email || row.class_id || row.status || row.date || row.description || "Shared portal record"}</p></div><div className="flex items-center gap-1 flex-shrink-0"><button onClick={() => edit(row)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500"><Pencil size={15} /></button><button onClick={() => remove(row.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-500"><Trash2 size={15} /></button></div></div>)}</div> : <EmptyState icon={Table2} title="No records yet" text="Use the form above to create the first shared record." />}</div>
-  </div>;
+
+  const save = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      const wasEditing = Boolean(editing);
+      await base44.portalManage(resource, {
+        method: wasEditing ? "PUT" : "POST",
+        id: editing,
+        body: normalisePayload(form),
+      });
+      setForm({});
+      setEditing(null);
+      await refresh();
+      setNotice(wasEditing ? "Record updated successfully." : "Record added successfully.");
+    } catch (saveError) {
+      setError(saveError.message || "Could not save this record. Please check the fields and try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const edit = (row) => {
+    const next = {};
+    fields.forEach((field) => {
+      const value = row[field];
+      next[field] = Array.isArray(value) ? value.join(", ") : value ?? "";
+    });
+    setError("");
+    setNotice("");
+    setForm(next);
+    setEditing(row.id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const remove = async (id) => {
+    if (!window.confirm("Delete this record? This action is audited.")) return;
+    setError("");
+    setNotice("");
+    try {
+      await base44.portalManage(resource, { method: "DELETE", id });
+      await refresh();
+      setNotice("Record deleted successfully.");
+    } catch (deleteError) {
+      setError(deleteError.message || "Could not delete this record. Please try again.");
+    }
+  };
+
+  return (
+    <div>
+      <SectionTitle
+        eyebrow="Administration"
+        title={LABELS[resource] || titleCase(resource)}
+        text="Manage shared records used by the student, teacher and parent experiences."
+        action={editing && <button onClick={() => { setEditing(null); setForm({}); }} className="text-sm text-slate-500 flex items-center gap-1"><X size={15} /> Cancel edit</button>}
+      />
+      {error && <div role="alert" className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center gap-2"><AlertCircle size={16} />{error}</div>}
+      {notice && <div role="status" className="mb-4 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 flex items-center gap-2"><CheckCircle2 size={16} />{notice}</div>}
+      <div className="rounded-2xl bg-white border border-slate-100 p-5 mb-5">
+        <form onSubmit={save} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {fields.map((field) => (
+            <label key={field} className="block">
+              <span className="portal-label">{titleCase(field)}</span>
+              {["description", "note"].includes(field) ? (
+                <textarea value={form[field] || ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} className="portal-input min-h-20" />
+              ) : field === "status" || field === "role" || field === "audience" || field === "type" ? (
+                <select value={form[field] || ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} className="portal-input">
+                  <option value="">Select {titleCase(field)}</option>
+                  {(field === "role" ? ["admin", "teacher", "student", "parent"] : field === "status" ? ["draft", "published", "scheduled", "paid", "pending", "present", "absent", "late"] : field === "audience" ? ["school", "students", "parents", "teachers", "class", "section"] : ["holiday", "exam", "ptm", "event", "academic"]).map((option) => <option key={option} value={option}>{titleCase(option)}</option>)}
+                </select>
+              ) : (
+                <input
+                  type={field.includes("date") || field === "date" ? "date" : field.includes("time") ? "time" : ["amount", "max_marks", "obtained_marks", "percentage", "period", "roll_number"].includes(field) ? "number" : field === "password" ? "password" : "text"}
+                  value={form[field] || ""}
+                  onChange={(e) => setForm({ ...form, [field]: e.target.value })}
+                  className="portal-input"
+                  placeholder={field.includes("_ids") ? "Comma-separated IDs" : ""}
+                />
+              )}
+            </label>
+          ))}
+          <div className="sm:col-span-2 lg:col-span-3 flex justify-end">
+            <button type="submit" disabled={saving} className="portal-button">{saving ? "Saving…" : editing ? <><Save size={15} /> Update record</> : <><Plus size={15} /> Add record</>}</button>
+          </div>
+        </form>
+      </div>
+      <div className="rounded-2xl bg-white border border-slate-100 overflow-hidden">
+        <div className="p-4 border-b border-slate-100"><div className="relative max-w-sm"><Search size={16} className="absolute left-3 top-3 text-slate-400" /><input value={search} onChange={(e) => setSearch(e.target.value)} className="portal-input !pl-9" placeholder="Search records" /></div></div>
+        {visible.length ? <div className="divide-y divide-slate-100">{visible.map((row) => <div key={row.id} className="px-5 py-4 flex items-center justify-between gap-4"><div className="min-w-0"><p className="font-semibold text-sm text-slate-800 truncate">{row.full_name || row.name || row.title || row.subject || row.email || row.id}</p><p className="text-xs text-slate-400 mt-1 truncate">{row.email || row.class_id || row.status || row.date || row.description || "Shared portal record"}</p></div><div className="flex items-center gap-1 flex-shrink-0"><button onClick={() => edit(row)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500" aria-label="Edit record"><Pencil size={15} /></button><button onClick={() => remove(row.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-500" aria-label="Delete record"><Trash2 size={15} /></button></div></div>)}</div> : <EmptyState icon={Table2} title="No records yet" text="Use the form above to create the first shared record." />}
+      </div>
+    </div>
+  );
 }
 
 function AdminPortalView({ section, payload, refresh, go }) {
